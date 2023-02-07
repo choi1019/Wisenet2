@@ -1,0 +1,31 @@
+{
+    "configurations": [
+        {
+            "name": "PlatformLinux",
+            "includePath": [
+                "/home/choisw/source/MemoryLinux/**",
+                "${default}"
+            ],
+            "defines": [
+                "${default}"
+            ],
+            "forcedInclude": [
+                "${default}" 
+           ],
+            "compileCommands": "${default}",
+            "browse": {
+                "limitSymbolsToIncludedHeaders": true,
+                "databaseFilename": "${default}",
+                "path": [
+                    "${default}",
+                    "/home/choisw/source/MemoryLinux"
+                ]
+            },
+            "intelliSenseMode": "${default}",
+            "cStandard": "${default}",
+            "cppStandard": "${default}",
+            "compilerPath": "${default}"
+        }
+    ],
+    "version": 4
+}
