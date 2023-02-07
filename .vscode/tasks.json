@@ -6,7 +6,7 @@
             "command": "/usr/bin/g++",
             "args": [
                 "-fdiagnostics-color=always",
-                "-I/home/choisw/source/MemoryLinux/",
+                "-I/home/choisw/source/ComponentLinux/",
                 "-g",
                 "${workspaceFolder}/Main.cpp",
                 "${workspaceFolder}/22TestApplication/PTestMain/PTestMain.cpp",
@@ -22,10 +22,11 @@
                 "${workspaceFolder}/21TestPlatform/TestObject/*.cpp",
                 "${workspaceFolder}/13PTechnical/PMemoryManager/*.cpp",
                 "${workspaceFolder}/03Technical/MemoryManager/*.cpp",
+                "${workspaceFolder}/02Platform/Component/*.cpp,
                 "${workspaceFolder}/01Base/Aspect/*.cpp",
                 "${workspaceFolder}/01Base/Object/*.cpp",
                 "-o",
-                "${workspaceFolder}/bin/MemoryLinux"
+                "${workspaceFolder}/bin/ComponentLinux"
             ],
             "options": {
                 "cwd": "/usr/bin"
