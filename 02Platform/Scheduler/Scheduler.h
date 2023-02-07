@@ -1,7 +1,8 @@
 #pragma once
 
-#include "../../2Platform/EventQueue/EventQueue.h"
-#include "IScheduler.h"
+#include <02Platform/EventQueue/EventQueue.h>
+#include <02Platform/Scheduler/IScheduler.h>
+#include <01Base/StdLib/Map.h>
 
 #undef GetClassName
 

@@ -43,14 +43,12 @@ public:
 
 template <class KEYTYPE, class VALUETYPE, int MAXLENGTH = 50>
 class Map: public Collection {
-
-typedef MapIterator<KEYTYPE, VALUETYPE> Iterator;
-
 private:
 	int length;
 	MapPair<KEYTYPE, VALUETYPE> elements[MAXLENGTH];
 
 public:
+	typedef MapIterator<KEYTYPE, VALUETYPE> Iterator;
 	Map(int nClassId = _Map_Id, const char *pcClassName = _Map_Name) 
 		: Collection(nClassId, pcClassName)
 		, elements()

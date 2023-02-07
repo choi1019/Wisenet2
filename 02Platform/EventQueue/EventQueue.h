@@ -1,12 +1,13 @@
 #pragma once
 
-#include "../typeDef.h"
-#define _EventQueue_Id _GET_CLASS_UID(_EPlatform::_eEventQueue)
+#include <02Platform/typedef.h>
+#define _EventQueue_Id _GET_CLASS_UID(_ELayer_Platform::_eEventQueue)
 #define _EventQueue_Name "EventQueue"
 
-#include "../../1Base/Object/BaseObject.h"
-#include "../../2Platform/Component/IComponent.h"
-#include "Event.h"
+#include <01Base/Object/BaseObject.h>
+#include <02Platform/Component/IComponent.h>
+#include <02Platform/EventQueue/Event.h>
+#include <01Base/Aspect/Log.h>
 
 class EventQueue : public BaseObject
 {

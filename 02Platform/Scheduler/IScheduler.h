@@ -1,10 +1,10 @@
 #pragma once
 
-#include "../typedef.h"
-#define _Scheduler_Id _GET_CLASS_UID(_EPlatform::_eScheduler)
+#include <02Platform/typedef.h>
+#define _Scheduler_Id _GET_CLASS_UID(_ELayer_Platform::_eScheduler)
 #define _Scheduler_Name "Scheduler"
 
-#include "../Component/Component.h"
+#include <02Platform/Component/Component.h>
 
 class IScheduler
 {

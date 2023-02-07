@@ -1,11 +1,12 @@
 #pragma once
-#include "../TypeDef.h"
-#define Component_Id _GET_CLASS_UID(_EPlatform::_eComponent) 
+
+#include <02Platform/typedef.h>
+#define Component_Id _GET_CLASS_UID(_ELayer_Platform::_eComponent) 
 #define Component_Name "Component"
 
-#include "UId.h"
-#include "../../1Base/StdLib/Vector.h"
-#include "../../1Base/\Aspect/Directory.h"
+#include <01Base/StdLib/Vector.h>
+#include <01Base/Aspect/Directory.h>
+#include <02Platform/Component/UId.h>
 
 class IComponent {
 public:

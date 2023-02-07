@@ -1,8 +1,8 @@
 #pragma once
 
-#include "../../1Base/StdLib/Map.h"
-#include "../../1Base/StdLib/Vector.h"
-#include "ILifecycleManager.h"
+#include <01Base/StdLib/Map.h>
+#include <01Base/StdLib/Vector.h>
+#include <02Platform/LifecycleManager/ILifecycleManager.h>
 
 class LifecycleManager : public ILifecycleManager, public Component{
 

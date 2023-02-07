@@ -1,7 +1,7 @@
 {
     "configurations": [
         {
-            "name": "PlatformLinux",
+            "name": "ComponentLinux",
             "includePath": [
                 "/home/choisw/source/ComponentLinux/**",
                 "${default}"
@@ -10,8 +10,8 @@
                 "${default}"
             ],
             "forcedInclude": [
-                "${default}" 
-           ],
+                "${default}"
+            ],
             "compileCommands": "${default}",
             "browse": {
                 "limitSymbolsToIncludedHeaders": true,

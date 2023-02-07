@@ -1,15 +1,15 @@
 #pragma once
 
-#include "../TypeDef.h"
-#define ComponentPart_Id _GET_CLASS_UID(_EPlatform::_eComponentPart)
+#include <02Platform/typedef.h>
+#define ComponentPart_Id _GET_CLASS_UID(_ELayer_Platform::_eComponentPart)
 #define ComponentPart_Name "ComponentPart"  // class string name
 
-#include "../../1Base/StdLib/Map.h"
-#include "../../1Base/StdLib/Vector.h"
-#include "../../1Base/Object/BaseObject.h"
+#include <01Base/Object/BaseObject.h>
+#include <02Platform/Component/UId.h>
+#include <02Platform/EventQueue/Event.h>
 
-#include "../../2Platform/Component/UId.h"
-#include "../../2Platform/EventQueue/Event.h"
+#include <01Base/StdLib/Map.h>
+#include <01Base/StdLib/Vector.h>
 
 #undef GetClassName
 

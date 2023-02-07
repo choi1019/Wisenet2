@@ -1,10 +1,10 @@
 #pragma once
 
-#include "../TypeDef.h"
-#define UId_Id _GET_CLASS_UID(_EPlatform::_eUId)
+#include <02Platform/typedef.h>
+#define UId_Id _GET_CLASS_UID(_ELayer_Platform::_eUId)
 #define UId_Nname "UId"
 
-#include "../../1Base/Object/BaseObject.h"
+#include <01Base/Object/BaseObject.h>
 
 class EventQueue;
 class UId: public BaseObject {

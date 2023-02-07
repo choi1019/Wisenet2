@@ -1,9 +1,9 @@
-#include "LifecycleManager.h"
+#include <02Platform/LifecycleManager/ILifecycleManager.h>
 
-#include "../../2Platform/Component/Component.h"
-#include "../../2Platform/Scheduler/Scheduler.h"
-#include "../../2Platform/Main/IMain.h"
-#include "../../1Base/Aspect/Directory.h"
+#include <02Platform/Component/Component.h>
+#include <02Platform/Scheduler/Scheduler.h>
+#include <02Platform/Main/IMain.h>
+#include <01Base/Aspect/Directory.h>
 
 
 void LifecycleManager::RegisterEventTypes() {

@@ -1,7 +1,7 @@
 #pragma once
 
-#include "ComponentPart.h"
-#include "IComponent.h"
+#include <02Platform/Component/IComponent.h>
+#include <02Platform/Component/ComponentPart.h>
 
 class Component : public IComponent, public ComponentPart
 {

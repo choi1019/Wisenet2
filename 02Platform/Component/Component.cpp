@@ -1,5 +1,7 @@
-#include "Component.h"
-#include "../../2Platform/EventQueue/EventQueue.h"
+#include <02Platform/Component/Component.h>
+#include <02Platform/EventQueue/EventQueue.h>
+#include <01Base/Aspect/Exception.h>
+#include <01Base/Aspect/Log.h>
 
 //unsigned Component::s_uCounter = 0;
 

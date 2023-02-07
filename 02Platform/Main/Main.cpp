@@ -1,4 +1,4 @@
-#include "Main.h"
+#include <02Platform/Main/Main.h>
 
 Main::Main(
 	unsigned uClassId,
@@ -52,7 +52,7 @@ void Main::InitializeAsAMain(Event* pEvent) {
 			= new("ParamInitializeAsALifecycleManager") ILifecycleManager::ParamInitializeAsALifecycleManager(this);
 		this->SendReplyEvent(
 			this->m_pLifecycleManager->GetUId()
-			, (unsigned)ILifecycleManager::EEventType::eInitializeAsALifecycleManager
+			, (int)ILifecycleManager::EEventType::eInitializeAsALifecycleManager
 			, UNDEFINED
 			, pParamParamInitializeAsALifecycleManager
 		);

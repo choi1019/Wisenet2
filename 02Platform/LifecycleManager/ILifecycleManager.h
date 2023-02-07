@@ -1,11 +1,11 @@
 #pragma once
 
-#include "../typedef.h"
-#define _LifecycleManager_Id _GET_CLASS_UID(_EPlatform::_eLifecycleManager)
+#include <02Platform/typedef.h>
+#define _LifecycleManager_Id _GET_CLASS_UID(_ELayer_Platform::_eLifecycleManager)
 #define _LifecycleManager_Name "LifecycleManager"
 
-#include "../../1Base/Object/BaseObject.h"
-#include "../../2Platform/Scheduler/Scheduler.h"
+#include <01Base/Object/ValueObject.h>
+#include <02Platform/Scheduler/Scheduler.h>
 
 class ILifecycleManager {
 public:
@@ -57,7 +57,7 @@ public:
 		eErrorCodeEnd
 	};
 
-	class ParamInitializeAsALifecycleManager : public BaseObject {
+	class ParamInitializeAsALifecycleManager : public ValueObject {
 	private:
 		Scheduler* m_pMainScheduler;
 	public:

@@ -1,8 +1,10 @@
-#include "ComponentPart.h"
+#include <02Platform/Component/ComponentPart.h>
+#include <01Base/Aspect/Exception.h>
+#include <01Base/Aspect/Log.h>
 
-#include "../../1Base/Aspect/Directory.h"
-#include "../../1Base/StdLib/String.h"
-#include "../../2Platform/EventQueue/EventQueue.h"
+#include <01Base/Aspect/Directory.h>
+#include <01Base/StdLib/String.h>
+#include <02Platform/EventQueue/EventQueue.h>
 
 ComponentPart::ComponentPart(unsigned uClassId, const char* acClassName)
 	: BaseObject(uClassId, acClassName)
@@ -125,7 +127,7 @@ void ComponentPart::PrepareReplyEvent(Event* pEvent) {
 ///////////////////////////////////////
 void ComponentPart::SendReplyEvent(UId uIdTarget, int nEventType, long long lArg, BaseObject* pArg, int nReplyType)
 {
-	Event* pEvent = new Event(this->GetUId(), uIdTarget, nEventType, lArg, pArg
+	Event* pEvent = new("") Event(this->GetUId(), uIdTarget, nEventType, lArg, pArg
 		, nReplyType, nullptr, Event::ESyncType::eSync);
 	this->SendAEvent(pEvent);
 }
@@ -141,7 +143,7 @@ void ComponentPart::SendReplyEvent(int nReceiverName, int nEventType, long long 
 ///////////////////////////////////////
 void ComponentPart::SendNoReplyEvent(UId uIdTarget, int nEventType, long long lArg, BaseObject* pArg)
 {
-	Event* pEvent = new Event(this->GetUId(), uIdTarget, nEventType, lArg, pArg
+	Event* pEvent = new("") Event(this->GetUId(), uIdTarget, nEventType, lArg, pArg
 		, UNDEFINED, nullptr, Event::ESyncType::eAsync);
 	this->SendAEvent(pEvent);
 }
@@ -153,7 +155,7 @@ void ComponentPart::SendNoReplyEvent(int nReceiverName, int nEventType, long lon
 
 void ComponentPart::SendNoReplyEventLast(UId uIdTarget, int nEventType, long long lArg, BaseObject* pArg)
 {
-	Event* pEvent = new Event(this->GetUId(), uIdTarget, nEventType, lArg, pArg
+	Event* pEvent = new("") Event(this->GetUId(), uIdTarget, nEventType, lArg, pArg
 		, UNDEFINED, nullptr, Event::ESyncType::eAsync, Event::ESendOrder::eLast);
 	this->SendAEvent(pEvent);
 }

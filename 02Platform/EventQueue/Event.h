@@ -1,14 +1,14 @@
 #pragma once
 
-#include "../typeDef.h"
-#define _Event_Id _GET_CLASS_UID(_EPlatform::_eEvent)
+#include <02Platform/typedef.h>
+#define _Event_Id _GET_CLASS_UID(_ELayer_Platform::_eEvent)
 #define _Event_Name "Event"
 
-#include "../../1Base/Aspect/Directory.h"
-#include "../../2Platform/Component/UId.h"
-#include "../../1Base/Object/BaseObject.h"
+#include <01Base/Aspect/Directory.h>
+#include <02Platform/Component/UId.h>
+#include <01Base/Object/ValueObject.h>
 
-class Event: public BaseObject
+class Event: public ValueObject
 {
 public:
 	enum class ESyncType {
@@ -17,16 +17,6 @@ public:
 	enum class ESendOrder {
 		eFirst, eLast
 	};
-
-public:
-	static IMemory* s_pMemory;
-	void* operator new (size_t size) throw() {
-		return s_pMemory->SafeMalloc(size, _Event_Name);
-	}
-	void operator delete(void* pObject) throw() {
-		s_pMemory->SafeFree(pObject);
-	}
-
 private:
 	static unsigned s_uCounter;
 
@@ -63,7 +53,7 @@ public:
 		unsigned uClassId = _Event_Id,
 		const char* pcClassName = _Event_Name
 	)
-		: BaseObject(uClassId, pcClassName)
+		: ValueObject(uClassId, pcClassName)
 		, m_nId(s_uCounter++)
 		, m_uidSource(uidSource)
 		, m_uidTarget(uidTarget)
@@ -87,7 +77,7 @@ public:
 		unsigned uClassId = _Event_Id,
 		const char* pcClassName = _Event_Name
 	)
-		: BaseObject(uClassId, pcClassName)
+		: ValueObject(uClassId, pcClassName)
 		, m_nId(s_uCounter++)
 		, m_uidSource(event.m_uidSource)
 		, m_uidTarget(event.m_uidTarget)
@@ -111,10 +101,10 @@ public:
 		}
 	}
 	virtual void Initialize() {
-		BaseObject::Initialize();
+		ValueObject::Initialize();
 	}
 	virtual void Finalize() {
-		BaseObject::Finalize();
+		ValueObject::Finalize();
 	}
 
 	int GetId() { return this->m_nId; }

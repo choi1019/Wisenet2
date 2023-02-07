@@ -1,8 +1,8 @@
 #pragma once
 
-#include "../../2Platform/Scheduler/Scheduler.h"
-#include "../../2Platform/LifecycleManager/LifecycleManager.h"
-#include "IMain.h"
+#include <02Platform/Scheduler/Scheduler.h>
+#include <02Platform/LifecycleManager/LifecycleManager.h>
+#include <02Platform/Main/IMain.h>
 
 class Main : public Scheduler, public IMain
 {

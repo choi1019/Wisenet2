@@ -22,7 +22,7 @@
                 "${workspaceFolder}/21TestPlatform/TestObject/*.cpp",
                 "${workspaceFolder}/13PTechnical/PMemoryManager/*.cpp",
                 "${workspaceFolder}/03Technical/MemoryManager/*.cpp",
-                "${workspaceFolder}/02Platform/Component/*.cpp,
+                "${workspaceFolder}/02Platform/Component/*.cpp",
                 "${workspaceFolder}/01Base/Aspect/*.cpp",
                 "${workspaceFolder}/01Base/Object/*.cpp",
                 "-o",
