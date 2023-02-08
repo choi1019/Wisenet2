@@ -4,27 +4,27 @@
 #define UId_Id _GET_CLASS_UID(_ELayer_Platform::_eUId)
 #define UId_Nname "UId"
 
-#include <01Base/Object/BaseObject.h>
+#include <01Base/Object/ValueObject.h>
 
 class EventQueue;
-class UId: public BaseObject {
+class UId: public ValueObject {
 private:
 	unsigned m_uComponentId;
 	EventQueue* m_pEventQueue;
 
 public:
 	UId(unsigned uComponentId = UNDEFINED, EventQueue* pEventQueue = nullptr)
-		: BaseObject(UId_Id, UId_Nname)
+		: ValueObject(UId_Id, UId_Nname)
 		, m_uComponentId(uComponentId)
 		, m_pEventQueue(pEventQueue)
 	{}
 	virtual ~UId() {}
 
 	virtual void Initialize() {
-		BaseObject::Initialize();
+		ValueObject::Initialize();
 	}
 	virtual void Finalize() {
-		BaseObject::Finalize();
+		ValueObject::Finalize();
 	}
 
 	void SetPEventQueue(EventQueue* pEventQueue) { this->m_pEventQueue = pEventQueue; }

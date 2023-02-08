@@ -12,10 +12,12 @@ private:
 public:
 	Component(unsigned uClassId = Component_Id, const char* pcClassName = Component_Name);
 	virtual ~Component();
+	
 	void AddPart(unsigned uName, ComponentPart* pComponentPart);
 	ComponentPart* GetPart(unsigned uName);
 	ComponentPart* RemovePart(unsigned uName);
 	void RemovePartAll();
+	
 	void SetPEventQueue(EventQueue* pEventQueue);
 
 	void BeginSequence(Event* pEvent);

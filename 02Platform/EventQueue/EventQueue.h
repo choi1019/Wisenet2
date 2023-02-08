@@ -5,7 +5,6 @@
 #define _EventQueue_Name "EventQueue"
 
 #include <01Base/Object/BaseObject.h>
-#include <02Platform/Component/IComponent.h>
 #include <02Platform/EventQueue/Event.h>
 #include <01Base/Aspect/Log.h>
 
@@ -15,7 +14,7 @@ private:
 	int m_nSchedulerId;
 	Event* m_pFront;
 	Event* m_pRear;
-	int m_nLength;
+	unsigned m_nLength;
 
 public:
 	int GetSchedulerId() { return this->m_nSchedulerId; }
@@ -41,31 +40,19 @@ public:
 		BaseObject::Finalize();
 	}
 
-	void ShowState(const char* pcMessage) {
-		LOG_HEADER(pcMessage);
+	void ShowState(const char* sMessage) {
+		LOG_HEADER(sMessage);
 		//		Log("SizeThis + Size Allocated", this->GetSzThis(), m_szSlot * m_uCountTotalSlots).Println();
 		//		Log("SizeSlot x CountSlots", m_szSlot, m_uCountTotalSlots).Println();
 		unsigned index = 0;
-		for (Event* pEvent = m_pFront; pEvent != nullptr; pEvent = pEvent->GetPQueueNext()) {
+		for (Event* pEvent = m_pFront; pEvent != nullptr; pEvent = pEvent->GetPNext()) {
 			LOG("Event",
 				pEvent->GetId(),
 				Directory::s_dirComponents[pEvent->GetUIdTarget().GetComponentId()],
 				Directory::s_dirEvents[pEvent->GetType()]
 			);
 		}
-		LOG_FOOTER(pcMessage, m_nLength);
-	}
-
-	virtual void PushFront(Event* pEvent) {
-		if (m_nLength == 0) {
-			this->m_pRear = pEvent;
-			this->m_pFront = pEvent;
-		}
-		else {
-			pEvent->SetPQueueNext(this->m_pFront);
-			this->m_pFront = pEvent;
-		}
-		this->m_nLength++;
+		LOG_FOOTER(sMessage, m_nLength);
 	}
 
 	virtual void PushBack(Event* pEvent) {
@@ -74,8 +61,8 @@ public:
 			this->m_pFront = pEvent;
 		}
 		else {
-			this->m_pRear->SetPQueueNext(pEvent);
-			this->m_pRear = this->m_pRear->GetPQueueNext();
+			this->m_pRear->SetPNextInQueue(pEvent);
+			this->m_pRear = pEvent;
 		}
 		this->m_nLength++;
 	}
@@ -84,12 +71,12 @@ public:
 		return this->m_pFront;
 	}
 
-	virtual Event* Pop(){
+	virtual Event* PopFront(){
 		if (m_nLength == 0) {
 			return nullptr;
 		}
 		Event* pEvent = this->m_pFront;
-		this->m_pFront = this->m_pFront->GetPQueueNext();
+		this->m_pFront = this->m_pFront->GetPNextInQueue();
 		this->m_nLength--;
 		return pEvent;
 	}

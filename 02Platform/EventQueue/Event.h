@@ -10,13 +10,6 @@
 
 class Event: public ValueObject
 {
-public:
-	enum class ESyncType {
-		eSync, eAsync
-	};
-	enum class ESendOrder {
-		eFirst, eLast
-	};
 private:
 	static unsigned s_uCounter;
 
@@ -24,19 +17,24 @@ private:
 	UId m_uidSource;
 	UId m_uidTarget;
 	int m_nType;
+	// Arguments
 	long long m_lArg;
-	BaseObject* m_pPArg;
+	ValueObject* m_pPArg;
 
-	int m_nReplyType;
-	Event* m_pParentEvent;
-
-	ESyncType m_eSyncType;
-	ESendOrder m_eSendOrder;
+	// for Reply
 	bool m_bReply;
-
-	Event* m_pNextSequence;
-	Event* m_pQueueNext;
-	int m_nCountChildren;
+	int m_nReplyType;
+	// Sequenced or not
+	bool m_bSequenced;
+	Event* m_pNext;
+	// Nested
+	bool m_bNested;
+	Event* m_pParent;
+	unsigned m_countChildren;
+	// Blocked or not
+	bool m_bBlocked;
+	// For Event Queue
+	Event* m_pNextInQueue;
 
 public:
 	Event(
@@ -44,11 +42,11 @@ public:
 		UId uidTarget,
 		int nType,
 		long long lArg,
-		BaseObject* pArg,
-		int nReplyType = UNDEFINED,
-		Event* pParentEvent = nullptr,
-		ESyncType eSyncType = ESyncType::eAsync,
-		ESendOrder eSendOrder = ESendOrder::eFirst,
+		ValueObject* pArg = nullptr,
+		
+		bool bReply = false,	
+		bool bSequenced = true,
+		bool bNested = false,
 
 		unsigned uClassId = _Event_Id,
 		const char* pcClassName = _Event_Name
@@ -60,15 +58,16 @@ public:
 		, m_nType(nType)
 		, m_lArg(lArg)
 		, m_pPArg(pArg)
-		, m_nReplyType(nReplyType)
-		, m_pParentEvent(pParentEvent)
-		, m_eSyncType(eSyncType)
-		, m_eSendOrder(eSendOrder)
 
-		, m_bReply(false)
-		, m_pNextSequence(nullptr)
-		, m_pQueueNext(nullptr)
-		, m_nCountChildren(0)
+		, m_bReply(bReply)
+		, m_nReplyType(UNDEFINED)
+		, m_bSequenced(bSequenced)
+		, m_pNext(nullptr)
+		, m_bNested(bSequenced)
+		, m_pParent(nullptr)
+		, m_countChildren(0)
+		, m_bBlocked(false)
+		, m_pNextInQueue(nullptr)
 	{
 	}
 
@@ -84,15 +83,16 @@ public:
 		, m_nType(event.m_nType)
 		, m_lArg(event.m_lArg)
 		, m_pPArg(m_pPArg == nullptr ? nullptr : event.m_pPArg->Clone())
-		, m_nReplyType(event.m_nReplyType)
-		, m_pParentEvent(event.m_pParentEvent)
-		, m_eSyncType(event.m_eSyncType)
-		, m_eSendOrder(event.m_eSendOrder)
 
-		, m_bReply(false)
-		, m_pNextSequence(event.m_pNextSequence)
-		, m_pQueueNext(event.m_pQueueNext)
-		, m_nCountChildren(event.m_nCountChildren)
+		, m_bReply(event.m_bReply)
+		, m_nReplyType(event.m_nReplyType)
+		, m_bSequenced(event.m_bSequenced)
+		, m_pNext(event.m_pNext)
+		, m_bNested(event.m_bNested)
+		, m_pParent(event.m_pParent)
+		, m_countChildren(event.m_countChildren)
+		, m_bBlocked( event.m_bBlocked)
+		, m_pNextInQueue( event.m_pNextInQueue) 
 	{
 	}
 	virtual ~Event() {
@@ -100,10 +100,11 @@ public:
 			delete m_pPArg;
 		}
 	}
-	virtual void Initialize() {
+
+	void Initialize() override {
 		ValueObject::Initialize();
 	}
-	virtual void Finalize() {
+	void Finalize() override {
 		ValueObject::Finalize();
 	}
 
@@ -112,47 +113,42 @@ public:
 	UId GetUIdTarget() { return this->m_uidTarget; }
 	int GetType() { return this->m_nType; }
 	long long GetlArg() { return this->m_lArg; }
-	BaseObject* GetPArg() { return this->m_pPArg; }
+	ValueObject* GetPArg() { return this->m_pPArg; }
 
 	void SetUIdSource(UId uidSource) { this->m_uidSource = uidSource; }
 	void SetUIdTarget(UId uidTarget) { this->m_uidTarget = uidTarget; }
 	void SetType(int nType) { this->m_nType = nType; }
 	void SetlArg(long long lArg) { this->m_lArg = lArg; }
-	void SetPArg(BaseObject* pPArg) { this->m_pPArg = pPArg; }
+	void SetPArg(ValueObject* pPArg) { this->m_pPArg = pPArg; }
 
-	int GetReplyType() { return this->m_nReplyType; }
-	void SetReplyType(int nReplyType) { this->m_nReplyType = nReplyType; }
-	Event* GetPParentEvent() { return this->m_pParentEvent; }
-	void SetPParentEvent(Event* pParentEvent) { this->m_pParentEvent = pParentEvent; }
-
-	void SetESyncType(ESyncType eSyncType) {	this->m_eSyncType = eSyncType; }
-	ESyncType GetESyncType() { return this->m_eSyncType; }
-	void SetESendOrder(ESendOrder eSendOrder) { this->m_eSendOrder = eSendOrder; }
-	ESendOrder GetESendOrder() { return this->m_eSendOrder; }
+	// Reply
 	bool IsReply() { return this->m_bReply; }
 	void SetBReply(bool bReply) { this->m_bReply = bReply; }
-
-	// for child count
-	void IncrementCountChildren() { this->m_nCountChildren++; }
-	void DecrementCountChildren() { this->m_nCountChildren--; }
-	int GetCoundChildren() { return this->m_nCountChildren; }
-	void SetCountChildren(int nCountChildren) { this->m_nCountChildren = nCountChildren; }
-
+	int GetReplyType() { return this->m_nReplyType; }
+	void SetReplyType(int nReplyType) { this->m_nReplyType = nReplyType; }
+	// Sequence
+	bool IsSequenced() { return this->m_bSequenced; }
+	void SetBSequenced(bool bSequenced) { this->m_bSequenced = bSequenced; }
+	Event* GetPNext() { return this->m_pNext; }
+	void SetPNext(Event* pNext) { this->m_pNext = pNext; }
+	// Nested
+	bool IsNested() { return this->m_bNested; }
+	void SetBNested(bool bNested) { this->m_bNested = bNested; }
+	Event* GetPParent() { return this->m_pParent; }
+	void SetPParent(Event* pParent) { this->m_pParent = pParent; }
+	void IncrementCountChildren() { this->m_countChildren++; }
+	void DecrementCountChildren() { this->m_countChildren--; }
+	unsigned GetCoundChildren() { return this->m_countChildren; }
+	void SetCountChildren(unsigned countChildren) { this->m_countChildren = countChildren; }
 	bool IsAllReplied() {
-		if (this->m_pParentEvent == nullptr) {
-			return true;
-		}
-		if (this->m_pParentEvent->GetCoundChildren() > 0) {
-			return false;
+		if (this->m_bNested) {
+			if (this->m_pParent->GetCoundChildren() > 0) {
+				return false;
+			}
 		}
 		return true;
 	}
-
-	// for Sequencing
-	Event* GetPNextSequence() { return this->m_pNextSequence; }
-	void SetPNextSequence(Event* pNextSequence) { this->m_pNextSequence = pNextSequence; }
-	// for event queue
-	Event* GetPQueueNext() { return this->m_pQueueNext; }
-	void SetPQueueNext(Event* pQueueNext) { this->m_pQueueNext = pQueueNext; }
-
+	// For Event Queue
+	Event* GetPNextInQueue() { return this->m_pNextInQueue; }
+	void SetPNextInQueue(Event* pNextInQueue) { this->m_pNextInQueue = pNextInQueue; }
 };

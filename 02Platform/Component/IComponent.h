@@ -5,7 +5,7 @@
 #define Component_Name "Component"
 
 #include <01Base/StdLib/Vector.h>
-#include <01Base/Aspect/Directory.h>
+
 #include <02Platform/Component/UId.h>
 
 class IComponent {
@@ -68,7 +68,6 @@ public:
 	private:
 		unsigned m_uGroupName;
 		Vector<UId> m_vUIdTargetComponents;
-
 	public:
 		ParamAssociateATarget(unsigned uGroupName)
 			: m_uGroupName(uGroupName)

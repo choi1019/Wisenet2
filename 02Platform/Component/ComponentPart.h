@@ -93,34 +93,19 @@ public:
 	virtual void EndSequence();
 
 protected:
-	///////////////////////////////////////
-	// prepare event
-	///////////////////////////////////////
 	void SendAEvent(Event* pEvent);
-	///////////////////////////////////////
-	// reply event
-	///////////////////////////////////////
 	void PrepareReplyEvent(Event* pEvent);
 
-	///////////////////////////////////////
-	// reply event
-	///////////////////////////////////////
 	void SendReplyEvent(UId uIdTarget, int nEventType, long long lArg = 0, BaseObject* pArg = nullptr
 		, int nReplyType = UNDEFINED);
 	void SendReplyEvent(int nReceiverName, int nEventType, long long lArg = 0, BaseObject* pArg = nullptr
 		, int nReplyType = UNDEFINED);
 
-	///////////////////////////////////////
-	// no reply event
-	///////////////////////////////////////
 	void SendNoReplyEvent(UId uIdTarget, int nEventType, long long lArg = 0, BaseObject* pArg = nullptr);
 	void SendNoReplyEvent(int nReceiverName, int nEventType, long long lArg = 0, BaseObject* pArg = nullptr);
 	void SendNoReplyEventLast(UId uIdTarget, int nEventType, long long lArg = 0, BaseObject* pArg = nullptr);
 	void SendNoReplyEventLast(int nReceiverName, int nEventType, long long lArg = 0, BaseObject* pArg = nullptr);
 
-	///////////////////////////////////////
-	// target events
-	///////////////////////////////////////
 	void SendTargetEvents(unsigned groupName, unsigned eventType, long long lArg = 0, BaseObject* pArg = nullptr);
 	void SendTargetEventsLast(unsigned groupName, unsigned eventType, long long lArg = 0, BaseObject* pArg = nullptr);
 
