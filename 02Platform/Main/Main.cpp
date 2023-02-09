@@ -50,12 +50,12 @@ void Main::InitializeAsAMain(Event* pEvent) {
 		// send a trigger event
 		ILifecycleManager::ParamInitializeAsALifecycleManager* pParamParamInitializeAsALifecycleManager
 			= new("ParamInitializeAsALifecycleManager") ILifecycleManager::ParamInitializeAsALifecycleManager(this);
-		// this->SendReplyEvent(
-		// 	this->m_pLifecycleManager->GetUId()
-		// 	, (int)ILifecycleManager::EEventType::eInitializeAsALifecycleManager
-		// 	, UNDEFINED
-		// 	, pParamParamInitializeAsALifecycleManager
-		// );
+		this->SendReplyEvent(
+			this->m_pLifecycleManager->GetUId()
+			, (int)ILifecycleManager::EEventType::eInitializeAsALifecycleManager
+			, UNDEFINED
+			, pParamParamInitializeAsALifecycleManager
+		);
 	}
 
 }

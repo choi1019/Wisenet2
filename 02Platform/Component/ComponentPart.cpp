@@ -77,7 +77,7 @@ void ComponentPart::EndSequence(Event*pEvent) {
 		// no child, synchronous
 		if (pEvent->IsSynchronous()) {
 			if (pEvent->GetCoundChildren() == 0) {
-				ReplyEvent(pEvent->GetPParent());
+				ReplyEvent(pEvent);
 			}
 		// asyncrhonous
 		} else {
@@ -98,6 +98,7 @@ void ComponentPart::SendAEvent(Event* pEvent) {
 			"EventQueue is not allocated"
 		);
 	}
+<<<<<<< HEAD
 	// parent event should wait for all children events finished
 	if (m_pEventParent->IsSynchronous()) {
 		// for nesting
@@ -106,6 +107,17 @@ void ComponentPart::SendAEvent(Event* pEvent) {
 		pEvent->SetBNested(true);
 	}
 	// push event to a target event queue
+=======
+	if (m_pEventParent != nullptr) {
+		if (m_pEventParent->IsSynchronous()) {
+			// for nesting
+			pEvent->SetBNested(true);
+			pEvent->SetPParent(m_pEventParent);
+			pEvent->GetPParent()->IncrementCountChildren();
+
+		}
+	}
+>>>>>>> 38eeb38 (0.032)
 	pEvent->GetUIdTarget().GetPEventQueue()->PushBack(pEvent);
 }
 
@@ -115,7 +127,9 @@ void ComponentPart::SendAEvent(Event* pEvent) {
 void ComponentPart::ReplyEvent(Event* pEvent, long long lArg, ValueObject* pArg) {
 	// set pEvent as a Reply
 	pEvent->SetBReply(true);
+	int nReplyType = pEvent->GetReplyType();
 	pEvent->SetReplyType(pEvent->GetType());
+	pEvent->SetType(nReplyType);
 	// swap source and destination
 	pEvent->SetUIdTarget(pEvent->GetUIdSource());
 	pEvent->SetUIdSource(*m_pUId);

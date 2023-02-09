@@ -40,37 +40,8 @@ void PMain::ShutdownSystem() {
 }
 
 int PMain::main_ex() {
-	// system memory allocation
-	size_t m_szSystemMemory = SIZE_MEMORY_SYSTEM;
-	char* m_pSystemMemeoryAllocated = new char[m_szSystemMemory];
-	PMemoryStatic* m_pMemoryStatic = new(m_pSystemMemeoryAllocated, m_szSystemMemory) PMemoryStatic();
-	m_pMemoryStatic->Initialize();
-	m_pMemoryStatic->Show("m_pMemoryStatic::Initialize()");
-
-	// aplication memorty allocation
-	size_t m_szUserMemory = SIZE_MEMORY_APPLICATION;
-	char* m_pUserMemeoryAllocated = new char[m_szUserMemory];
-	PMemoryDynamic* m_pMemoryDynamic = new(m_pUserMemeoryAllocated, m_szUserMemory) PMemoryDynamic(SIZE_PAGE, SIZE_SLOT_UNIT);
-	m_pMemoryDynamic->Initialize();
-	m_pMemoryDynamic->Show("m_pMemoryDynamic::Initialize()");
-
-	///////////////////////////////////////////
-	PMain* pPMain = new("PMain") PMain();
-
-	pPMain->BootstrapSystem();
-	pPMain->Run();
-	pPMain->ShutdownSystem();
 	///////////////////////////////////////////
 
-	m_pMemoryDynamic->Finalize();
-	m_pMemoryDynamic->Show("");
-	delete m_pMemoryDynamic;
-	delete[] m_pUserMemeoryAllocated;
-
-	m_pMemoryStatic->Finalize();
-	m_pMemoryStatic->Show("");
-	delete m_pMemoryStatic;
-	delete[] m_pSystemMemeoryAllocated;
-	
+	///////////////////////////////////////////
 	return 0;
 }

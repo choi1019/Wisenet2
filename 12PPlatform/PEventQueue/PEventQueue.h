@@ -30,7 +30,8 @@ public:
 		const char* pcClassName = _PEventQueue_Name)
 		: EventQueue(nSchedulerId, nClassId, pcClassName)
 	{
-		pthread_mutex_init(&m_mutex, nullptr);
+		int result = pthread_mutex_init(&m_mutex, nullptr);
+		LOG_NEWLINE("PEventQueue::pthread_mutex_init(result)", result);
 	}
 	virtual ~PEventQueue() 
 	{
@@ -46,12 +47,12 @@ public:
 
 	void PushBack(Event* pEvent) override {
 		Lock();
-		PEventQueue::PushBack(pEvent);
+		EventQueue::PushBack(pEvent);
 		UnLock();
 	}
 	Event* PopFront() override {
 		Lock();
-		Event *pEvent = PEventQueue::PopFront();
+		Event *pEvent = EventQueue::PopFront();
 		UnLock();
 		return pEvent;
 	}
