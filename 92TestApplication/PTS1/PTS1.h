@@ -44,14 +44,14 @@ public:
 			// system memory allocation
 			m_szSystemMemory = SIZE_SYSTEM_MEMORY;
 			m_pSystemMemeoryAllocated = new char[m_szSystemMemory];
-			m_pMemoryStatic = new(m_pSystemMemeoryAllocated, m_szSystemMemory) PMemoryStatic();
+			m_pMemoryStatic = new(m_pSystemMemeoryAllocated, m_szSystemMemory, "PTS1") PMemoryStatic();
 			m_pMemoryStatic->Initialize();
 			m_pMemoryStatic->Show("m_pMemoryStatic::Initialize()");
 
 			// aplication memorty allocation
 			m_szUserMemory = SIZE_USER_MEMORY;
 			m_pUserMemeoryAllocated = new char[m_szUserMemory];
-			m_pMemoryDynamic = new(m_pUserMemeoryAllocated, m_szUserMemory) PMemoryDynamic(SIZE_PAGE, SIZE_SLOT_UNIT);
+			m_pMemoryDynamic = new(m_pUserMemeoryAllocated, m_szUserMemory, "PTS1") PMemoryDynamic(SIZE_PAGE, SIZE_SLOT_UNIT);
 			m_pMemoryDynamic->Initialize();
 			m_pMemoryDynamic->Show("m_pMemoryDynamic::Initialize()");
 

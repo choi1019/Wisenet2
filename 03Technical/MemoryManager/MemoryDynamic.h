@@ -19,7 +19,7 @@ public:
 	static void* s_pCurrent;
 	static size_t s_szCurrent;
 
-	void* operator new(size_t szThis, void* pMemoryAllocated, size_t szMemoryllocated);
+	void* operator new(size_t szThis, void* pMemoryAllocated, size_t szMemoryllocated, const char* sMessage);
 	void operator delete(void* pObject);
 	void operator delete(void* pObject, void* pMemoryAllocated, size_t szMemoryllocated);
 

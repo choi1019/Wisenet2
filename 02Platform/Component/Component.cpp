@@ -38,10 +38,10 @@ Component::Component(unsigned uClassId, const char* pcClassName)
 	this->RegisterEventTypes();
 	this->RegisterExceptions();
 	// LOG
-	LOG("new", Directory::s_dirComponents[this->GetComponentId()]);
+	LOG_NEWLINE("new", Directory::s_dirComponents[this->GetComponentId()]);
 }
 Component::~Component() {
-	LOG("delete", Directory::s_dirComponents[this->GetComponentId()]);
+	LOG_NEWLINE("delete", Directory::s_dirComponents[this->GetComponentId()]);
 
 	delete this->GetPUId();
 	delete this->GetPMReceivers();
@@ -98,12 +98,12 @@ void Component::RemovePartAll() {
 void Component::SetPEventQueue(EventQueue* pEventQueue) {
 	this->GetPUId()->SetPEventQueue(pEventQueue);
 	SetEState(EState::eAllocated);
-	LOG(this->GetClassName(), __func__, Directory::s_dirComponents[pEventQueue->GetSchedulerId()]);
+	LOG_NEWLINE(this->GetClassName(), __func__, Directory::s_dirComponents[pEventQueue->GetSchedulerId()]);
 }
 
 void Component::AssociateAReceiver(unsigned receiverName, UId receiverUId) {
 	this->GetPMReceivers()->Add(receiverName, receiverUId);
-	LOG(
+	LOG_NEWLINE(
 		Directory::s_dirComponents[this->GetComponentId()]
 		, __func__
 		, Directory::s_dirComponents[receiverUId.GetComponentId()]);
@@ -140,12 +140,12 @@ void Component::AssociateATarget(unsigned uGroupName, Vector<UId>& vNewUIdTarget
 void Component::Initialize() {
 	ComponentPart::Initialize();
 	SetEState(EState::eInitialized);
-	LOG(Directory::s_dirComponents[this->GetComponentId()], __func__);
+	LOG_NEWLINE(Directory::s_dirComponents[this->GetComponentId()], __func__);
 }
 void Component::Finalize() {
 	ComponentPart::Finalize();
 	SetEState(EState::eFinalized);
-	LOG(Directory::s_dirComponents[this->GetComponentId()], __func__);
+	LOG_NEWLINE(Directory::s_dirComponents[this->GetComponentId()], __func__);
 }
 
 void Component::Start() {

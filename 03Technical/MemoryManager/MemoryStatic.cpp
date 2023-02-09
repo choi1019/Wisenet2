@@ -8,7 +8,7 @@ size_t MemoryStatic::s_szAllocated = 0;
 void* MemoryStatic::s_pCurrent = nullptr;
 size_t MemoryStatic::s_szCurrent = 0;
 
-void* MemoryStatic::operator new(size_t szThis, void* pMemoryAllocated, size_t szMemoryllocated) {
+void* MemoryStatic::operator new(size_t szThis, void* pMemoryAllocated, size_t szMemoryllocated, const char* sMessage) {
     if (szMemoryllocated < szThis) {
         throw Exception((unsigned)IMemory::EException::_eNoMoreSystemMemory, "new MemoryStatic", "_eNoMoreSystemMemory");
     }
@@ -17,7 +17,7 @@ void* MemoryStatic::operator new(size_t szThis, void* pMemoryAllocated, size_t s
     s_pCurrent = (void*)((size_t)s_pAllocated + szThis);
     s_szCurrent = s_szAllocated - szThis;
 
-    LOG_NEWLINE("MemoryStatic::new", szThis, s_szCurrent, s_szAllocated);
+    LOG_NEWLINE("MemoryStatic::new", sMessage, szThis, s_szCurrent, s_szAllocated);
     return s_pAllocated;
 }
 void MemoryStatic::operator delete(void* pObject) {
@@ -72,7 +72,7 @@ void MemoryStatic::SafeFree(void* pObject) {
 
 // maintenance
 void MemoryStatic::Show(const char* pTitle) {
-    LOG_HEADER("MemoryStatic::Show-", pTitle);
+    LOG_HEADER("Show-", pTitle);
     LOG_NEWLINE("MemoryStatic(szAllocated, pAllocated, szCurrent, pCurrent)"
     	, s_szAllocated
     	, (size_t)s_pAllocated

@@ -16,12 +16,6 @@
 
 class PTS2: public TestSuite {
 private:
-	size_t m_szSystemMemory;
-	char* m_pSystemMemeoryAllocated;
-	PMemoryStatic* m_pMemoryStatic;
-	size_t m_szApplicationMemory;
-	char* m_pApplicationMemeoryAllocated;
-	PMemoryDynamic* m_pMemoryDynamic;
 
 public:
 	PTS2(
@@ -34,37 +28,12 @@ public:
 	}
 
 	void Initialize() override {
-		// system memory allocation
-		m_szSystemMemory = SIZE_MEMORY_SYSTEM;
-		m_pSystemMemeoryAllocated = new char[m_szSystemMemory];
-		m_pMemoryStatic = new(m_pSystemMemeoryAllocated, m_szSystemMemory) PMemoryStatic();
-		m_pMemoryStatic->Initialize();
-		m_pMemoryStatic->Show("m_pMemoryStatic::Initialize()");
-
-		// aplication memorty allocation
-		m_szApplicationMemory = SIZE_MEMORY_APPLICATION;
-		m_pApplicationMemeoryAllocated = new char[m_szApplicationMemory];
-		m_pMemoryDynamic = new(m_pApplicationMemeoryAllocated, m_szApplicationMemory) PMemoryDynamic(SIZE_PAGE, SIZE_SLOT_UNIT);
-		m_pMemoryDynamic->Initialize();
-		m_pMemoryDynamic->Show("m_pMemoryDynamic::Initialize()");
 	}
 	
 	void Run() override {
-		PMain* pPMain = new("PMain") PMain();
-		pPMain->BootstrapSystem();
-		pPMain->Run();
-		pPMain->ShutdownSystem();
+		PMain::main_ex();
 	}
 
 	void Finalize() override {
-		m_pMemoryDynamic->Finalize();
-		m_pMemoryDynamic->Show("");
-		delete m_pMemoryDynamic;
-		delete[] m_pApplicationMemeoryAllocated;
-
-		m_pMemoryStatic->Finalize();
-		m_pMemoryStatic->Show("");
-		delete m_pMemoryStatic;
-		delete[] m_pSystemMemeoryAllocated;
 	}
 };

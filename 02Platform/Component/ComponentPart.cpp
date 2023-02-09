@@ -53,7 +53,17 @@ UId ComponentPart::FindUid(int nReceiverName) {
 void ComponentPart::BeginSequence(Event* pEvent) {
 	m_pEventParent = nullptr;
 	if (pEvent->IsReply()) {
+<<<<<<< HEAD
 		// ?
+=======
+		// nested
+		if (pEvent->GetPParent() != nullptr) {
+			int nReplyType = pEvent->GetType();
+			pEvent->SetType(pEvent->GetPParent()->GetType());
+			pEvent->SetReplyType(nReplyType);
+			pEvent->GetPParent()->DecrementCountChildren();
+		}
+>>>>>>> db4074d (0.033)
 	} else {
 		if (pEvent->IsSynchronous()) {
 			// for nested events
@@ -127,9 +137,6 @@ void ComponentPart::SendAEvent(Event* pEvent) {
 void ComponentPart::ReplyEvent(Event* pEvent, long long lArg, ValueObject* pArg) {
 	// set pEvent as a Reply
 	pEvent->SetBReply(true);
-	int nReplyType = pEvent->GetReplyType();
-	pEvent->SetReplyType(pEvent->GetType());
-	pEvent->SetType(nReplyType);
 	// swap source and destination
 	pEvent->SetUIdTarget(pEvent->GetUIdSource());
 	pEvent->SetUIdSource(*m_pUId);

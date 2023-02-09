@@ -8,20 +8,20 @@ void Scheduler::InitializeVarialbes() {
 	//		this->m_pEventQueue->Clear();
 }
 void Scheduler::DeleteVarialbes() {
-	LOG_HEADER(Directory::s_dirComponents[this->GetComponentId()], "EventQueue");
+	LOG_HEADER("Scheduler::DeleteVarialbes", Directory::s_dirComponents[this->GetComponentId()], "EventQueue");
 	this->m_pEventQueue->ShowState(Directory::s_dirComponents[this->GetComponentId()].c_str());
 
 //	this->GetPEventQueue()->ShowState("");
 	Event* pEvent = this->m_pEventQueue->Front();
 	while (pEvent != nullptr) {
-		LOG(__func__, Directory::s_dirEvents[pEvent->GetType()]);
+		LOG_NEWLINE(__func__, Directory::s_dirEvents[pEvent->GetType()]);
 		Event *pPoppedEvent = this->m_pEventQueue->PopFront();
 		if (pPoppedEvent != nullptr) {
 			delete pEvent;
 		}
 		pEvent = this->m_pEventQueue->Front();
 	}
-	LOG_FOOTER(Directory::s_dirComponents[this->GetComponentId()], "EventQueue");
+	LOG_FOOTER("Scheduler::DeleteVarialbes", Directory::s_dirComponents[this->GetComponentId()], "EventQueue");
 }
 
 void Scheduler::RegisterEventTypes() {
@@ -78,12 +78,12 @@ void Scheduler::FinalizeAsAScheduler() {
 
 void Scheduler::Run() {
 	m_eState = IScheduler::EState::eRunning;
-	LOG("Scheduler::StartSchedulers", Directory::s_dirComponents[this->GetComponentId()]);
+	LOG_HEADER("Scheduler::StartSchedulers", Directory::s_dirComponents[this->GetComponentId()]);
 	while (IScheduler::EState::eStopped != this->m_eState)
 	{
 		RunOnce();
 	}
-	LOG("Scheduler::StopSchedulers", Directory::s_dirComponents[this->GetComponentId()]);
+	LOG_FOOTER("Scheduler::StopSchedulers", Directory::s_dirComponents[this->GetComponentId()]);
 }
 
 void Scheduler::Pause() {
@@ -120,7 +120,7 @@ void Scheduler::RunOnce()
 			if (pTargetComponent == nullptr) {
 				throw Exception((unsigned)IScheduler::EError::eComponentNotFound, this->GetClassName(), __func__, "eComponentNotFound");
 			}
-
+			LOG_NEWLINE(Directory::s_dirEvents[pEvent->GetType()]);
 			pTargetComponent->BeginSequence(pEvent);
 			pTargetComponent->ProcessAEvent(pEvent);
 			pTargetComponent->EndSequence(pEvent);

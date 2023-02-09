@@ -79,13 +79,13 @@ LifecycleManager::LifecycleManager(int nClassId, const char* pcClassName)
 	: Component(nClassId, pcClassName)
 	, m_pMainScheduler(nullptr)
 {
-	LOG(this->GetClassName(), __func__);
+	LOG_NEWLINE(this->GetClassName(), __func__);
 	this->RegisterEventTypes();
 	this->RegisterExceptions();
 }
 
 LifecycleManager::~LifecycleManager() {
-	LOG(this->GetClassName(), __func__);
+	LOG_NEWLINE(this->GetClassName(), __func__);
 }
 
 void LifecycleManager::Initialize() {
@@ -97,19 +97,19 @@ void LifecycleManager::Finalize() {
 
 void LifecycleManager::RegisterAScheduler(int name, Scheduler* pScheduler) {
 	this->m_mapSchedulers[name] = pScheduler;
-	LOG(__func__, Directory::s_dirComponents[pScheduler->GetComponentId()]);
+	LOG_NEWLINE(__func__, Directory::s_dirComponents[pScheduler->GetComponentId()]);
 	this->RegisterAComponent(name, pScheduler);
 }
 
 void LifecycleManager::RegisterAComponent(int name, Component* pComponent) {
 	this->m_mapComponents[name] = pComponent;
-	LOG(__func__, Directory::s_dirComponents[pComponent->GetComponentId()]);
+	LOG_NEWLINE(__func__, Directory::s_dirComponents[pComponent->GetComponentId()]);
 }
 
 void LifecycleManager::AllocateAComponent(int componentName, int schedulerName) {
 	this->m_mapAllocations[componentName] = schedulerName;
 	/*
-	LOG(__func__,
+	LOG_NEWLINE(__func__,
 		Directory::s_dirComponents[this->m_mapComponents[componentName]->GetComponentId()],
 		Directory::s_dirComponents[this->m_mapSchedulers[schedulerName]->GetComponentId()]
 	);

@@ -18,18 +18,18 @@ PMain::~PMain() {
 }
 
 void PMain::BootstrapSystem() {
-	LOG_HEADER(this->GetClassName(), __func__);
+	LOG_HEADER(this->GetClassName(), "BootstrapSystem");
 
 	// Main EventQueue
 	PEventQueue* pPEventQueue = new("PMain::PEventQueue") PEventQueue(this->GetComponentId());
-	LOG_NEWLINE("new", Directory::s_dirObjects[(long long)pPEventQueue]);
+	LOG_NEWLINE("new", Directory::s_dirObjects[(size_t)pPEventQueue]);
 	this->SetPEventQueue(pPEventQueue);
 
 	// Lifecycle Manager
 	this->SetPLifecycleManager(new("PLifecycleManager") PLifecycleManager());
 	this->AllocateAComponent(this->GetPLifecycleManager());
 
-	LOG_FOOTER(this->GetClassName(), __func__);
+	LOG_FOOTER(this->GetClassName(), "BootstrapSystem");
 
 	this->SendStartEvent();
 }
@@ -39,9 +39,47 @@ void PMain::ShutdownSystem() {
 	delete this->GetPLifecycleManager();
 }
 
-int PMain::main_ex() {
-	///////////////////////////////////////////
+void PMain::Initialize() {}
+void PMain::Finalize() {}
 
-	///////////////////////////////////////////
+int PMain::main_ex() {
+	size_t m_szSystemMemory;
+	char* m_pSystemMemeoryAllocated;
+	PMemoryStatic* m_pMemoryStatic;
+	size_t m_szApplicationMemory;
+	char* m_pApplicationMemeoryAllocated;
+	PMemoryDynamic* m_pMemoryDynamic;
+
+	// system memory allocation
+	m_szSystemMemory = SIZE_MEMORY_SYSTEM;
+	m_pSystemMemeoryAllocated = new char[m_szSystemMemory];
+	m_pMemoryStatic = new(m_pSystemMemeoryAllocated, m_szSystemMemory, "main_ex") PMemoryStatic();
+	m_pMemoryStatic->Initialize();
+	m_pMemoryStatic->Show("m_pMemoryStatic::Initialize()");
+
+	// aplication memorty allocation
+	m_szApplicationMemory = SIZE_MEMORY_APPLICATION;
+	m_pApplicationMemeoryAllocated = new char[m_szApplicationMemory];
+	m_pMemoryDynamic = new(m_pApplicationMemeoryAllocated, m_szApplicationMemory, "main_ex") PMemoryDynamic(SIZE_PAGE, SIZE_SLOT_UNIT);
+	m_pMemoryDynamic->Initialize();
+	m_pMemoryDynamic->Show("m_pMemoryDynamic::Initialize()");
+
+	///////////////////////////////////////////////
+	PMain* pPMain = new("PMain") PMain();
+	pPMain->BootstrapSystem();
+	pPMain->Run();
+	pPMain->ShutdownSystem();
+	///////////////////////////////////////////////
+
+	m_pMemoryDynamic->Finalize();
+	m_pMemoryDynamic->Show("");
+	delete m_pMemoryDynamic;
+	delete[] m_pApplicationMemeoryAllocated;
+
+	m_pMemoryStatic->Finalize();
+	m_pMemoryStatic->Show("");
+	delete m_pMemoryStatic;
+	delete[] m_pSystemMemeoryAllocated;
+
 	return 0;
 }

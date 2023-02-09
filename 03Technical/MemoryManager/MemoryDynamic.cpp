@@ -9,7 +9,7 @@ size_t MemoryDynamic::s_szAllocated = 0;
 void* MemoryDynamic::s_pCurrent = nullptr;
 size_t MemoryDynamic::s_szCurrent = 0;
 
-void* MemoryDynamic::operator new(size_t szThis, void* pMemoryAllocated, size_t szMemoryllocated) {
+void* MemoryDynamic::operator new(size_t szThis, void* pMemoryAllocated, size_t szMemoryllocated, const char* sMessage) {
     if (szMemoryllocated < szThis) {
         throw Exception((unsigned)IMemory::EException::_eNoMoreSystemMemory, "new MemoryDynamic", "_eNoMoreSystemMemory");
     }
@@ -63,7 +63,7 @@ void* MemoryDynamic::Malloc(size_t szObject, const char* sMessage) {
         szSlot += m_szUnit;
     }
     
-    LOG_NEWLINE("MemoryDynamic::Malloc(szObject)", sMessage, szObject, s_szCurrent, s_szAllocated);
+    LOG_NEWLINE("MemoryDynamic::Malloc(sMessage,szObject)", sMessage, szObject);
     SlotList *pPrevious = nullptr;
     SlotList *pCurrent = m_pSlotListHead; 
     while (pCurrent != nullptr) {
@@ -91,7 +91,7 @@ void* MemoryDynamic::Malloc(size_t szObject, const char* sMessage) {
                 SlotList *pNewSlotList = new("SlotList3") SlotList(szSlot, m_pPageList);
                 Slot* pSlot = pNewSlotList->AllocateSlot();
                 // insert a new SlotList
-                SlotList *pNext = new("SlotListNext3") SlotList(szSlot);
+                SlotList *pNext = new("SlotListHead3") SlotList(szSlot);
                 pNext->SetPSibling(pNewSlotList);
                 pCurrent->SetPNext(pNext);
                 pNext->SetPNext(nullptr);
@@ -102,7 +102,7 @@ void* MemoryDynamic::Malloc(size_t szObject, const char* sMessage) {
             SlotList *pNewSlotList = new("SlotList4") SlotList(szSlot, m_pPageList);
             Slot* pSlot = pNewSlotList->AllocateSlot();
             // insert a new next head
-            SlotList *pNext = new("SlotListNext4") SlotList(szSlot);
+            SlotList *pNext = new("SlotListHead4") SlotList(szSlot);
             pNext->SetPSibling(pNewSlotList);
             pPrevious->SetPNext(pNext);
             pNext->SetPNext(pCurrent);
@@ -157,7 +157,7 @@ void MemoryDynamic::SafeFree(void* pObject) {
 
 // maintenance
 void MemoryDynamic::Show(const char* pTitle) {
-    LOG_HEADER("MemoryDynamic::Show-", (size_t)s_pCurrent, s_pCurrent);
+    LOG_HEADER("Show-", pTitle, (size_t)s_pCurrent, s_pCurrent);
     m_pPageList->Show("");
     SlotList* pSlotList = this->m_pSlotListHead;
     while (pSlotList != nullptr) {
