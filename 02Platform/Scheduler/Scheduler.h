@@ -37,18 +37,16 @@ public:
 	virtual void InitializeAsAScheduler(int uPriority);
 	virtual void FinalizeAsAScheduler();
 
-	virtual void Start() = 0;
+	virtual void Start();
+	virtual void Stop();
 	virtual void Run();
-	virtual void Join() = 0;
+	virtual void Pause();
+	virtual void Resume();
+
 
 protected:
 	virtual void RunOnce();
 
-	virtual void Pause();
-	virtual void Resume();
-	virtual void Stop();
-
-	virtual void IsStarted(Event* pEvent);
 	virtual void Pause(Event* pEvent);
 	virtual void Resume(Event* pEvent);
 	virtual void Stop(Event* pEvent);

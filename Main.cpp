@@ -1,5 +1,5 @@
-#include <22TestApplication/PTestMain/PTestMain.h>
-#include <21TestPlatform/TestAspect/TestException.h>
+#include <92TestApplication/PTestMain/PTestMain.h>
+#include <91TestPlatform/TestAspect/TestException.h>
 
 int main() {
 	try {

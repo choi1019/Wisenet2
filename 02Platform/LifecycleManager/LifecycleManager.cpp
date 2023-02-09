@@ -428,7 +428,7 @@ void LifecycleManager::StopSchedulers(Event* pEvent) {
 	if (pEvent->IsReply()) {
 		if (pEvent->IsAllReplied()) {
 			for (auto itr : m_mapSchedulers) {
-				itr.second->Join();
+				itr.second->Stop();
 			}
 			LOG_FOOTER(__func__);
 		}

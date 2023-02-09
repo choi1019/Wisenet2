@@ -14,16 +14,17 @@
 		const char* pcClassName)
 		: MemoryStatic(nClassId, pcClassName)
 	{
+		pthread_mutex_init(&m_mutex, nullptr);
 	}
 	PMemoryStatic::~PMemoryStatic() {
 //		DeleteCriticalSection(&CriticalSection);
+        pthread_mutex_destroy(&m_mutex);
 	}
 
 	void PMemoryStatic::Initialize() {
-        pthread_mutex_init(&m_mutex, nullptr);
 		MemoryStatic::Initialize();
 	}
 	void PMemoryStatic::Finalize() {
 		MemoryStatic::Finalize();
-        pthread_mutex_destroy(&m_mutex);
+
 	}

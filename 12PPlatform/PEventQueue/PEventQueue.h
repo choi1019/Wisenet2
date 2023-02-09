@@ -6,12 +6,23 @@
 
 
 #include <02Platform/EventQueue/EventQueue.h>
+#include <pthread.h>
 
 #define MAXLENGTH_EVENTQUEUE 20
 
 class PEventQueue: public EventQueue {
 private:
+	pthread_mutex_t m_mutex;
 
+protected:
+	void Lock() {
+//		EnterCriticalSection(&CriticalSection);
+        pthread_mutex_lock(&m_mutex);
+	}
+	void UnLock() {
+//		LeaveCriticalSection(&CriticalSection);
+        pthread_mutex_unlock(&m_mutex);
+	}
 public:
 	PEventQueue(
 		int nSchedulerId,
@@ -19,20 +30,29 @@ public:
 		const char* pcClassName = _PEventQueue_Name)
 		: EventQueue(nSchedulerId, nClassId, pcClassName)
 	{
-		// Create a semaphore with initial and max counts of MAX_SEM_COUNT
-
+		pthread_mutex_init(&m_mutex, nullptr);
 	}
-
 	virtual ~PEventQueue() 
 	{
+		pthread_mutex_destroy(&m_mutex);
+	}
+
+	void Initialize() override {
+		EventQueue::Initialize();
+	}
+	void Finalize() override {
+		EventQueue::Finalize();        
 	}
 
 	void PushBack(Event* pEvent) override {
+		Lock();
 		PEventQueue::PushBack(pEvent);
+		UnLock();
 	}
-
 	Event* PopFront() override {
+		Lock();
 		Event *pEvent = PEventQueue::PopFront();
+		UnLock();
 		return pEvent;
 	}
 };

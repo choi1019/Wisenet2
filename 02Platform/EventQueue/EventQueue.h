@@ -79,11 +79,12 @@ public:
 		Event *pEvent = m_pFront;
 		this->m_pFront = m_pFront->GetPQueueNext();
 		this->m_nLength--;
-		return pEvent;
+		return pEvent;	
 	}
 
 	virtual bool IsEmpty() {
 		return (m_nLength == 0) ? true : false;
 	}
+
 };
 

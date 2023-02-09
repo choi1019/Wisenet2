@@ -26,14 +26,14 @@ void Main::FinalizeAsAScheduler() {}
 
 void Main::SendStartEvent() {
 	// initialize as a main, scheduler is not running
-	this->BeginSequence(nullptr);
+//	this->BeginSequence(nullptr);
 	this->SendNoReplyEvent(
 		this->GetUId(),
 		(unsigned)IMain::EEventType::eInitializeAsAMain,
 		0,
 		nullptr   // root event
 	);
-	this->EndSequence(nullptr);
+//	this->EndSequence(nullptr);
 }
 
 void Main::InitializeAsAMain(Event* pEvent) {

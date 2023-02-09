@@ -9,27 +9,38 @@
                 "-I/home/choisw/source/ComponentLinux/",
                 "-g",
                 "${workspaceFolder}/Main.cpp",
-                "${workspaceFolder}/22TestApplication/PTestMain/PTestMain.cpp",
-                "${workspaceFolder}/22TestApplication/PTS2/PTC21/*.cpp",
-                "${workspaceFolder}/22TestApplication/PTS2/PTC22/*.cpp",
-                "${workspaceFolder}/22TestApplication/PTS2/*.cpp",
-                "${workspaceFolder}/22TestApplication/PTS1/PTC11/*.cpp",
-                "${workspaceFolder}/22TestApplication/PTS1/PTC12/*.cpp",
-                "${workspaceFolder}/22TestApplication/PTS1/PTC13/*.cpp",
-                "${workspaceFolder}/22TestApplication/PTS1/PTC14/*.cpp",
-                "${workspaceFolder}/21TestPlatform/TestCase/*.cpp",
-                "${workspaceFolder}/21TestPlatform/TestAspect/*.cpp",
-                "${workspaceFolder}/21TestPlatform/TestObject/*.cpp",
+                "${workspaceFolder}/92TestApplication/PTestMain/PTestMain.cpp",
+
+                "${workspaceFolder}/92TestApplication/PTS2/*.cpp",
+                "${workspaceFolder}/92TestApplication/PTS2/PTC21/*.cpp",
+                "${workspaceFolder}/92TestApplication/PTS2/PTC22/*.cpp",
+
+                "${workspaceFolder}/92TestApplication/PTS1/PTC11/*.cpp",
+                "${workspaceFolder}/92TestApplication/PTS1/PTC12/*.cpp",
+                "${workspaceFolder}/92TestApplication/PTS1/PTC13/*.cpp",
+                "${workspaceFolder}/92TestApplication/PTS1/PTC14/*.cpp",
+
+                "${workspaceFolder}/91TestPlatform/TestCase/*.cpp",
+                "${workspaceFolder}/91TestPlatform/TestAspect/*.cpp",
+                "${workspaceFolder}/91TestPlatform/TestObject/*.cpp",
+
+                "${workspaceFolder}/51PApplication/PMain/*.cpp",
+                "${workspaceFolder}/51PApplication/PLifecycleManager/*.cpp",
+
                 "${workspaceFolder}/13PTechnical/PMemoryManager/*.cpp",
+
                 "${workspaceFolder}/12PPlatform/PEventQueue/*.cpp",
                 "${workspaceFolder}/12PPlatform/PScheduler/*.cpp",
                 "${workspaceFolder}/12PPlatform/PComponent/*.cpp",
+
                 "${workspaceFolder}/03Technical/MemoryManager/*.cpp",
+
                 "${workspaceFolder}/02Platform/Main/*.cpp",
                 "${workspaceFolder}/02Platform/LifecycleManager/*.cpp",
                 "${workspaceFolder}/02Platform/EventQueue/*.cpp",
                 "${workspaceFolder}/02Platform/Scheduler/*.cpp",
                 "${workspaceFolder}/02Platform/Component/*.cpp",
+
                 "${workspaceFolder}/01Base/Aspect/*.cpp",
                 "${workspaceFolder}/01Base/Object/*.cpp",
                 "-o",

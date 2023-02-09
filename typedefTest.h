@@ -7,10 +7,10 @@
 #define _GET_TESTCLASS_UID(ID)	(unsigned)ID*100
 
 enum class _ETestLayer {
-	_eBegin = 20,
+	_eBegin = 90,
 
-	_eTestPlatform = 21,
-	_eTestApplication = 22,
+	_eTestPlatform = 91,
+	_eTestApplication = 92,
 
 	_eEnd,
 };

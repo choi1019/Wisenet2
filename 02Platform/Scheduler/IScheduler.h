@@ -36,8 +36,9 @@ public:
 		eCreated,
 		eInitializedAsAScheduler,
 		eStarted,
-		ePaused,
+		eRunning,
 		eStopped,
+		ePaused,
 		eFinalizedAsAScheduler,
 		eEnd
 	};

@@ -5,25 +5,29 @@
 #define _PCompnent_Name "PCompnent"
 
 #include <02Platform/Component/Component.h>
+#include <pthread.h>
 
 #define PRIORITY 100
 
 class PComponent : public Component
 {
-public:
-	PComponent(int nClassId = _PCompnent_Id, const char* pcClassName = _PCompnent_Name);
-	virtual ~PComponent();
-
-	virtual void Run();
-	virtual void Start();
+private:
+	pthread_t m_thread;
+	int m_idThared;
+	size_t m_stsThread;
 
 protected:
-	virtual void RegisterEventTypes();
-	virtual void RegisterExceptions();
+	void RegisterEventTypes();
+	void RegisterExceptions();
 
-	virtual void Initialize() override;
-	virtual void Finalize() override;
+	virtual void Initialize();
+	virtual void Finalize();
 
+public:
+	PComponent(int nClassId = _PCompnent_Id, const char* pcClassName = _PCompnent_Name);
+	virtual ~PComponent() override;
+
+	virtual void Start();
 	virtual void Stop();
-	virtual void Pause();
+	virtual void Run() {}
 };

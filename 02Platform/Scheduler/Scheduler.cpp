@@ -77,7 +77,7 @@ void Scheduler::FinalizeAsAScheduler() {
 }
 
 void Scheduler::Run() {
-	m_eState = IScheduler::EState::eStarted;
+	m_eState = IScheduler::EState::eRunning;
 	LOG("Scheduler::StartSchedulers", Directory::s_dirComponents[this->GetComponentId()]);
 	while (IScheduler::EState::eStopped != this->m_eState)
 	{
@@ -92,12 +92,13 @@ void Scheduler::Pause() {
 void Scheduler::Resume() {
 	m_eState = IScheduler::EState::eStarted;
 }
+void Scheduler::Start() {
+	m_eState = IScheduler::EState::eStarted;
+}
 void Scheduler::Stop() {
 	m_eState = IScheduler::EState::eStopped;
 }
 
-void Scheduler::IsStarted(Event* pEvent) {
-}
 void Scheduler::Pause(Event* pEvent) {
 	this->Pause();
 }
@@ -174,9 +175,6 @@ void Scheduler::ProcessAEvent(Event* pEvent)
 	switch (pEvent->GetType()) {
 	case (unsigned)IScheduler::EEventType::eInitializeAsAScheduler:
 		this->InitializeAsAScheduler(pEvent);
-		break;
-	case (unsigned)IScheduler::EEventType::eIsStarted:
-		this->IsStarted(pEvent);
 		break;
 	case (unsigned)IScheduler::EEventType::eAllocateAComponent:
 		this->AllocateAComponent(pEvent);

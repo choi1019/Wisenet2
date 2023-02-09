@@ -25,7 +25,7 @@ enum class _ELayer {
 	_ePCamera = 32,
 	_ePRecoreder = 33,
 
-	_ePApplication = 61,
+	_ePApplication = 51,
 
 	_eEnd
 };

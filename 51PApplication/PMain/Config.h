@@ -1,0 +1,8 @@
+#pragma once
+
+#define SIZE_MEMORY_SYSTEM 10000
+#define SIZE_MEMORY_APPLICATION 10000
+#define SIZE_PAGE 1024
+#define SIZE_SLOT_UNIT 32
+
+
