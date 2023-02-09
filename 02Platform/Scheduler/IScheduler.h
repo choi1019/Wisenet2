@@ -4,7 +4,9 @@
 #define _Scheduler_Id _GET_CLASS_UID(_ELayer_Platform::_eScheduler)
 #define _Scheduler_Name "Scheduler"
 
+#include <01Base/Object/ValueObject.h>
 #include <02Platform/Component/Component.h>
+
 
 class IScheduler
 {
@@ -51,7 +53,7 @@ public:
 
 	};
 
-	class ParamAllocateAComponent : public BaseObject {
+	class ParamAllocateAComponent : public ValueObject {
 	private:
 		Component* m_pComponentAllocated;
 	public:

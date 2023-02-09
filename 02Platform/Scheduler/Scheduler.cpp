@@ -15,7 +15,7 @@ void Scheduler::DeleteVarialbes() {
 	Event* pEvent = this->m_pEventQueue->Front();
 	while (pEvent != nullptr) {
 		LOG(__func__, Directory::s_dirEvents[pEvent->GetType()]);
-		Event *pPoppedEvent = this->m_pEventQueue->Pop();
+		Event *pPoppedEvent = this->m_pEventQueue->PopFront();
 		if (pPoppedEvent != nullptr) {
 			delete pEvent;
 		}
@@ -112,43 +112,19 @@ void Scheduler::RunOnce()
 {
 	try {
 		// get pEvent from the queue
-		Event* pEvent = pEvent = m_pEventQueue->Pop();
+		Event* pEvent = pEvent = m_pEventQueue->PopFront();
 		if (pEvent != nullptr) {
-			// if the event is reply
-			if (pEvent->IsReply()) {
-				this->PrepareReplyEvent(pEvent);
-			}
-			// find the target component
 			UId uidTarget = pEvent->GetUIdTarget();
 			Component* pTargetComponent = m_mComponents[uidTarget.GetComponentId()];
 			if (pTargetComponent == nullptr) {
-				// delete pEvent;
 				throw Exception((unsigned)IScheduler::EError::eComponentNotFound, this->GetClassName(), __func__, "eComponentNotFound");
 			}
-			// process a event
-			pTargetComponent->BeginSequence(pEvent);
-			try {
-				pTargetComponent->ProcessAEvent(pEvent);
-			}
-			catch (Exception& exception) {
-				exception.Println();
-			}
-			// post process pEvent
-			if (pEvent->IsReply()) {
-				delete pEvent;
-			}
-			else {
-				if (pEvent->GetESyncType() == Event::ESyncType::eAsync) {
-					delete pEvent;
-				}
-				else {
-					pEvent->SetBReply(true);
-					pEvent->GetUIdSource().GetPEventQueue()->PushFront(pEvent);
-				}
-			}
 
-			pTargetComponent->EndSequence();
+			pTargetComponent->BeginSequence(pEvent);
+			pTargetComponent->ProcessAEvent(pEvent);
+			pTargetComponent->EndSequence(pEvent);
 		}
+
 	}
 	catch (Exception& exception) {
 		exception.Println();

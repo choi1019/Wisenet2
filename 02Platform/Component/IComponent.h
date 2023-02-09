@@ -4,6 +4,7 @@
 #define Component_Id _GET_CLASS_UID(_ELayer_Platform::_eComponent) 
 #define Component_Name "Component"
 
+#include <01Base/Object/ValueObject.h>
 #include <01Base/StdLib/Vector.h>
 
 #include <02Platform/Component/UId.h>
@@ -50,7 +51,7 @@ public:
 		eEnd
 	};
 
-	class ParamAssociateAReceiver : public BaseObject {
+	class ParamAssociateAReceiver : public ValueObject {
 	private:
 		unsigned m_uReceiverName;
 		UId m_uIdReceiverComponent;
@@ -64,7 +65,7 @@ public:
 		UId GetUIdReceiverComponent() { return this->m_uIdReceiverComponent; }
 	};
 
-	class ParamAssociateATarget : public BaseObject {
+	class ParamAssociateATarget : public ValueObject {
 	private:
 		unsigned m_uGroupName;
 		Vector<UId> m_vUIdTargetComponents;

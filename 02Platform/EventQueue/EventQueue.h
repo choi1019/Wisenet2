@@ -5,6 +5,7 @@
 #define _EventQueue_Name "EventQueue"
 
 #include <01Base/Object/BaseObject.h>
+#include <01Base/Object/ValueObject.h>
 #include <02Platform/EventQueue/Event.h>
 #include <01Base/Aspect/Log.h>
 
@@ -45,7 +46,7 @@ public:
 		//		Log("SizeThis + Size Allocated", this->GetSzThis(), m_szSlot * m_uCountTotalSlots).Println();
 		//		Log("SizeSlot x CountSlots", m_szSlot, m_uCountTotalSlots).Println();
 		unsigned index = 0;
-		for (Event* pEvent = m_pFront; pEvent != nullptr; pEvent = pEvent->GetPNext()) {
+		for (Event* pEvent = m_pFront; pEvent != nullptr; pEvent = pEvent->GetPQueueNext()) {
 			LOG("Event",
 				pEvent->GetId(),
 				Directory::s_dirComponents[pEvent->GetUIdTarget().GetComponentId()],
@@ -61,7 +62,7 @@ public:
 			this->m_pFront = pEvent;
 		}
 		else {
-			this->m_pRear->SetPNextInQueue(pEvent);
+			this->m_pRear->SetPQueueNext(pEvent);
 			this->m_pRear = pEvent;
 		}
 		this->m_nLength++;
@@ -75,8 +76,8 @@ public:
 		if (m_nLength == 0) {
 			return nullptr;
 		}
-		Event* pEvent = this->m_pFront;
-		this->m_pFront = this->m_pFront->GetPNextInQueue();
+		Event *pEvent = m_pFront;
+		this->m_pFront = m_pFront->GetPQueueNext();
 		this->m_nLength--;
 		return pEvent;
 	}

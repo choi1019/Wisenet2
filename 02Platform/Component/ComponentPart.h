@@ -56,9 +56,11 @@ protected:
 	Map<unsigned, Vector<UId, MAXTARGETCOMPONENTS>*, MAXTARGETGROUPS>* m_pmTargetsGroups;
 
 	// for Sequencing
-	Event* m_pSequenceHead;
-	Event* m_pSequenceParent;
+	Event* m_pEventSequenceFront;
+	Event* m_pEventSequenceRear;
 
+	Event *m_pEventParent;
+	
 	void RegisterExceptions();
 
 public:
@@ -77,8 +79,8 @@ public:
 	UId* GetPUId() { return m_pUId; }
 	UId GetUId() { return *m_pUId; }
 	void SetPUId(UId* pUId) { m_pUId = pUId; }
-	unsigned GetComponentId() { return m_pUId->GetComponentId(); }
-	void SetComponentId(unsigned uComponentId) { return m_pUId->SetComponentId(uComponentId); }
+	int GetComponentId() { return m_pUId->GetComponentId(); }
+	void SetComponentId(int uComponentId) { return m_pUId->SetComponentId(uComponentId); }
 
 	Map<unsigned, UId, MAXRECEIVERCOMPONENTS>* GetPMReceivers() { return m_pmReceivers; }
 	void SetPMReceivers(Map<unsigned, UId, MAXRECEIVERCOMPONENTS>* pmReceivers) { this->m_pmReceivers = pmReceivers; }
@@ -89,24 +91,16 @@ public:
 	UId FindUid(int nReceiverName);
 
 	// for sequencing events
-	virtual void BeginSequence(Event* pEvent);
-	virtual void EndSequence();
+	void BeginSequence(Event* pEvent);
+	void EndSequence(Event*pEvent);
 
 protected:
 	void SendAEvent(Event* pEvent);
-	void PrepareReplyEvent(Event* pEvent);
+	void ReplyEvent(Event* pEvent, long long lArg = 0, ValueObject* pArg = nullptr);
 
-	void SendReplyEvent(UId uIdTarget, int nEventType, long long lArg = 0, BaseObject* pArg = nullptr
-		, int nReplyType = UNDEFINED);
-	void SendReplyEvent(int nReceiverName, int nEventType, long long lArg = 0, BaseObject* pArg = nullptr
-		, int nReplyType = UNDEFINED);
-
-	void SendNoReplyEvent(UId uIdTarget, int nEventType, long long lArg = 0, BaseObject* pArg = nullptr);
-	void SendNoReplyEvent(int nReceiverName, int nEventType, long long lArg = 0, BaseObject* pArg = nullptr);
-	void SendNoReplyEventLast(UId uIdTarget, int nEventType, long long lArg = 0, BaseObject* pArg = nullptr);
-	void SendNoReplyEventLast(int nReceiverName, int nEventType, long long lArg = 0, BaseObject* pArg = nullptr);
-
-	void SendTargetEvents(unsigned groupName, unsigned eventType, long long lArg = 0, BaseObject* pArg = nullptr);
-	void SendTargetEventsLast(unsigned groupName, unsigned eventType, long long lArg = 0, BaseObject* pArg = nullptr);
-
+	void SendReplyEvent(UId uIdTarget, int nEventType, long long lArg = 0, ValueObject* pArg = nullptr, int ReplyType = UNDEFINED);
+	void SendReplyEvent(int nReceiverName, int nEventType, long long lArg = 0, ValueObject* pArg = nullptr, int ReplyType = UNDEFINED);
+	void SendNoReplyEvent(UId uIdTarget, int nEventType, long long lArg = 0, ValueObject* pArg = nullptr);
+	void SendNoReplyEvent(int nReceiverName, int nEventType, long long lArg = 0, ValueObject* pArg = nullptr);
+	void SendTargetEvents(unsigned groupName, unsigned eventType, long long lArg = 0, ValueObject* pArg = nullptr);
 };

@@ -258,10 +258,10 @@ void Component::BeginSequence(Event* pEvent) {
 	//}
 }
 
-void Component::EndSequence() {
-	for (auto const& part: m_mComponentParts) {
-		ComponentPart* pPart = part.second;
-		pPart->EndSequence();
-	}
-	ComponentPart::EndSequence();
+void Component::EndSequence(Event* pEvent) {
+	// for (auto const& part: m_mComponentParts) {
+	// 	ComponentPart* pPart = part.second;
+	// 	pPart->EndSequence(pEvent);
+	// }
+	ComponentPart::EndSequence(pEvent);
 }

@@ -11,8 +11,8 @@ ComponentPart::ComponentPart(unsigned uClassId, const char* acClassName)
 	, m_pUId(nullptr)
 	, m_pmReceivers(nullptr)
 	, m_pmTargetsGroups(nullptr)
-	, m_pSequenceHead(nullptr)
-	, m_pSequenceParent(nullptr) 
+//	, m_pSequenceHead(nullptr)
+	, m_pEventParent(nullptr) 
 {
 	this->RegisterExceptions();
 }
@@ -51,20 +51,38 @@ UId ComponentPart::FindUid(int nReceiverName) {
 
 // for transaction
 void ComponentPart::BeginSequence(Event* pEvent) {
-	m_pSequenceHead = nullptr;
-	m_pSequenceParent = pEvent;
-}
-void ComponentPart::EndSequence() {
-	for (; m_pSequenceHead != nullptr; m_pSequenceHead = m_pSequenceHead->GetPNextSequence()) {
-//		LOG("ComponentPart::EndSequence",
-//			Directory::s_dirComponents[m_pSequenceHead->GetUIdTarget().GetComponentId()].c_str(),
-//			Directory::s_dirEvents[m_pSequenceHead->GetType()].c_str()
-//		);
-		if (m_pSequenceHead->GetESendOrder() == Event::ESendOrder::eFirst) {
-			m_pSequenceHead->GetUIdTarget().GetPEventQueue()->PushFront(m_pSequenceHead);
+	m_pEventParent = nullptr;
+	if (pEvent->IsReply()) {
+		// nested
+		if (pEvent->GetPParent() != nullptr) {
+			pEvent->GetPParent()->DecrementCountChildren();
 		}
-		else {
-			m_pSequenceHead->GetUIdTarget().GetPEventQueue()->PushBack(m_pSequenceHead);
+	} else {
+		if (pEvent->IsSynchronous()) {
+			// for nested events
+			m_pEventParent = pEvent;
+		}
+	}
+}
+
+void ComponentPart::EndSequence(Event*pEvent) {
+	if (pEvent->IsReply()) {
+		// nested
+		if (pEvent->GetPParent() != nullptr) {
+			pEvent->GetPParent()->DecrementCountChildren();
+			if (pEvent->GetCoundChildren() == 0) {
+				ReplyEvent(pEvent->GetPParent());
+			}
+		} else {
+			delete pEvent;	
+		}
+	} else {
+		if (pEvent->IsSynchronous()) {
+			if (pEvent->GetCoundChildren() == 0) {
+				ReplyEvent(pEvent->GetPParent());
+			}
+		} else {
+			delete pEvent;	
 		}
 	}
 }
@@ -81,104 +99,87 @@ void ComponentPart::SendAEvent(Event* pEvent) {
 			"EventQueue is not allocated"
 		);
 	}
-	// insert current event at the head
-	if (m_pSequenceHead == nullptr) {
-		pEvent->SetPNextSequence(nullptr);
-		m_pSequenceHead = pEvent;
-	}
-	else {
-		pEvent->SetPNextSequence(m_pSequenceHead);
-		m_pSequenceHead = pEvent;
-	}
 
-	// for reply
-	if (pEvent->GetESyncType() == Event::ESyncType::eSync) {
-		pEvent->SetPParentEvent(m_pSequenceParent);
-		if (m_pSequenceParent != nullptr) {
-			m_pSequenceParent->IncrementCountChildren();
-			if (pEvent->GetReplyType() == UNDEFINED) {
-				pEvent->SetReplyType(m_pSequenceParent->GetType());
-			}
-		}
+	if (m_pEventParent->IsSynchronous()) {
+		// for nesting
+		pEvent->SetBNested(true);
+		pEvent->SetPParent(m_pEventParent);
+		pEvent->GetPParent()->IncrementCountChildren();
+
 	}
+	
+	pEvent->GetUIdTarget().GetPEventQueue()->PushBack(pEvent);
+	
+	// if (pEvent->IsSequential()) {
+	// 	// for sequencing
+	// 	// add current event at the end
+	// 	if (m_pEventSequenceFront == nullptr) {
+	// 		m_pEventSequenceFront = pEvent;
+	// 		m_pEventSequenceRear = pEvent;
+	// 	} else {
+	// 		pEvent->SetPSequenceNext(m_pEventSequenceRear->GetPSequenceNext());
+	// 		m_pEventSequenceRear = pEvent;
+	// 	}
+	// } else {
+	// 	// Send event
+	// 	pEvent->GetUIdTarget().GetPEventQueue()->PushBack(pEvent);
+	// }
 }
 
 ///////////////////////////////////////
 // reply event
 ///////////////////////////////////////
-void ComponentPart::PrepareReplyEvent(Event* pEvent) {
-	// swap source and destination
-	UId uIdSource = pEvent->GetUIdSource();
-	pEvent->SetUIdSource(pEvent->GetUIdTarget());
-	pEvent->SetUIdTarget(uIdSource);
-
-	// swap event type and reply event type
-	int nReplyEventType = pEvent->GetReplyType();
+void ComponentPart::ReplyEvent(Event* pEvent, long long lArg, ValueObject* pArg) {
+	// set pEvent as a Reply
+	pEvent->SetBReply(true);
 	pEvent->SetReplyType(pEvent->GetType());
-	pEvent->SetType(nReplyEventType);
-
-	if (pEvent->GetPParentEvent() != nullptr) {
-		pEvent->GetPParentEvent()->DecrementCountChildren();
-	}
+	// swap source and destination
+	pEvent->SetUIdTarget(pEvent->GetUIdSource());
+	pEvent->SetUIdSource(*m_pUId);
+	// reply argument
+	pEvent->SetlArg(lArg);
+	pEvent->SetPArg(pArg);
+	// Send event
+	pEvent->GetUIdTarget().GetPEventQueue()->PushBack(pEvent);
 }
 
 ///////////////////////////////////////
-// synchronous event
+// Synchronous event
 ///////////////////////////////////////
-void ComponentPart::SendReplyEvent(UId uIdTarget, int nEventType, long long lArg, BaseObject* pArg, int nReplyType)
+void ComponentPart::SendReplyEvent(UId uIdTarget, int nEventType, long long lArg, ValueObject* pArg, int ReplyType)
 {
-	Event* pEvent = new("") Event(this->GetUId(), uIdTarget, nEventType, lArg, pArg
-		, nReplyType, nullptr, Event::ESyncType::eSync);
+	Event* pEvent = new("") Event(*m_pUId, uIdTarget, nEventType, lArg, pArg, ReplyType);
+	pEvent->SetBSynchronous(true);
 	this->SendAEvent(pEvent);
 }
-void ComponentPart::SendReplyEvent(int nReceiverName, int nEventType, long long lArg, BaseObject* pArg, int nReplyType)
+void ComponentPart::SendReplyEvent(int nReceiverName, int nEventType, long long lArg, ValueObject* pArg, int ReplyType)
 {
 	UId uIdTarget = this->FindUid(nReceiverName);
-	this->SendReplyEvent(uIdTarget, nEventType, lArg, pArg, nReplyType);
+	this->SendReplyEvent(uIdTarget, nEventType, lArg, pArg, ReplyType);
 }
 
-
 ///////////////////////////////////////
-// asynchronous event
+// Asynchronous event
 ///////////////////////////////////////
-void ComponentPart::SendNoReplyEvent(UId uIdTarget, int nEventType, long long lArg, BaseObject* pArg)
+void ComponentPart::SendNoReplyEvent(UId uIdTarget, int nEventType, long long lArg, ValueObject* pArg)
 {
-	Event* pEvent = new("") Event(this->GetUId(), uIdTarget, nEventType, lArg, pArg
-		, UNDEFINED, nullptr, Event::ESyncType::eAsync);
+	Event* pEvent = new("") Event(*m_pUId, uIdTarget, nEventType, lArg, pArg);
+	pEvent->SetBSynchronous(false);
 	this->SendAEvent(pEvent);
 }
-void ComponentPart::SendNoReplyEvent(int nReceiverName, int nEventType, long long lArg, BaseObject* pArg)
+void ComponentPart::SendNoReplyEvent(int nReceiverName, int nEventType, long long lArg, ValueObject* pArg)
 {
 	UId uIdTarget = this->FindUid(nReceiverName);
 	this->SendNoReplyEvent(uIdTarget, nEventType, lArg, pArg);
 }
 
-void ComponentPart::SendNoReplyEventLast(UId uIdTarget, int nEventType, long long lArg, BaseObject* pArg)
-{
-	Event* pEvent = new("") Event(this->GetUId(), uIdTarget, nEventType, lArg, pArg
-		, UNDEFINED, nullptr, Event::ESyncType::eAsync, Event::ESendOrder::eLast);
-	this->SendAEvent(pEvent);
-}
-void ComponentPart::SendNoReplyEventLast(int nReceiverName, int nEventType, long long lArg, BaseObject* pArg)
-{
-	UId uIdTarget = this->FindUid(nReceiverName);
-	this->SendNoReplyEventLast(uIdTarget, nEventType, lArg, pArg);
-}
-
 ///////////////////////////////////////
 // target events
 ///////////////////////////////////////
-void ComponentPart::SendTargetEvents(unsigned groupName, unsigned eventType, long long lArg, BaseObject* pArg) {
+void ComponentPart::SendTargetEvents(unsigned groupName, unsigned eventType, long long lArg, ValueObject* pArg) {
 	for (auto& itr : *(this->m_pmTargetsGroups->Find(groupName)->second))
 	{
 		this->SendNoReplyEvent(itr, eventType, lArg, pArg);
-	}
-}
-
-void ComponentPart::SendTargetEventsLast(unsigned groupName, unsigned eventType, long long lArg, BaseObject* pArg) {
-	for (auto& itr : *(this->m_pmTargetsGroups->Find(groupName)->second))
-	{
-		this->SendNoReplyEventLast(itr, eventType, lArg, pArg);
 	}
 }
 

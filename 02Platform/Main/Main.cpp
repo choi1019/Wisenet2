@@ -33,7 +33,7 @@ void Main::SendStartEvent() {
 		0,
 		nullptr   // root event
 	);
-	this->EndSequence();
+	this->EndSequence(nullptr);
 }
 
 void Main::InitializeAsAMain(Event* pEvent) {

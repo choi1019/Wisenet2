@@ -21,7 +21,7 @@ public:
 	void SetPEventQueue(EventQueue* pEventQueue);
 
 	void BeginSequence(Event* pEvent);
-	void EndSequence();
+	void EndSequence(Event* pEvent);
 public:
 	virtual void Run();
 	virtual void Start();
