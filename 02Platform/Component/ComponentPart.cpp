@@ -53,10 +53,7 @@ UId ComponentPart::FindUid(int nReceiverName) {
 void ComponentPart::BeginSequence(Event* pEvent) {
 	m_pEventParent = nullptr;
 	if (pEvent->IsReply()) {
-		// nested
-		if (pEvent->GetPParent() != nullptr) {
-			pEvent->GetPParent()->DecrementCountChildren();
-		}
+		// ?
 	} else {
 		if (pEvent->IsSynchronous()) {
 			// for nested events
@@ -68,7 +65,7 @@ void ComponentPart::BeginSequence(Event* pEvent) {
 void ComponentPart::EndSequence(Event*pEvent) {
 	if (pEvent->IsReply()) {
 		// nested
-		if (pEvent->GetPParent() != nullptr) {
+		if (pEvent->IsNested()) {
 			pEvent->GetPParent()->DecrementCountChildren();
 			if (pEvent->GetCoundChildren() == 0) {
 				ReplyEvent(pEvent->GetPParent());
@@ -77,10 +74,12 @@ void ComponentPart::EndSequence(Event*pEvent) {
 			delete pEvent;	
 		}
 	} else {
+		// no child, synchronous
 		if (pEvent->IsSynchronous()) {
 			if (pEvent->GetCoundChildren() == 0) {
 				ReplyEvent(pEvent->GetPParent());
 			}
+		// asyncrhonous
 		} else {
 			delete pEvent;	
 		}
@@ -88,7 +87,7 @@ void ComponentPart::EndSequence(Event*pEvent) {
 }
 
 ///////////////////////////////////////
-// prepare event
+// send a event
 ///////////////////////////////////////
 void ComponentPart::SendAEvent(Event* pEvent) {
 	if (pEvent->GetUIdTarget().GetPEventQueue() == nullptr) {
@@ -99,35 +98,19 @@ void ComponentPart::SendAEvent(Event* pEvent) {
 			"EventQueue is not allocated"
 		);
 	}
-
+	// parent event should wait for all children events finished
 	if (m_pEventParent->IsSynchronous()) {
 		// for nesting
-		pEvent->SetBNested(true);
+		m_pEventParent->IncrementCountChildren();
 		pEvent->SetPParent(m_pEventParent);
-		pEvent->GetPParent()->IncrementCountChildren();
-
+		pEvent->SetBNested(true);
 	}
-	
+	// push event to a target event queue
 	pEvent->GetUIdTarget().GetPEventQueue()->PushBack(pEvent);
-	
-	// if (pEvent->IsSequential()) {
-	// 	// for sequencing
-	// 	// add current event at the end
-	// 	if (m_pEventSequenceFront == nullptr) {
-	// 		m_pEventSequenceFront = pEvent;
-	// 		m_pEventSequenceRear = pEvent;
-	// 	} else {
-	// 		pEvent->SetPSequenceNext(m_pEventSequenceRear->GetPSequenceNext());
-	// 		m_pEventSequenceRear = pEvent;
-	// 	}
-	// } else {
-	// 	// Send event
-	// 	pEvent->GetUIdTarget().GetPEventQueue()->PushBack(pEvent);
-	// }
 }
 
 ///////////////////////////////////////
-// reply event
+// reply a event
 ///////////////////////////////////////
 void ComponentPart::ReplyEvent(Event* pEvent, long long lArg, ValueObject* pArg) {
 	// set pEvent as a Reply
@@ -144,7 +127,7 @@ void ComponentPart::ReplyEvent(Event* pEvent, long long lArg, ValueObject* pArg)
 }
 
 ///////////////////////////////////////
-// Synchronous event
+// send a synchronous event
 ///////////////////////////////////////
 void ComponentPart::SendReplyEvent(UId uIdTarget, int nEventType, long long lArg, ValueObject* pArg, int ReplyType)
 {
@@ -159,7 +142,7 @@ void ComponentPart::SendReplyEvent(int nReceiverName, int nEventType, long long 
 }
 
 ///////////////////////////////////////
-// Asynchronous event
+// send an asynchronous event
 ///////////////////////////////////////
 void ComponentPart::SendNoReplyEvent(UId uIdTarget, int nEventType, long long lArg, ValueObject* pArg)
 {
@@ -174,7 +157,7 @@ void ComponentPart::SendNoReplyEvent(int nReceiverName, int nEventType, long lon
 }
 
 ///////////////////////////////////////
-// target events
+// semd target events
 ///////////////////////////////////////
 void ComponentPart::SendTargetEvents(unsigned groupName, unsigned eventType, long long lArg, ValueObject* pArg) {
 	for (auto& itr : *(this->m_pmTargetsGroups->Find(groupName)->second))
