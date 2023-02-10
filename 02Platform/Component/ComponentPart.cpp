@@ -54,8 +54,11 @@ void ComponentPart::BeginSequence(Event* pEvent) {
 	m_pEventParent = nullptr;
 	if (pEvent->IsReply()) {
 <<<<<<< HEAD
+<<<<<<< HEAD
 		// ?
 =======
+=======
+>>>>>>> 53e58a1 (0.001)
 		// nested
 		if (pEvent->GetPParent() != nullptr) {
 			int nReplyType = pEvent->GetType();
@@ -63,7 +66,13 @@ void ComponentPart::BeginSequence(Event* pEvent) {
 			pEvent->SetReplyType(nReplyType);
 			pEvent->GetPParent()->DecrementCountChildren();
 		}
+<<<<<<< HEAD
 >>>>>>> db4074d (0.033)
+=======
+=======
+		// ?
+>>>>>>> 31ce4f8 (0.001)
+>>>>>>> 53e58a1 (0.001)
 	} else {
 		if (pEvent->IsSynchronous()) {
 			// for nested events
@@ -109,6 +118,7 @@ void ComponentPart::SendAEvent(Event* pEvent) {
 		);
 	}
 <<<<<<< HEAD
+<<<<<<< HEAD
 	// parent event should wait for all children events finished
 	if (m_pEventParent->IsSynchronous()) {
 		// for nesting
@@ -118,6 +128,8 @@ void ComponentPart::SendAEvent(Event* pEvent) {
 	}
 	// push event to a target event queue
 =======
+=======
+>>>>>>> 53e58a1 (0.001)
 	if (m_pEventParent != nullptr) {
 		if (m_pEventParent->IsSynchronous()) {
 			// for nesting
@@ -127,7 +139,20 @@ void ComponentPart::SendAEvent(Event* pEvent) {
 
 		}
 	}
+<<<<<<< HEAD
 >>>>>>> 38eeb38 (0.032)
+=======
+=======
+	// parent event should wait for all children events finished
+	if (m_pEventParent->IsSynchronous()) {
+		// for nesting
+		m_pEventParent->IncrementCountChildren();
+		pEvent->SetPParent(m_pEventParent);
+		pEvent->SetBNested(true);
+	}
+	// push event to a target event queue
+>>>>>>> 31ce4f8 (0.001)
+>>>>>>> 53e58a1 (0.001)
 	pEvent->GetUIdTarget().GetPEventQueue()->PushBack(pEvent);
 }
 
