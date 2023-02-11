@@ -36,7 +36,7 @@ private:
 
 	// for working
 	Event *m_pQueueNext;
-	Event *m_pSequenceNext;
+//	Event *m_pSequenceNext;
 	Event *m_pParent;
 	unsigned m_countChildren;
 
@@ -73,7 +73,7 @@ public:
 		, m_bNested(bNested)
 		, m_idParent(UNDEFINED)
 		, m_pQueueNext(nullptr)
-		, m_pSequenceNext(nullptr)
+//		, m_pSequenceNext(nullptr)
 		, m_pParent(nullptr)
 		, m_countChildren(0)
 	{
@@ -101,7 +101,7 @@ public:
 		, m_bNested(event.m_bNested)
 		, m_idParent(event.m_idParent)
 		, m_pQueueNext(event.m_pQueueNext)
-		, m_pSequenceNext(event.m_pSequenceNext)
+//		, m_pSequenceNext(event.m_pSequenceNext)
 		, m_pParent(event.m_pParent)
 		, m_countChildren(event.m_countChildren)
 	{
@@ -154,8 +154,8 @@ public:
 	// Working - Serialization is not needed
 	Event *GetPQueueNext() { return m_pQueueNext; }
 	void SetPQueueNext(Event *pQueueNext) { m_pQueueNext = pQueueNext; }
-	Event *GetPSequenceNext() { return m_pSequenceNext; }
-	void SetPSequenceNext(Event *pSequenceNext) { m_pSequenceNext = pSequenceNext; }
+//	Event *GetPSequenceNext() { return m_pSequenceNext; }
+//	void SetPSequenceNext(Event *pSequenceNext) { m_pSequenceNext = pSequenceNext; }
 	Event *GetPParent() { return m_pParent; }
 	void SetPParent(Event *pParent) { m_pParent = pParent; }
 

@@ -30,7 +30,8 @@ void PMain::BootstrapSystem() {
 	this->AllocateAComponent(this->GetPLifecycleManager());
 
 	LOG_FOOTER(this->GetClassName(), "BootstrapSystem");
-
+	
+	// send system start event
 	this->SendStartEvent();
 }
 

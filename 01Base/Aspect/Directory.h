@@ -48,6 +48,10 @@ public:
 	void Show(const char* pcTitle);
 };
 
+#define REGISTER_EVENT(COMPONENTNAME, EVENTTYPE) Directory::s_dirEvents[(int)COMPONENTNAME::EEventType::EVENTTYPE] = "EVENTTYPE"
+#define SHOW_EVENTNAME(EVENTTYPE) Directory::s_dirEvents[EVENTTYPE] + EVENTTYPE
+#define SHOW_COMPONENTNAME(COMPONENTID) Directory::s_dirComponents[COMPONENTID] + COMPONENTID
+//Directory::s_dirComponents[pEvent->GetUIdTarget().GetComponentId()] + pEvent->GetUIdTarget().GetComponentId()
 
 
 

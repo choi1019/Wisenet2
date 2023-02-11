@@ -34,7 +34,7 @@ Component::Component(unsigned uClassId, const char* pcClassName)
 	SetEState(EState::eCreated);
 
 	// component id directory
-	Directory::s_dirComponents[this->GetComponentId()] = Directory::s_dirObjects[(long long)this];
+	Directory::s_dirComponents[this->GetComponentId()] = pcClassName;
 	this->RegisterEventTypes();
 	this->RegisterExceptions();
 	// LOG

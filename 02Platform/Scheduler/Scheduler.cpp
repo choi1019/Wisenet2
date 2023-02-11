@@ -120,8 +120,11 @@ void Scheduler::RunOnce()
 			if (pTargetComponent == nullptr) {
 				throw Exception((unsigned)IScheduler::EError::eComponentNotFound, this->GetClassName(), __func__, "eComponentNotFound");
 			}
-			LOG_NEWLINE(Directory::s_dirEvents[pEvent->GetType()]);
 			pTargetComponent->BeginSequence(pEvent);
+			LOG_NEWLINE("Scheduler::RunOnce()"
+				, Directory::s_dirComponents[pEvent->GetUIdTarget().GetComponentId()] + pEvent->GetUIdTarget().GetComponentId()
+				, Directory::s_dirEvents[pEvent->GetType()] + pEvent->GetType()
+				, pEvent->IsReply());
 			pTargetComponent->ProcessAEvent(pEvent);
 			pTargetComponent->EndSequence(pEvent);
 		}
@@ -135,7 +138,7 @@ void Scheduler::RunOnce()
 void Scheduler::AllocateAComponent(Component* pComponent) {
 	pComponent->SetPEventQueue(this->GetPEventQueue());
 	m_mComponents.Add(pComponent->GetComponentId(), pComponent);
-	LOG(_Scheduler_Name, __func__
+	LOG_NEWLINE(_Scheduler_Name, __func__
 		, Directory::s_dirComponents[this->GetComponentId()]
 		, Directory::s_dirComponents[pComponent->GetComponentId()]
 	);

@@ -53,30 +53,20 @@ UId ComponentPart::FindUid(int nReceiverName) {
 void ComponentPart::BeginSequence(Event* pEvent) {
 	m_pEventParent = nullptr;
 	if (pEvent->IsReply()) {
-<<<<<<< HEAD
-<<<<<<< HEAD
-		// ?
-=======
-=======
->>>>>>> 53e58a1 (0.001)
 		// nested
-		if (pEvent->GetPParent() != nullptr) {
+		if (pEvent->IsNested()) {
 			int nReplyType = pEvent->GetType();
 			pEvent->SetType(pEvent->GetPParent()->GetType());
 			pEvent->SetReplyType(nReplyType);
-			pEvent->GetPParent()->DecrementCountChildren();
 		}
-<<<<<<< HEAD
->>>>>>> db4074d (0.033)
-=======
-=======
-		// ?
->>>>>>> 31ce4f8 (0.001)
->>>>>>> 53e58a1 (0.001)
 	} else {
+		// syncrhnous event - needs to be replied
 		if (pEvent->IsSynchronous()) {
 			// for nested events
 			m_pEventParent = pEvent;
+		// asynchronous event
+		} else {
+			
 		}
 	}
 }
@@ -86,19 +76,18 @@ void ComponentPart::EndSequence(Event*pEvent) {
 		// nested
 		if (pEvent->IsNested()) {
 			pEvent->GetPParent()->DecrementCountChildren();
-			if (pEvent->GetCoundChildren() == 0) {
+			if (pEvent->GetPParent()->GetCoundChildren() == 0) {
 				ReplyEvent(pEvent->GetPParent());
 			}
-		} else {
-			delete pEvent;	
 		}
+		delete pEvent;	
 	} else {
-		// no child, synchronous
+		// no child, reply
 		if (pEvent->IsSynchronous()) {
 			if (pEvent->GetCoundChildren() == 0) {
 				ReplyEvent(pEvent);
 			}
-		// asyncrhonous
+		// asyncrhonous event
 		} else {
 			delete pEvent;	
 		}
@@ -117,42 +106,15 @@ void ComponentPart::SendAEvent(Event* pEvent) {
 			"EventQueue is not allocated"
 		);
 	}
-<<<<<<< HEAD
-<<<<<<< HEAD
-	// parent event should wait for all children events finished
-	if (m_pEventParent->IsSynchronous()) {
-		// for nesting
-		m_pEventParent->IncrementCountChildren();
-		pEvent->SetPParent(m_pEventParent);
-		pEvent->SetBNested(true);
-	}
-	// push event to a target event queue
-=======
-=======
->>>>>>> 53e58a1 (0.001)
+	// parent event is synchronous
 	if (m_pEventParent != nullptr) {
-		if (m_pEventParent->IsSynchronous()) {
-			// for nesting
-			pEvent->SetBNested(true);
-			pEvent->SetPParent(m_pEventParent);
-			pEvent->GetPParent()->IncrementCountChildren();
-
-		}
-	}
-<<<<<<< HEAD
->>>>>>> 38eeb38 (0.032)
-=======
-=======
-	// parent event should wait for all children events finished
-	if (m_pEventParent->IsSynchronous()) {
 		// for nesting
-		m_pEventParent->IncrementCountChildren();
-		pEvent->SetPParent(m_pEventParent);
 		pEvent->SetBNested(true);
+		pEvent->SetPParent(m_pEventParent);
+		// parent event wait replying untill all the children finish
+		pEvent->GetPParent()->IncrementCountChildren();
+
 	}
-	// push event to a target event queue
->>>>>>> 31ce4f8 (0.001)
->>>>>>> 53e58a1 (0.001)
 	pEvent->GetUIdTarget().GetPEventQueue()->PushBack(pEvent);
 }
 
@@ -170,6 +132,9 @@ void ComponentPart::ReplyEvent(Event* pEvent, long long lArg, ValueObject* pArg)
 	pEvent->SetPArg(pArg);
 	// Send event
 	pEvent->GetUIdTarget().GetPEventQueue()->PushBack(pEvent);
+	LOG_NEWLINE(SHOW_COMPONENTNAME(pEvent->GetUIdTarget().GetComponentId())				
+				, SHOW_COMPONENTNAME(pEvent->GetUIdSource().GetComponentId())
+				, SHOW_EVENTNAME(pEvent->GetType()));
 }
 
 ///////////////////////////////////////
