@@ -26,14 +26,17 @@ void Scheduler::DeleteVarialbes() {
 
 void Scheduler::RegisterEventTypes() {
 	Directory::s_dirEvents[(unsigned)IScheduler::EEventType::eInitializeAsAScheduler] = "eInitializeAsAScheduler";
-	Directory::s_dirEvents[(unsigned)IScheduler::EEventType::eIsStarted] = "eIsSchedulerStarted";
 	Directory::s_dirEvents[(unsigned)IScheduler::EEventType::eAllocateAComponent] = "eAllocateAComponent";
+	Directory::s_dirEvents[(unsigned)IScheduler::EEventType::eDellocateAComponent] = "eDellocateAComponent";
+	Directory::s_dirEvents[(unsigned)IScheduler::EEventType::eFinalizeAsAScheduler] = "eFinalizeAsAScheduler";
+
+	Directory::s_dirEvents[(unsigned)IScheduler::EEventType::eFork] = "eFork";
+	Directory::s_dirEvents[(unsigned)IScheduler::EEventType::eJoin] = "eJoin";
+
 	Directory::s_dirEvents[(unsigned)IScheduler::EEventType::eStart] = "eStartScheduler";
+	Directory::s_dirEvents[(unsigned)IScheduler::EEventType::eStop] = "eStopScheduler";
 	Directory::s_dirEvents[(unsigned)IScheduler::EEventType::ePause] = "ePauseScheduler";
 	Directory::s_dirEvents[(unsigned)IScheduler::EEventType::eResume] = "eResumeScheduler";
-	Directory::s_dirEvents[(unsigned)IScheduler::EEventType::eDellocateAComponent] = "eDellocateAComponent";
-	Directory::s_dirEvents[(unsigned)IScheduler::EEventType::eStop] = "eStopScheduler";
-	Directory::s_dirEvents[(unsigned)IScheduler::EEventType::eFinalizeAsAScheduler] = "eFinalizeAsAScheduler";
 }
 
 Scheduler::Scheduler(
@@ -76,16 +79,6 @@ void Scheduler::FinalizeAsAScheduler() {
 	this->DeleteVarialbes();
 }
 
-void Scheduler::Run() {
-	m_eState = IScheduler::EState::eRunning;
-	LOG_HEADER("Scheduler::StartSchedulers", Directory::s_dirComponents[this->GetComponentId()]);
-	while (IScheduler::EState::eStopped != this->m_eState)
-	{
-		RunOnce();
-	}
-	LOG_FOOTER("Scheduler::StopSchedulers", Directory::s_dirComponents[this->GetComponentId()]);
-}
-
 void Scheduler::Pause() {
 	m_eState = IScheduler::EState::ePaused;
 }
@@ -99,16 +92,35 @@ void Scheduler::Stop() {
 	m_eState = IScheduler::EState::eStopped;
 }
 
+void Scheduler::Fork(Event* pEvent) {
+	this->Fork();
+}
+void Scheduler::Join(Event* pEvent) {
+	this->Join();
+}
+void Scheduler::Start(Event* pEvent) {
+	this->Start();
+}
+void Scheduler::Stop(Event* pEvent) {
+	this->Stop();
+}
 void Scheduler::Pause(Event* pEvent) {
 	this->Pause();
 }
 void Scheduler::Resume(Event* pEvent) {
 	this->Resume();
 }
-void Scheduler::Stop(Event* pEvent) {
-	this->Stop();
-}
 
+
+void Scheduler::Run() {
+	m_eState = IScheduler::EState::eRunning;
+	LOG_NEWLINE("Scheduler::Start", Directory::s_dirComponents[this->GetComponentId()]);
+	while (IScheduler::EState::eStopped != this->m_eState)
+	{
+		RunOnce();
+	}
+	LOG_NEWLINE("Scheduler::Stop", Directory::s_dirComponents[this->GetComponentId()]);
+}
 void Scheduler::RunOnce()
 {
 	try {
@@ -122,8 +134,10 @@ void Scheduler::RunOnce()
 			}
 			pTargetComponent->BeginSequence(pEvent);
 			LOG_NEWLINE("Scheduler::RunOnce()"
-				, Directory::s_dirComponents[pEvent->GetUIdTarget().GetComponentId()] + pEvent->GetUIdTarget().GetComponentId()
-				, Directory::s_dirEvents[pEvent->GetType()] + pEvent->GetType()
+				, SHOW_COMPONENTNAME(pEvent->GetUIdSource().GetComponentId())
+				, SHOW_COMPONENTNAME(pEvent->GetUIdTarget().GetComponentId())
+				, SHOW_EVENTNAME(pEvent->GetType())
+				, SHOW_EVENTNAME(pEvent->GetReplyType())
 				, pEvent->IsReply());
 			pTargetComponent->ProcessAEvent(pEvent);
 			pTargetComponent->EndSequence(pEvent);
@@ -179,11 +193,28 @@ void Scheduler::ProcessAEvent(Event* pEvent)
 	case (unsigned)IScheduler::EEventType::eInitializeAsAScheduler:
 		this->InitializeAsAScheduler(pEvent);
 		break;
+	case (unsigned)IScheduler::EEventType::eFinalizeAsAScheduler:
+		this->FinalizeAsAScheduler(pEvent);
+		break;
+
 	case (unsigned)IScheduler::EEventType::eAllocateAComponent:
 		this->AllocateAComponent(pEvent);
 		break;
 	case (unsigned)IScheduler::EEventType::eDellocateAComponent:
 		this->DellocateAComponent(pEvent);
+		break;
+
+	case (unsigned)IScheduler::EEventType::eFork:
+		this->Fork(pEvent);
+		break;
+	case (unsigned)IScheduler::EEventType::eJoin:
+		this->Join(pEvent);
+		break;
+	case (unsigned)IScheduler::EEventType::eStart:
+		this->Start(pEvent);
+		break;
+	case (unsigned)IScheduler::EEventType::eStop:
+		this->Stop(pEvent);
 		break;
 	case (unsigned)IScheduler::EEventType::ePause:
 		this->Pause(pEvent);
@@ -191,12 +222,7 @@ void Scheduler::ProcessAEvent(Event* pEvent)
 	case (unsigned)IScheduler::EEventType::eResume:
 		this->Resume(pEvent);
 		break;
-	case (unsigned)IScheduler::EEventType::eStop:
-		this->Stop(pEvent);
-		break;
-	case (unsigned)IScheduler::EEventType::eFinalizeAsAScheduler:
-		this->FinalizeAsAScheduler(pEvent);
-		break;
+		
 	default:
 		Component::ProcessAEvent(pEvent);
 		break;

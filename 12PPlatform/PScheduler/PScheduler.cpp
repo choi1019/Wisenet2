@@ -1,5 +1,6 @@
 #include <12PPlatform/PScheduler/PScheduler.h>
 #include <01Base/Aspect/Exception.h>
+#include <12PPlatform/PEventQueue/PEventQueue.h>
 
 void* CallBackPScheduler(void *pObject) {
 	PScheduler *pPScheduler = (PScheduler *)pObject;
@@ -7,14 +8,14 @@ void* CallBackPScheduler(void *pObject) {
 	return nullptr;
 }
 
-void PScheduler::Start() {
+void PScheduler::Fork() {
 	m_idThared = pthread_create((&m_thread), NULL, CallBackPScheduler, (void*)this);
 	if(m_idThared < 0) {
 		throw Exception();
 	}
 }
 
-void PScheduler::Stop() {
+void PScheduler::Join() {
 	pthread_join(m_thread, (void**)&m_stsThread);
 }
 
@@ -23,6 +24,7 @@ PScheduler::PScheduler(
 	const char* pcClassName)
 	: Scheduler(uClassId, pcClassName)
 {
+	this->SetPEventQueue(new("PEventQueue") PEventQueue());
 }
 PScheduler::~PScheduler() 
 {

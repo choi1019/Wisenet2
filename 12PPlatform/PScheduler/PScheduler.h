@@ -25,8 +25,8 @@ public:
 	virtual void InitializeAsAScheduler(int uPriority);
 	virtual void FinalizeAsAScheduler();
 
-	void Start() override;
-	void Stop() override;
+	void Fork() override;
+	void Join() override;
 
 protected:
 	virtual void Initialize();

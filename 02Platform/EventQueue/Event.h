@@ -27,12 +27,11 @@ private:
 
 	// Synchronous
 	bool m_bSynchronous;
-	bool m_bBlocked;
+//	bool m_bBlocked;
 	// Sequential
 	bool m_bSequential;
 	// Nested
-	bool m_bNested;
-	int m_idParent;
+//	bool m_bNested;
 
 	// for working
 	Event *m_pQueueNext;
@@ -50,8 +49,8 @@ public:
 		int nReplyType =UNDEFINED,
 		
 		bool bSynchronous = false,
-		bool bSequential = false,
-		bool bNested = false,
+//		bool bSequential = false,
+//		bool bNested = false,
 
 		unsigned uClassId = _Event_Id,
 		const char* pcClassName = _Event_Name
@@ -68,10 +67,9 @@ public:
 		, m_nReplyType(nReplyType)
 
 		, m_bSynchronous(bSynchronous)
-		, m_bBlocked(false)
-		, m_bSequential(bSequential)
-		, m_bNested(bNested)
-		, m_idParent(UNDEFINED)
+//		, m_bBlocked(false)
+//		, m_bSequential(bSequential)
+//		, m_bNested(bNested)
 		, m_pQueueNext(nullptr)
 //		, m_pSequenceNext(nullptr)
 		, m_pParent(nullptr)
@@ -96,10 +94,9 @@ public:
 		, m_nReplyType(event.m_nReplyType)
 
 		, m_bSynchronous(event.m_bSynchronous)
-		, m_bBlocked( event.m_bBlocked)
-		, m_bSequential(event.m_bSequential)
-		, m_bNested(event.m_bNested)
-		, m_idParent(event.m_idParent)
+		// , m_bBlocked( event.m_bBlocked)
+		// , m_bSequential(event.m_bSequential)
+		// , m_bNested(event.m_bNested)
 		, m_pQueueNext(event.m_pQueueNext)
 //		, m_pSequenceNext(event.m_pSequenceNext)
 		, m_pParent(event.m_pParent)
@@ -140,16 +137,16 @@ public:
 	// Synchronous 
 	bool IsSynchronous() { return this->m_bSynchronous; }
 	void SetBSynchronous(bool bSynchronous) { this->m_bSynchronous = bSynchronous; }
-	bool IsBlocked() { return this->m_bBlocked; }
-	void SetBBlocked(bool bBlocked) { this->m_bBlocked = bBlocked; }
+	// bool IsBlocked() { return this->m_bBlocked; }
+	// void SetBBlocked(bool bBlocked) { this->m_bBlocked = bBlocked; }
 	// Sequence
-	bool IsSequential() { return this->m_bSequential; }
-	void SetBSequential(bool bSequential) { this->m_bSequential = bSequential; }
+	// bool IsSequential() { return this->m_bSequential; }
+	// void SetBSequential(bool bSequential) { this->m_bSequential = bSequential; }
 	// Nested
-	bool IsNested() { return this->m_bNested; }
-	void SetBNested(bool bNested) { this->m_bNested = bNested; }
-	int GetIdParent() { return this->m_idParent; }
-	void SetIdParent(int idParent) { this->m_idParent = idParent; }
+	// bool IsNested() { return this->m_bNested; }
+	// void SetBNested(bool bNested) { this->m_bNested = bNested; }
+	// int GetIdParent() { return this->m_idParent; }
+	// void SetIdParent(int idParent) { this->m_idParent = idParent; }
 
 	// Working - Serialization is not needed
 	Event *GetPQueueNext() { return m_pQueueNext; }
@@ -164,7 +161,7 @@ public:
 	unsigned GetCoundChildren() { return m_countChildren; }
 	void SetCountChildren(unsigned countChildren) { m_countChildren = countChildren; }
 	bool IsAllReplied() {
-		if (this->m_bNested) {
+		if (this->m_pParent!=nullptr) {
 			if (this->m_pParent->GetCoundChildren() == 0) {
 				return true;
 			}

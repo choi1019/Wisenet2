@@ -9,6 +9,9 @@ class Main : public Scheduler, public IMain
 private:
 	LifecycleManager* m_pLifecycleManager;
 
+	void RegisterEventTypes();
+	void RegisterExceptions();
+
 public:
 	Main(
 		unsigned uClassId = _Main_Id,

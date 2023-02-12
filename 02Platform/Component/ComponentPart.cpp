@@ -51,31 +51,30 @@ UId ComponentPart::FindUid(int nReceiverName) {
 
 // for transaction
 void ComponentPart::BeginSequence(Event* pEvent) {
-	m_pEventParent = nullptr;
+	m_pEventParent = pEvent;
 	if (pEvent->IsReply()) {
-		// nested
-		if (pEvent->IsNested()) {
-			int nReplyType = pEvent->GetType();
+		// nested, 
+		if (pEvent->GetPParent() != nullptr) {
+			pEvent->SetReplyType(pEvent->GetType());
 			pEvent->SetType(pEvent->GetPParent()->GetType());
-			pEvent->SetReplyType(nReplyType);
+			pEvent->GetPParent()->DecrementCountChildren();
+
+			m_pEventParent = pEvent->GetPParent();
 		}
-	} else {
-		// syncrhnous event - needs to be replied
-		if (pEvent->IsSynchronous()) {
-			// for nested events
-			m_pEventParent = pEvent;
-		// asynchronous event
-		} else {
-			
-		}
-	}
+	} 
+	// else {
+	// 	// syncrhnous event - wait until all children replied
+	// 	if (pEvent->IsSynchronous()) {
+	// 		// for nested events
+	// 		m_pEventParent = pEvent;
+	// 	}
+	// }
 }
 
 void ComponentPart::EndSequence(Event*pEvent) {
 	if (pEvent->IsReply()) {
 		// nested
-		if (pEvent->IsNested()) {
-			pEvent->GetPParent()->DecrementCountChildren();
+		if (pEvent->GetPParent() != nullptr) {
 			if (pEvent->GetPParent()->GetCoundChildren() == 0) {
 				ReplyEvent(pEvent->GetPParent());
 			}
@@ -83,13 +82,13 @@ void ComponentPart::EndSequence(Event*pEvent) {
 		delete pEvent;	
 	} else {
 		// no child, reply
-		if (pEvent->IsSynchronous()) {
-			if (pEvent->GetCoundChildren() == 0) {
+//		if (pEvent->IsSynchronous()) {
+		if (pEvent->GetCoundChildren() == 0) {
+			if (pEvent->IsSynchronous()) {
 				ReplyEvent(pEvent);
+			} else {
+				delete pEvent;					
 			}
-		// asyncrhonous event
-		} else {
-			delete pEvent;	
 		}
 	}
 }
@@ -108,12 +107,9 @@ void ComponentPart::SendAEvent(Event* pEvent) {
 	}
 	// parent event is synchronous
 	if (m_pEventParent != nullptr) {
-		// for nesting
-		pEvent->SetBNested(true);
 		pEvent->SetPParent(m_pEventParent);
 		// parent event wait replying untill all the children finish
 		pEvent->GetPParent()->IncrementCountChildren();
-
 	}
 	pEvent->GetUIdTarget().GetPEventQueue()->PushBack(pEvent);
 }
@@ -132,9 +128,10 @@ void ComponentPart::ReplyEvent(Event* pEvent, long long lArg, ValueObject* pArg)
 	pEvent->SetPArg(pArg);
 	// Send event
 	pEvent->GetUIdTarget().GetPEventQueue()->PushBack(pEvent);
-	LOG_NEWLINE(SHOW_COMPONENTNAME(pEvent->GetUIdTarget().GetComponentId())				
-				, SHOW_COMPONENTNAME(pEvent->GetUIdSource().GetComponentId())
-				, SHOW_EVENTNAME(pEvent->GetType()));
+	// LOG_NEWLINE("ReplyEvent"			
+	// 			, SHOW_COMPONENTNAME(pEvent->GetUIdSource().GetComponentId())
+	// 			, SHOW_COMPONENTNAME(pEvent->GetUIdTarget().GetComponentId())	
+	// 			, SHOW_EVENTNAME(pEvent->GetType()));
 }
 
 ///////////////////////////////////////

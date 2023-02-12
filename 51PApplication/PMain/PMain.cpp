@@ -22,12 +22,12 @@ void PMain::BootstrapSystem() {
 
 	// Main EventQueue
 	PEventQueue* pPEventQueue = new("PMain::PEventQueue") PEventQueue(this->GetComponentId());
-	LOG_NEWLINE("new", Directory::s_dirObjects[(size_t)pPEventQueue]);
 	this->SetPEventQueue(pPEventQueue);
 
 	// Lifecycle Manager
-	this->SetPLifecycleManager(new("PLifecycleManager") PLifecycleManager());
-	this->AllocateAComponent(this->GetPLifecycleManager());
+	PLifecycleManager *pPLifecycleManager = new("PLifecycleManager") PLifecycleManager();
+	this->SetPLifecycleManager(pPLifecycleManager);
+	this->AllocateAComponent(pPLifecycleManager);
 
 	LOG_FOOTER(this->GetClassName(), "BootstrapSystem");
 	

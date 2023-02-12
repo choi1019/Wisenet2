@@ -79,13 +79,11 @@ LifecycleManager::LifecycleManager(int nClassId, const char* pcClassName)
 	: Component(nClassId, pcClassName)
 	, m_pMainScheduler(nullptr)
 {
-	LOG_NEWLINE(this->GetClassName(), __func__);
 	this->RegisterEventTypes();
 	this->RegisterExceptions();
 }
 
 LifecycleManager::~LifecycleManager() {
-	LOG_NEWLINE(this->GetClassName(), __func__);
 }
 
 void LifecycleManager::Initialize() {
@@ -209,8 +207,8 @@ void LifecycleManager::StartSchedulers(Event* pEvent) {
 	else {
 		LOG_HEADER(__func__);
 		for (auto itr : m_mapSchedulers) {
-			itr.second->Start();
-			this->SendReplyEvent(itr.second->GetUId(), (int)IScheduler::EEventType::eIsStarted);
+			itr.second->Fork();
+			this->SendReplyEvent(itr.second->GetUId(), (int)IScheduler::EEventType::eStart);
 		}
 	}
 }
@@ -350,35 +348,37 @@ void LifecycleManager::StartComponents(Event* pEvent) {
 //  InitializeAsALifecycleManager
 void LifecycleManager::InitializeAsALifecycleManager(Event* pEvent) {
 	if (pEvent->IsReply()) {
-		switch (pEvent->GetReplyType()) {
-		case (int)ILifecycleManager::EEventType::eRegisterSchedulers:
-			this->SendReplyEvent(this->GetUId(), (int)ILifecycleManager::EEventType::eInitializeSchedulers);
-			break;
-		case (int)ILifecycleManager::EEventType::eInitializeSchedulers:
-			this->SendReplyEvent(this->GetUId(), (int)ILifecycleManager::EEventType::eStartSchedulers);
-			break;
-		case (int)ILifecycleManager::EEventType::eStartSchedulers:
-			this->SendReplyEvent(this->GetUId(), (int)ILifecycleManager::EEventType::eRegisterComponents);
-			break;
-		case (int)ILifecycleManager::EEventType::eRegisterComponents:
-			this->SendReplyEvent(this->GetUId(), (int)ILifecycleManager::EEventType::eAllocateComponents);
-			break;
-		case (int)ILifecycleManager::EEventType::eAllocateComponents:
-			this->SendReplyEvent(this->GetUId(), (int)ILifecycleManager::EEventType::eAssociateSendersNReceivers);
-			break;
-		case (int)ILifecycleManager::EEventType::eAssociateSendersNReceivers:
-			this->SendReplyEvent(this->GetUId(), (int)ILifecycleManager::EEventType::eAssociateSourcesNTargets);
-			break;
-		case (int)ILifecycleManager::EEventType::eAssociateSourcesNTargets:
-			this->SendReplyEvent(this->GetUId(), (int)ILifecycleManager::EEventType::eInitializeComponents);
-			break;
-		case (int)ILifecycleManager::EEventType::eInitializeComponents:
-			LOG_FOOTER(this->GetClassName(), __func__);
-			break;
-		default:
-			throw Exception((int)ILifecycleManager::EException::eInitializationReplyError, this->GetClassName(), __func__);
-			break;
-		}
+//		if (pEvent->IsAllReplied()) {
+			switch (pEvent->GetReplyType()) {
+			case (int)ILifecycleManager::EEventType::eRegisterSchedulers:
+				this->SendReplyEvent(this->GetUId(), (int)ILifecycleManager::EEventType::eInitializeSchedulers);
+				break;
+			case (int)ILifecycleManager::EEventType::eInitializeSchedulers:
+				this->SendReplyEvent(this->GetUId(), (int)ILifecycleManager::EEventType::eStartSchedulers);
+				break;
+			case (int)ILifecycleManager::EEventType::eStartSchedulers:
+				this->SendReplyEvent(this->GetUId(), (int)ILifecycleManager::EEventType::eRegisterComponents);
+				break;
+			case (int)ILifecycleManager::EEventType::eRegisterComponents:
+				this->SendReplyEvent(this->GetUId(), (int)ILifecycleManager::EEventType::eAllocateComponents);
+				break;
+			case (int)ILifecycleManager::EEventType::eAllocateComponents:
+				this->SendReplyEvent(this->GetUId(), (int)ILifecycleManager::EEventType::eAssociateSendersNReceivers);
+				break;
+			case (int)ILifecycleManager::EEventType::eAssociateSendersNReceivers:
+				this->SendReplyEvent(this->GetUId(), (int)ILifecycleManager::EEventType::eAssociateSourcesNTargets);
+				break;
+			case (int)ILifecycleManager::EEventType::eAssociateSourcesNTargets:
+				this->SendReplyEvent(this->GetUId(), (int)ILifecycleManager::EEventType::eInitializeComponents);
+				break;
+			case (int)ILifecycleManager::EEventType::eInitializeComponents:
+				LOG_FOOTER(this->GetClassName(), __func__);
+				break;
+			default:
+				throw Exception((int)ILifecycleManager::EException::eInitializationReplyError, this->GetClassName(), __func__);
+				break;
+			}
+//		}
 	}
 	else {
 		LOG_HEADER(this->GetClassName(), __func__);
@@ -428,7 +428,7 @@ void LifecycleManager::StopSchedulers(Event* pEvent) {
 	if (pEvent->IsReply()) {
 		if (pEvent->IsAllReplied()) {
 			for (auto itr : m_mapSchedulers) {
-				itr.second->Stop();
+				itr.second->Join();
 			}
 			LOG_FOOTER(__func__);
 		}

@@ -1,5 +1,14 @@
 #include <02Platform/Main/Main.h>
 
+void Main::RegisterEventTypes() {
+	REGISTER_EVENT(IMain, eInitializeAsAMain);
+	REGISTER_EVENT(IMain, eFinalizeAsAMain);
+}
+
+void  Main::RegisterExceptions() {
+//	REGISTER_EVENT(IMain, eEventTypeError);
+}
+
 Main::Main(
 	unsigned uClassId,
 	const char* pcClassName)

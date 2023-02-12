@@ -22,9 +22,9 @@ public:
 
 		eAllocateAComponent,
 		eDellocateAComponent,
-
+		eFork,
+		eJoin,
 		eStart,
-		eIsStarted,
 		ePause,
 		eResume,
 		eStop,

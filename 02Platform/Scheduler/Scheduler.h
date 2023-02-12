@@ -37,6 +37,8 @@ public:
 	virtual void InitializeAsAScheduler(int uPriority);
 	virtual void FinalizeAsAScheduler();
 
+	virtual void Fork() {}
+	virtual void Join() {}
 	virtual void Start();
 	virtual void Stop();
 	virtual void Run();
@@ -47,9 +49,12 @@ public:
 protected:
 	virtual void RunOnce();
 
+	virtual void Fork(Event* pEvent);
+	virtual void Join(Event* pEvent);
+	virtual void Start(Event* pEvent);
+	virtual void Stop(Event* pEvent);
 	virtual void Pause(Event* pEvent);
 	virtual void Resume(Event* pEvent);
-	virtual void Stop(Event* pEvent);
 
 	void AllocateAComponent(Component* pComponent);
 	void DellocateAComponent(Component* pComponent);

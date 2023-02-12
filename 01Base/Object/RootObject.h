@@ -40,25 +40,9 @@ public:
 	inline void SetEState(EState eState) { this->m_eState = eState; }
 
 	// constructors and destructors
-	RootObject(unsigned nClassId = _RootObject_Id, const char* pcClassName = _RootObject_Name)
-	: m_nClassId(nClassId)
-	, m_pcClassName(pcClassName)
-	, m_szThis(0)
-	{
-		this->m_eState = EState::eCreated;
-		this->m_uObjectId = RootObject::s_uObjectCount++;
-	}
-	virtual ~RootObject() 
-	{
-	    this->m_eState = EState::eDeleted;
-	}
-	virtual void Initialize()
-	{
-		this->m_eState = EState::eInitialized;
-	}
-	virtual void Finalize()
-	{
-		this->m_eState = EState::eFinalized;
-	}
+	RootObject(unsigned nClassId = _RootObject_Id, const char* pcClassName = _RootObject_Name);
+	virtual ~RootObject();
+	virtual void Initialize();
+	virtual void Finalize();
 };
 

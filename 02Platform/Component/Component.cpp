@@ -245,7 +245,8 @@ void Component::ProcessAEvent(Event* pEvent) {
 		throw Exception(
 			(unsigned)EException::eEventNotSupported,
 			this->GetClassName(), __func__,
-			String("eEventNotSupported:") + (unsigned)pEvent->GetType());
+			String("eEventNotSupported:") + (unsigned)pEvent->GetType()),
+			SHOW_EVENTNAME(pEvent->GetType());
 		break;
 	}
 }

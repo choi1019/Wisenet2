@@ -13,25 +13,28 @@ protected:
 	int m_nType;
 	String m_sObject;
 	String m_sFunction;
-	String m_sMessage;
+	String m_sMessage1;
+	String m_sMessage2;
 //	time_t m_tTime;
 public:
 	int GetType() { return this->m_nType; }
 	String GetSource() { return this->m_sObject; }
 	String GetFunction() { return this->m_sFunction; }
-	String& GetMessage() { return this->m_sMessage; }
-	
+	String& GetMessage1() { return this->m_sMessage1; }
+	String& GetMessage2() { return this->m_sMessage2; }
 public:
 	Exception(
 		int nType = UNDEFINED,
 		String sObject = "",
 		String sFunction = "",
-		String sMessage = "")
+		String sMessage1 = "",
+		String sMessage2 = "")
 		: Aspect(_Exception_Id, _Exception_Name)
 		, m_nType(nType)
 		, m_sObject(sObject)
 		, m_sFunction(sFunction)
-		, m_sMessage(sMessage)
+		, m_sMessage1(sMessage1)
+		, m_sMessage2(sMessage2)
 	{
 //		m_tTime = time(0);
 	}
@@ -46,11 +49,12 @@ public:
 
 	virtual void Println() {
 		printf(
-			"\n>> Execption(%d) << %s::%s => %s\n"
+			"\n>> Execption(%d) << %s::%s => %s, %s\n"
 			, m_nType
 			, m_sObject.c_str()
 			, m_sFunction.c_str()
-			, m_sMessage.c_str()
+			, m_sMessage1.c_str()
+			, m_sMessage2.c_str()
 			//			,String(m_tTime).c_str()
 		);
 	}

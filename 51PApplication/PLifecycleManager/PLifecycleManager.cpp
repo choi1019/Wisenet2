@@ -41,9 +41,11 @@ void PLifecycleManager::Finalize() {
 }
 
 void PLifecycleManager::StartComponents() {
-	this->SendReplyEvent((int)EComponents::eVideoManager, (int)Component::EEventType::eStart);
+//	this->SendReplyEvent((int)EComponents::eVideoManager, (int)Component::EEventType::eStart);
+	BaseObject::s_pMemory->Show("Static");
+	ValueObject::s_pMemory->Show("Dynamic");
 }
 
 void PLifecycleManager::StopComponents() {
-	this->SendReplyEvent((int)EComponents::eVideoManager, (int)Component::EEventType::eStop);
+//	this->SendReplyEvent((int)EComponents::eVideoManager, (int)Component::EEventType::eStop);
 }
