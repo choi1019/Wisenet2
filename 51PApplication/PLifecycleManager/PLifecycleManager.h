@@ -13,7 +13,7 @@ public:
 		eScheduler1,
 		eScheduler2,
 		eScheduler3,
-		eTimer33,
+		eTimer,
 
 		eVideoManager,
 		eVideoInput,

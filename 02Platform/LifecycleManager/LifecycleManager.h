@@ -6,7 +6,7 @@
 
 class LifecycleManager : public ILifecycleManager, public Component{
 
-private:
+protected:
 	// <schedulerName, schedulerPtr>
 	typedef Map<int, Scheduler*> MapSchedulers;
 	// <componentName, ComponentPtr>

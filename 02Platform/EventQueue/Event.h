@@ -29,7 +29,7 @@ private:
 	bool m_bSynchronous;
 //	bool m_bBlocked;
 	// Sequential
-	bool m_bSequential;
+//	bool m_bSequential;
 	// Nested
 //	bool m_bNested;
 

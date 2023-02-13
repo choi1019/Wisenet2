@@ -105,11 +105,13 @@ void ComponentPart::SendAEvent(Event* pEvent) {
 			"EventQueue is not allocated"
 		);
 	}
-	// parent event is synchronous
-	if (m_pEventParent != nullptr) {
-		pEvent->SetPParent(m_pEventParent);
-		// parent event wait replying untill all the children finish
-		pEvent->GetPParent()->IncrementCountChildren();
+	// event is synchronous
+	if (pEvent->IsSynchronous()) {
+		if (m_pEventParent != nullptr) {
+			pEvent->SetPParent(m_pEventParent);
+			// parent event wait replying untill all the children finish
+			pEvent->GetPParent()->IncrementCountChildren();
+		}
 	}
 	pEvent->GetUIdTarget().GetPEventQueue()->PushBack(pEvent);
 }

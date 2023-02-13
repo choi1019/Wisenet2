@@ -149,14 +149,13 @@ void Component::Finalize() {
 }
 
 void Component::Start() {
-	SetEState(EState::eStarted);
+	SetEState(EState::eRunning);
 }
 void Component::Stop() {
 	SetEState(EState::eStopped);
 	this->RemovePartAll();
 }
 void Component::Run() {
-	SetEState(EState::eRunning);
 }
 void Component::Pause() {
 	SetEState(EState::ePaused);

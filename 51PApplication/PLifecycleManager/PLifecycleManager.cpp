@@ -2,6 +2,7 @@
 
 #include <12PPlatform/PComponent/PComponent.h>
 #include <12PPlatform/PScheduler/PScheduler.h>
+#include <13PTechnical/PTimer/PTimer.h>
 
 PLifecycleManager::PLifecycleManager(
 		unsigned typeId,
@@ -16,11 +17,11 @@ void PLifecycleManager::RegisterUserShedulers() {
 	// this->RegisterAScheduler((int)EComponents::eVideoInput, new("eVideoInput") VideoInput());
 }
 void PLifecycleManager::RegisterUserComponents() {
-	// this->RegisterAComponent((int)EComponents::eTimer33, new("eTimer33") PTimer(0, 33));
+	this->RegisterAComponent((int)EComponents::eTimer, new("eTimer") PTimer(1));
 	// this->RegisterAComponent((int)EComponents::eVideoManager, new("VideoManager") VideoManager());
 }
 void PLifecycleManager::AllocateUserComponents() {
-	// this->AllocateAComponent((int)EComponents::eTimer33, (int)EComponents::eScheduler1);
+	this->AllocateAComponent((int)EComponents::eTimer, (int)EComponents::eScheduler1);
 	// this->AllocateAComponent((int)EComponents::eVideoManager, (int)EComponents::eScheduler1);
 }
 void PLifecycleManager::AssociateUserSendersNReceivers() {
@@ -44,6 +45,7 @@ void PLifecycleManager::StartComponents() {
 //	this->SendReplyEvent((int)EComponents::eVideoManager, (int)Component::EEventType::eStart);
 	BaseObject::s_pMemory->Show("Static");
 	ValueObject::s_pMemory->Show("Dynamic");
+	this->m_mapComponents[(int)EComponents::eTimer]->Start();;
 }
 
 void PLifecycleManager::StopComponents() {

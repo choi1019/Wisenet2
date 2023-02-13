@@ -13,5 +13,5 @@ public:
 
 	virtual void Fork();
 	virtual void Join();
-    virtual void Run() = 0;
+    virtual void RunThread() = 0;
 };

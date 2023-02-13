@@ -1,14 +1,14 @@
 #include <13PTechnical/PThread/PThread.h>
 #include <01Base/Aspect/Exception.h>
 
-void* CallBackPScheduler(void *pObject) {
+void* CallBackPThread(void *pObject) {
 	PThread *pThread = (PThread *)pObject;
-	pThread->Run();
+	pThread->RunThread();
 	return nullptr;
 }
 
 void PThread::Fork() {
-	m_idThared = pthread_create((&m_thread), NULL, CallBackPScheduler, (void*)this);
+	m_idThared = pthread_create((&m_thread), NULL, CallBackPThread, (void*)this);
 	if(m_idThared < 0) {
 		throw Exception();
 	}
