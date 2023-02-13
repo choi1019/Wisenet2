@@ -1,3 +1,4 @@
+#pragma once
 #include <pthread.h>
 
 class PThread
@@ -11,7 +12,7 @@ public:
 
 	virtual ~PThread();
 
-	virtual void Fork();
+	virtual void Fork(void *(*__start_routine)(void *), void *pObject);
 	virtual void Join();
     virtual void RunThread() = 0;
 };

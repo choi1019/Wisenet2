@@ -9,7 +9,8 @@ enum class _ELayer_PTechnical {
 	_ePMemoryDynamic,
 	_ePMemoryEven,
 
-	_ePTimer,
+	_ePTimerRTC,
+	_ePTimerLinux,
 
 	_eEnd
 };

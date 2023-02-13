@@ -1,14 +1,16 @@
 #pragma once
 
 #include <13PTechnical/typedef.h>
-#define _PTimer_Id _GET_CLASS_UID(_ELayer_PTechnical::_ePTimer)
-#define _PTimer_Name "PTimer"
+#define _PTimerRTC_Id _GET_CLASS_UID(_ELayer_PTechnical::_ePTimerRTC)
+#define _PTimerRTC_Name "PTimerRTC"
 
 #include <03Technical/Timer/Timer.h>
 #include <13PTechnical/PThread/PThread.h>
 #include <linux/rtc.h>
 
-class PTimer : public Timer, public PThread {
+extern void* CallBackPTimerRTC(void *pObject);
+
+class PTimerRTC : public Timer, public PThread {
 private:
 	struct rtc_time m_time;
 	int m_nFd;
@@ -16,9 +18,9 @@ private:
 	unsigned m_uCounter;
 	
 public:
-	PTimer(size_t szPeriod, int nComponentId = _PTimer_Id, const char* sComponentName = _PTimer_Name);
+	PTimerRTC(size_t szPeriod, int nComponentId = _PTimerRTC_Id, const char* sComponentName = _PTimerRTC_Name);
 
-	~PTimer() override;
+	~PTimerRTC() override;
 	void Initialize() override;
 	void Finalize() override;
 

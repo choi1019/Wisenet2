@@ -1,55 +1,55 @@
-#include <13PTechnical/PTimer/PTimer.h>
+#include <13PTechnical/PTimer/PTimerRTC.h>
 
 #include <sys/ioctl.h>
 #include <fcntl.h>
 #include <unistd.h>
 
-void* CallBackPTimer(void *pObject) {
-	PTimer *pPTimer = (PTimer *)pObject;
+void* CallBackPTimerRTC(void *pObject) {
+	PTimerRTC *pPTimer = (PTimerRTC *)pObject;
 	pPTimer->RunThread();
 	return nullptr;
 }
 
 // PTimer
-PTimer::PTimer(size_t szPeriod, int nComponentId, const char* sComponentName) 
+PTimerRTC::PTimerRTC(size_t szPeriod, int nComponentId, const char* sComponentName) 
     : Timer(nComponentId, sComponentName) 
     , m_szPeriod(szPeriod)
     , m_uCounter(0)
 {
-    char path[20] = "rtc";
+    char path[20] = "/dev/rtc";
     m_nFd = open(path, O_RDONLY);
     if (m_nFd < 0) {
  	}
 }
 
-PTimer::~PTimer() {
+PTimerRTC::~PTimerRTC() {
     close(m_nFd);
 }
 
-void PTimer::Initialize() {
+void PTimerRTC::Initialize() {
     Timer::Initialize();
 
-    int retval = ioctl(m_nFd, RTC_IRQP_SET, 0);
+    int retval = ioctl(m_nFd, RTC_IRQP_SET, 2);
 	if (retval == -1) {
 	}
 }
 
-void PTimer::Finalize() {
+void PTimerRTC::Finalize() {
     Timer::Finalize();
 
 }
 
-void PTimer::Start() {
+void PTimerRTC::Start() {
     Timer::Start();
-    PThread::Fork();
+    PThread::Fork(&CallBackPTimerRTC, this);
     // Enable periodic interrupts
-	int retval = ioctl(m_nFd, RTC_PIE_ON, 0);
+	int retval = ioctl(m_nFd, RTC_UIE_ON, 0);
 	if (retval == -1) {
 	}
 }
 
 // Thread
-void PTimer::RunThread() {
+void PTimerRTC::RunThread() {
     size_t counter = 0;
     while(this->GetEState() == Component::EState::eRunning) {
         // This blocks
@@ -57,28 +57,25 @@ void PTimer::RunThread() {
         int retval = read(m_nFd, &data, sizeof(unsigned long));
         if (retval == -1) {
         }
-//       if (++counter > m_szPeriod) {
-            SendNoReplyEvent(this->GetUId(), (unsigned)ITimer::EEventType::eTimeOut);
-//          counter = 0;
-//        }
+        SendNoReplyEvent(this->GetUId(), (unsigned)ITimer::EEventType::eTimeOut);
     }
 }
 
-void PTimer::Stop() {
+void PTimerRTC::Stop() {
     // Disable periodic interrupts
-	int retval = ioctl(m_nFd, RTC_PIE_OFF, 0);
+	int retval = ioctl(m_nFd, RTC_UIE_OFF, 0);
 	if (retval == -1) {
 	}
     Timer::Stop();
     PThread::Join();
 }
 
-void PTimer::TimeOut(Event *pEvent) {
+void PTimerRTC::TimeOut(Event *pEvent) {
 //    SendTargetEvents((unsigned)ITimer::EGroups::eGroup1, (unsigned)ITimer::EEventType::eTimeOut);
-    LOG_NEWLINE("%%%% PTimer::TimeOut()", m_uCounter++);
+    LOG_NEWLINE("%%%%", this->GetComponentId(), " PTimer::TimeOut()", m_uCounter++);
 }
 
-void PTimer::ProcessAEvent(Event *pEvent) {
+void PTimerRTC::ProcessAEvent(Event *pEvent) {
     switch(pEvent->GetType()) {
         case (unsigned)ITimer::EEventType::eTimeOut:
             this->TimeOut(pEvent);
