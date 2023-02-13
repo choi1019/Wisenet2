@@ -6,7 +6,7 @@
 
 #include <03Technical/Timer/Timer.h>
 #include <13PTechnical/PThread/PThread.h>
-#include <sys/time.h>
+//#include <linux/hrtimer.h>
 
 extern void* CallBackPTimerLinux(void *pObject);
 
@@ -18,9 +18,7 @@ public:
 private:
 	size_t m_szPeriod;
 	unsigned m_uCounter;
-
-
-	
+		
 public:
 	PTimerLinux(size_t szPeriod, int nComponentId = _PTimerLinux_Id, const char* sComponentName = _PTimerLinux_Name);
 
