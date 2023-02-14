@@ -11,14 +11,9 @@ void* CallBackPComponentPart(void *pObject) {
 PComponentPart::PComponentPart(int uClassId, const char* acClassName)
 	: ComponentPart(uClassId, acClassName)
 {
-	this->RegisterExceptions();
 }
 
 PComponentPart::~PComponentPart() {
-}
-
-void PComponentPart::RegisterExceptions() {
-	ComponentPart::RegisterExceptions();
 }
 
 void PComponentPart::Initialize() {

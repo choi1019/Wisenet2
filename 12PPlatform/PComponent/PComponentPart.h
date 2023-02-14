@@ -16,9 +16,6 @@ private:
 	int m_idThared;
 	size_t m_stsThread;
 
-protected:
-	virtual void RegisterExceptions();
-
 public:
 	// for Component
 	PComponentPart(int uClassId = PComponentPart_Id, const char* acClassName = PComponentPart_Name);

@@ -1,8 +1,8 @@
 #pragma once
 
+#include <02Platform/Main/IMain.h>
 #include <02Platform/Scheduler/Scheduler.h>
 #include <02Platform/LifecycleManager/LifecycleManager.h>
-#include <02Platform/Main/IMain.h>
 
 class Main : public Scheduler, public IMain
 {
@@ -18,27 +18,31 @@ public:
 		const char* pcClassName = _Main_Name);
 	virtual ~Main();
 
-	virtual void Run();
-	// do nothing as a scheduler
-	virtual void InitializeAsAScheduler(int uPriority);
-	virtual void Start();
-	virtual void Join();
+	// as a Main
+	virtual void BootstrapSystem() = 0;
+	void InitializeAsAMain(Event* pEvent);
+	virtual void RunAsAMain();
+	void FinalizeAsAMain(Event* pEvent);
+	virtual void ShutdownSystem() = 0;
 
-	virtual void Pause();
-	virtual void Resume();
-	virtual void Stop();
+	// as a Scheduler - do nothing except "RunAsAScheduler"
+	void InitializeAsAScheduler(int uPriority) override {}
+	void FinalizeAsAScheduler() override {}
+	void Fork() override {}
+	void Join() override {}
+	void StartAsAScheduler() override {}
+	void PauseAsAScheduler() override {}
+	void ResumeAsAScheduler() override {}
+	void StopAsAScheduler() override {}
 
-	virtual void FinalizeAsAScheduler();
+	// as a Component
+	virtual void Initialize() { Scheduler::Initialize(); }
+	virtual void Finalize() { Scheduler::Initialize(); }
 
 protected:
 	LifecycleManager* GetPLifecycleManager() { return this->m_pLifecycleManager; }
 	void SetPLifecycleManager(LifecycleManager* pLifecycleManager) { this->m_pLifecycleManager = pLifecycleManager; }
-
-	virtual void SendStartEvent();
-
-	virtual void InitializeAsAMain(Event* pEvent);
-	virtual void FinalizeAsAMain(Event* pEvent);
-
+	
 	virtual void ProcessAEvent(Event* pEvent);
 };
 

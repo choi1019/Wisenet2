@@ -105,6 +105,7 @@ void PTimerLinux::ProcessAEvent(Event *pEvent) {
             this->TimeOut(pEvent);
             break;
         default:
+        	Timer::ProcessAEvent(pEvent);
             break;
     }
 

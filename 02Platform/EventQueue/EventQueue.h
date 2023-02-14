@@ -7,7 +7,6 @@
 #include <01Base/Object/BaseObject.h>
 #include <01Base/Object/ValueObject.h>
 #include <02Platform/EventQueue/Event.h>
-#include <01Base/Aspect/Log.h>
 
 class EventQueue : public BaseObject
 {
@@ -41,21 +40,6 @@ public:
 		BaseObject::Finalize();
 	}
 
-	void ShowState(const char* sMessage) {
-		LOG_HEADER(sMessage);
-		//		Log("SizeThis + Size Allocated", this->GetSzThis(), m_szSlot * m_uCountTotalSlots).Println();
-		//		Log("SizeSlot x CountSlots", m_szSlot, m_uCountTotalSlots).Println();
-		unsigned index = 0;
-		for (Event* pEvent = m_pFront; pEvent != nullptr; pEvent = pEvent->GetPQueueNext()) {
-			LOG("Event",
-				pEvent->GetId(),
-				Directory::s_dirComponents[pEvent->GetUIdTarget().GetComponentId()],
-				Directory::s_dirEvents[pEvent->GetType()]
-			);
-		}
-		LOG_FOOTER(sMessage, m_nLength);
-	}
-
 	virtual void PushBack(Event* pEvent) {
 		if (m_nLength == 0) {
 			this->m_pRear = pEvent;
@@ -86,5 +70,6 @@ public:
 		return (m_nLength == 0) ? true : false;
 	}
 
+	void Show(const char* sMessage);
 };
 

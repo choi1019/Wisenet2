@@ -1,8 +1,11 @@
 #include <02Platform/Main/Main.h>
+#include <01Base/Aspect/Exception.h>
+#include <01Base/Aspect/Log.h>
 
 void Main::RegisterEventTypes() {
-	REGISTER_EVENT(IMain, eInitializeAsAMain);
-	REGISTER_EVENT(IMain, eFinalizeAsAMain);
+	Directory::s_dirEvents[(int)IMain::EEventType::eInitializeAsAMain] = "eInitializeAsAMain";
+	Directory::s_dirEvents[(int)IMain::EEventType::eRunAsAMain] = "eRunAsAMain";
+	Directory::s_dirEvents[(int)IMain::EEventType::eFinalizeAsAMain] = "eFinalizeAsAMain";
 }
 
 void  Main::RegisterExceptions() {
@@ -15,47 +18,29 @@ Main::Main(
 	: Scheduler(uClassId, pcClassName)
 	, m_pLifecycleManager(nullptr)
 {
+	this->RegisterEventTypes();
+	this->RegisterExceptions();
 }
 Main::~Main() {}
 
-void Main::Run() {
-	Scheduler::Run();
-}
-// do nothing as a scheduler
-void Main::InitializeAsAScheduler(int uPriority) {}
-
-void Main::Start() {}
-void Main::Join() {}
-
-void Main::Pause() {}
-void Main::Resume() {}
-void Main::Stop() {}
-
-void Main::FinalizeAsAScheduler() {}
-
-void Main::SendStartEvent() {
-	// initialize as a main, scheduler is not running
-//	this->BeginSequence(nullptr);
-	this->SendNoReplyEvent(
-		this->GetUId(),
-		(unsigned)IMain::EEventType::eInitializeAsAMain,
-		0,
-		nullptr   // root event
-	);
-//	this->EndSequence(nullptr);
+void Main::RunAsAMain() {
+	Scheduler::RunAsAScheduler();
 }
 
 void Main::InitializeAsAMain(Event* pEvent) {
 	if (pEvent->IsReply()) {
-		LOG_FOOTER(this->GetClassName(), __func__, "finished");
-		this->SendNoReplyEvent(
-			this->m_pLifecycleManager->GetUId(), 
-			(int)ILifecycleManager::EEventType::eStartComponents
-		);
+		if (pEvent->GetReplyType() == (int)ILifecycleManager::EEventType::eInitializeAsALifecycleManager) {
+			LOG_FOOTER("Main::InitializeAsAMain", "Send->m_pLifecycleManager(eInitializeAsALifecycleManager)");
+			this->SendNoReplyEvent(this->m_pLifecycleManager->GetUId(), (int)ILifecycleManager::EEventType::eStartComponents);
+			LOG_HEADER("Main::InitializeAsAMain", "Send->m_pLifecycleManager(eStartComponents)");
+		} else if (pEvent->GetReplyType() == (int)ILifecycleManager::EEventType::eStartComponents) {
+			LOG_FOOTER("Main::InitializeAsAMain", "Send->m_pLifecycleManager(eStartComponents)");
+		} else {
+			throw Exception ((unsigned)IComponent::EException::eEventNotSupported, "Main", "InitializeAsAMain", pEvent->GetType());
+		}
 	}
 	else {
-		LOG_HEADER(this->GetClassName(), __func__, "started");
-
+		LOG_HEADER("Main::InitializeAsAMain", "Send->m_pLifecycleManager(eInitializeAsALifecycleManager)");
 		// send a trigger event
 		ILifecycleManager::ParamInitializeAsALifecycleManager* pParamParamInitializeAsALifecycleManager
 			= new("ParamInitializeAsALifecycleManager") ILifecycleManager::ParamInitializeAsALifecycleManager(this);
@@ -68,6 +53,7 @@ void Main::InitializeAsAMain(Event* pEvent) {
 	}
 
 }
+
 void Main::FinalizeAsAMain(Event* pEvent) {
 	if (pEvent->IsReply()) {
 		Scheduler::Stop();

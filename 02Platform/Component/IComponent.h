@@ -11,6 +11,35 @@
 
 class IComponent {
 public:
+	enum class EState {
+		eBegin = Component_Id,
+
+		eCreated,
+		eAllocated,
+		eAssociated,
+		eTargeted,
+		eInitialized,
+		eStarted,
+		eRunning,
+		ePaused,
+		eStopped,
+		eFinalized,
+		eDeleted,
+
+		eEnd
+	};
+
+	enum class EException {
+		eBegin = Component_Id,
+		eNotAllocated,
+		eReceiverNotFound,
+		eNotAssociated,
+		eNotTargeted,
+		eEventNotSupported,
+		eNotStopped,
+		eEnd
+	};
+
 	enum class EEventType {
 		eBegin = Component_Id,
 
@@ -24,7 +53,7 @@ public:
 
 		eRun,
 		ePause,
-
+		eResume,
 
 		eEnd
 	};

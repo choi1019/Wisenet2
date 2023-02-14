@@ -16,9 +16,11 @@ public:
 		const char* pcClassName = _PMain_Name);
 	virtual ~PMain();
 
+	// as a Component
 	void Initialize() override;
 	void Finalize() override;
 	
-	virtual void BootstrapSystem();
-	virtual void ShutdownSystem();
+	void BootstrapSystem() override;
+	void RunAsAMain() override;
+	void ShutdownSystem() override;
 };

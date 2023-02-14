@@ -51,7 +51,7 @@ void PTimerRTC::Start() {
 // Thread
 void PTimerRTC::RunThread() {
     size_t counter = 0;
-    while(this->GetEState() == Component::EState::eRunning) {
+    while(this->GetEState() == IComponent::EState::eRunning) {
         // This blocks
         size_t data;
         int retval = read(m_nFd, &data, sizeof(unsigned long));
@@ -81,6 +81,7 @@ void PTimerRTC::ProcessAEvent(Event *pEvent) {
             this->TimeOut(pEvent);
             break;
         default:
+            Timer::ProcessAEvent(pEvent);
             break;
     }
 

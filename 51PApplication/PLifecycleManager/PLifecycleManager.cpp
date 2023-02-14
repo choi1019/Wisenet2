@@ -48,7 +48,7 @@ void PLifecycleManager::StartComponents() {
 //	this->SendReplyEvent((int)EComponents::eVideoManager, (int)Component::EEventType::eStart);
 	BaseObject::s_pMemory->Show("Static");
 	ValueObject::s_pMemory->Show("Dynamic");
-	this->m_mapComponents[(int)EComponents::eTimer1]->Start();
+	this->SendReplyEvent((int)EComponents::eTimer1, (int)IComponent::EEventType::eStart);
 //	this->m_mapComponents[(int)EComponents::eTimer2]->Start();;
 }
 

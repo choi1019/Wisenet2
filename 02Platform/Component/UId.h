@@ -9,11 +9,11 @@
 class EventQueue;
 class UId: public ValueObject {
 private:
-	unsigned m_uComponentId;
+	int m_uComponentId;
 	EventQueue* m_pEventQueue;
 
 public:
-	UId(unsigned uComponentId = UNDEFINED, EventQueue* pEventQueue = nullptr)
+	UId(int uComponentId = UNDEFINED, EventQueue* pEventQueue = nullptr)
 		: ValueObject(UId_Id, UId_Nname)
 		, m_uComponentId(uComponentId)
 		, m_pEventQueue(pEventQueue)
@@ -31,7 +31,7 @@ public:
 	EventQueue* GetPEventQueue() { return this->m_pEventQueue; }
 
 	int GetComponentId() { return this->m_uComponentId; }
-	void SetComponentId(unsigned componentId) { this->m_uComponentId = componentId; }
+	void SetComponentId(int componentId) { this->m_uComponentId = componentId; }
 
 	bool operator==(UId& other) {
 		return (this->m_pEventQueue == other.m_pEventQueue && this->m_uComponentId == other.m_uComponentId);

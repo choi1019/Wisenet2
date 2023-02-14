@@ -14,7 +14,6 @@ ComponentPart::ComponentPart(unsigned uClassId, const char* acClassName)
 //	, m_pSequenceHead(nullptr)
 	, m_pEventParent(nullptr) 
 {
-	this->RegisterExceptions();
 }
 
 ComponentPart::~ComponentPart() {
@@ -26,14 +25,6 @@ void ComponentPart::Initialize() {
 
 void ComponentPart::Finalize() {
 	BaseObject::Finalize();
-}
-
-void ComponentPart::RegisterExceptions() {
-	Directory::s_dirExceptions[(unsigned)EException::eNotAllocated] = "eNotAllocated";
-	Directory::s_dirExceptions[(unsigned)EException::eReceiverNotFound] = "eReceiverNotFound";
-	Directory::s_dirExceptions[(unsigned)EException::eNotAssociated] = "eNotAssociated";
-	Directory::s_dirExceptions[(unsigned)EException::eNotTargeted] = "eNotTargeted";
-	Directory::s_dirExceptions[(unsigned)EException::eEventNotSupported] = "eEventNotSupported";
 }
 
 UId ComponentPart::FindUid(int nReceiverName) {
@@ -141,7 +132,7 @@ void ComponentPart::ReplyEvent(Event* pEvent, long long lArg, ValueObject* pArg)
 ///////////////////////////////////////
 void ComponentPart::SendReplyEvent(UId uIdTarget, int nEventType, long long lArg, ValueObject* pArg, int ReplyType)
 {
-	Event* pEvent = new("") Event(*m_pUId, uIdTarget, nEventType, lArg, pArg, ReplyType);
+	Event* pEvent = new("Event") Event(*m_pUId, uIdTarget, nEventType, lArg, pArg, ReplyType);
 	pEvent->SetBSynchronous(true);
 	this->SendAEvent(pEvent);
 }
@@ -156,7 +147,7 @@ void ComponentPart::SendReplyEvent(int nReceiverName, int nEventType, long long 
 ///////////////////////////////////////
 void ComponentPart::SendNoReplyEvent(UId uIdTarget, int nEventType, long long lArg, ValueObject* pArg)
 {
-	Event* pEvent = new("") Event(*m_pUId, uIdTarget, nEventType, lArg, pArg);
+	Event* pEvent = new("Event") Event(*m_pUId, uIdTarget, nEventType, lArg, pArg);
 	pEvent->SetBSynchronous(false);
 	this->SendAEvent(pEvent);
 }

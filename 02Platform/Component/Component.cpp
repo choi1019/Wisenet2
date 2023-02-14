@@ -19,11 +19,15 @@ void Component::RegisterEventTypes() {
 }
 
 void Component::RegisterExceptions() {
-	ComponentPart::RegisterExceptions();
+	Directory::s_dirExceptions[(unsigned)EException::eNotAllocated] = "eNotAllocated";
+	Directory::s_dirExceptions[(unsigned)EException::eReceiverNotFound] = "eReceiverNotFound";
+	Directory::s_dirExceptions[(unsigned)EException::eNotAssociated] = "eNotAssociated";
+	Directory::s_dirExceptions[(unsigned)EException::eNotTargeted] = "eNotTargeted";
+	Directory::s_dirExceptions[(unsigned)EException::eEventNotSupported] = "eEventNotSupported";
 }
 
-Component::Component(unsigned uClassId, const char* pcClassName)
-	: ComponentPart(uClassId, pcClassName)
+Component::Component(unsigned uClassId, const char* sClassName)
+	: ComponentPart(uClassId, sClassName)
 {
 	this->SetPUId(new("UId") UId(this->GetObjectId(), nullptr));
 	//		BaseObject::s_pMemory->SetId(this);
@@ -31,18 +35,14 @@ Component::Component(unsigned uClassId, const char* pcClassName)
 	this->SetPMReceivers(new("ReceiversMap") Map<unsigned, UId, MAXRECEIVERCOMPONENTS>());
 	this->SetPMTargetsGroups(new("TargetsMap") Map<unsigned, Vector<UId, MAXTARGETCOMPONENTS>*, MAXTARGETGROUPS>());
 
-	SetEState(EState::eCreated);
+	SetEState(IComponent::EState::eCreated);
 
 	// component id directory
-	Directory::s_dirComponents[this->GetComponentId()] = pcClassName;
+	Directory::s_dirComponents[this->GetComponentId()] = sClassName;
 	this->RegisterEventTypes();
 	this->RegisterExceptions();
-	// LOG
-	LOG_NEWLINE("new", Directory::s_dirComponents[this->GetComponentId()]);
 }
 Component::~Component() {
-	LOG_NEWLINE("delete", Directory::s_dirComponents[this->GetComponentId()]);
-
 	delete this->GetPUId();
 	delete this->GetPMReceivers();
 	// delete target group vectors
@@ -66,7 +66,7 @@ ComponentPart* Component::GetPart(unsigned uName) {
 ComponentPart* Component::RemovePart(unsigned uName) {
 	ComponentPart* pComponentPart = this->m_mComponentParts[uName];
 
-	if (pComponentPart->GetEState() == Component::EState::eRunning) {
+	if (pComponentPart->GetEState() == IComponent::EState::eRunning) {
 		throw Exception(
 			(unsigned)EException::eNotStopped,
 			this->GetClassName(),
@@ -82,7 +82,7 @@ ComponentPart* Component::RemovePart(unsigned uName) {
 void Component::RemovePartAll() {
 	for (auto iter : this->m_mComponentParts) {
 		ComponentPart* pComponentPart = iter.second;
-		if (pComponentPart->GetEState() == Component::EState::eRunning) {
+		if (pComponentPart->GetEState() == IComponent::EState::eRunning) {
 			throw Exception(
 				(unsigned)EException::eNotStopped,
 				this->GetClassName(),
@@ -97,8 +97,8 @@ void Component::RemovePartAll() {
 
 void Component::SetPEventQueue(EventQueue* pEventQueue) {
 	this->GetPUId()->SetPEventQueue(pEventQueue);
-	SetEState(EState::eAllocated);
-	LOG_NEWLINE(this->GetClassName(), __func__, Directory::s_dirComponents[pEventQueue->GetSchedulerId()]);
+	SetEState(IComponent::EState::eAllocated);
+	LOG_NEWLINE("Component::SetPEventQueue", this->GetClassName(), Directory::s_dirClasses[pEventQueue->GetClassId()]);
 }
 
 void Component::AssociateAReceiver(unsigned receiverName, UId receiverUId) {
@@ -139,33 +139,33 @@ void Component::AssociateATarget(unsigned uGroupName, Vector<UId>& vNewUIdTarget
 
 void Component::Initialize() {
 	ComponentPart::Initialize();
-	SetEState(EState::eInitialized);
+	SetEState(IComponent::EState::eInitialized);
 	LOG_NEWLINE(Directory::s_dirComponents[this->GetComponentId()], __func__);
 }
 void Component::Finalize() {
 	ComponentPart::Finalize();
-	SetEState(EState::eFinalized);
+	SetEState(IComponent::EState::eFinalized);
 	LOG_NEWLINE(Directory::s_dirComponents[this->GetComponentId()], __func__);
 }
 
 void Component::Start() {
-	SetEState(EState::eRunning);
+	SetEState(IComponent::EState::eRunning);
 }
 void Component::Stop() {
-	SetEState(EState::eStopped);
+	SetEState(IComponent::EState::eStopped);
 	this->RemovePartAll();
 }
 void Component::Run() {
 }
 void Component::Pause() {
-	SetEState(EState::ePaused);
+	SetEState(IComponent::EState::ePaused);
 }
 
 /////////////////////////////////////////////////////////////
 // event mapping functions
 /////////////////////////////////////////////////////////////
 void Component::AssociateAReceiver(Event* pEvent) {
-	if (GetEState() < EState::eAllocated) {
+	if (GetEState() < IComponent::EState::eAllocated) {
 		throw Exception((unsigned)EException::eNotAllocated, this->GetClassName(), __func__, "eNotAllocated");
 	}
 
@@ -174,12 +174,12 @@ void Component::AssociateAReceiver(Event* pEvent) {
 	UId uIdReceiverComponent = pParamAssociateAReceiver->GetUIdReceiverComponent();
 	this->AssociateAReceiver(uReceiverName, uIdReceiverComponent);
 
-	SetEState(EState::eAssociated);
+	SetEState(IComponent::EState::eAssociated);
 	//		Log(this->GetClassName(), "AssociateAReceiver", uReceiverName).Println();
 }
 
 void Component::AssociateATarget(Event* pEvent) {
-	if (GetEState() < EState::eAllocated) {
+	if (GetEState() < IComponent::EState::eAllocated) {
 		throw Exception((unsigned)EException::eNotAllocated, this->GetClassName(), __func__, "eNotAllocated");
 	}
 
@@ -189,7 +189,7 @@ void Component::AssociateATarget(Event* pEvent) {
 	this->AssociateATarget(uGroupName, vUIdTargetComponent);
 
 	//		this->SendAReplyEvent(pEvent, 0, nullptr);
-	SetEState(EState::eTargeted);
+	SetEState(IComponent::EState::eTargeted);
 }
 
 void Component::Initialize(Event* pEvent) {

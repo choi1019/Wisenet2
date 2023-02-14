@@ -1,9 +1,9 @@
 #pragma once
 
-#include <02Platform/Component/IComponent.h>
+
 #include <02Platform/Component/ComponentPart.h>
 
-class Component : public IComponent, public ComponentPart
+class Component : public ComponentPart
 {
 private:
 //	static unsigned s_uCounter;

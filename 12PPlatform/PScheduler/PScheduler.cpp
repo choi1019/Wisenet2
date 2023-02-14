@@ -4,7 +4,7 @@
 
 void* CallBackPScheduler(void *pObject) {
 	PScheduler *pPScheduler = (PScheduler *)pObject;
-	pPScheduler->Run();
+	pPScheduler->RunAsAScheduler();
 	return nullptr;
 }
 
@@ -38,8 +38,6 @@ void PScheduler::FinalizeAsAScheduler() {
 	Scheduler::FinalizeAsAScheduler();
 
 }
-
-
 
 void PScheduler::Initialize() {
 	Scheduler::Initialize();

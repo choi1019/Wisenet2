@@ -41,7 +41,7 @@ public:
 	inline bool operator!=(const MapIterator& rhs) { return pElement != rhs.pElement; }
 };
 
-template <class KEYTYPE, class VALUETYPE, int MAXLENGTH = 50>
+template <class KEYTYPE, class VALUETYPE, int MAXLENGTH = 100>
 class Map: public Collection {
 private:
 	int length;

@@ -9,6 +9,7 @@ public:
 	enum class EEventType {
 		eBegin = _Main_Id,
 		eInitializeAsAMain,
+		eRunAsAMain,
 		eFinalizeAsAMain,
 		eEnd
 	};

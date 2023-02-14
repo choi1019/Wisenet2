@@ -6,6 +6,7 @@
 
 
 #include <02Platform/EventQueue/EventQueue.h>
+#include <01Base/Aspect/Log.h>
 #include <pthread.h>
 #include <semaphore.h>
 

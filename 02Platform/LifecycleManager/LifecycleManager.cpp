@@ -5,7 +5,7 @@
 #include <02Platform/Main/IMain.h>
 #include <01Base/Aspect/Directory.h>
 #include <01Base/Aspect/Exception.h>
-
+#include <01Base/Aspect/Log.h>
 
 void LifecycleManager::RegisterEventTypes() {
 	Directory::s_dirEvents[(unsigned)ILifecycleManager::EEventType::eStopSystem] = "eStopSystem";

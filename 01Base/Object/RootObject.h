@@ -22,8 +22,8 @@ public:
 	static unsigned s_uObjectCount;
 private:
 	// attributes
-	unsigned 	m_uObjectId;
-	unsigned 	m_nClassId;
+	int 	m_uObjectId;
+	int 	m_nClassId;
 	const char* m_pcClassName;
 	size_t 		m_szThis;
 	EState 		m_eState;

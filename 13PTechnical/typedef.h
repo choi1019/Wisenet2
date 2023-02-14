@@ -8,6 +8,7 @@ enum class _ELayer_PTechnical {
 	_ePMemoryStatic,
 	_ePMemoryDynamic,
 	_ePMemoryEven,
+	_ePMemoryManager,
 
 	_ePTimerRTC,
 	_ePTimerLinux,

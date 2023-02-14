@@ -4,13 +4,13 @@
 unsigned RootObject::s_uObjectCount = 0;
 
 RootObject::RootObject(unsigned nClassId, const char* pcClassName)
-: m_nClassId(nClassId)
+: m_uObjectId(RootObject::s_uObjectCount++)
+, m_nClassId(nClassId)
 , m_pcClassName(pcClassName)
 , m_szThis(0)
 {
     this->m_eState = EState::eCreated;
-    this->m_uObjectId = RootObject::s_uObjectCount++;
-    Directory::s_dirObjects[nClassId] = pcClassName;
+    Directory::s_dirClasses[m_nClassId] = pcClassName;
 }
 RootObject::~RootObject() 
 {

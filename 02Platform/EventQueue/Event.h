@@ -8,6 +8,7 @@
 #include <02Platform/Component/UId.h>
 #include <01Base/Object/ValueObject.h>
 
+
 class Event: public ValueObject
 {
 private:
@@ -168,4 +169,6 @@ public:
 		}
 		return false;
 	}
+
+	void Show(const char* sMessage, int nMessage = 0);
 };

@@ -4,6 +4,7 @@
 #define ComponentPart_Id _GET_CLASS_UID(_ELayer_Platform::_eComponentPart)
 #define ComponentPart_Name "ComponentPart"  // class string name
 
+#include <02Platform/Component/IComponent.h>
 #include <01Base/Object/BaseObject.h>
 #include <02Platform/Component/UId.h>
 #include <02Platform/EventQueue/Event.h>
@@ -13,55 +14,20 @@
 
 #undef GetClassName
 
-class ComponentPart : public BaseObject {
-public:
-	enum class EState {
-		eBegin = ComponentPart_Id,
-
-		eCreated,
-		eAllocated,
-		eAssociated,
-		eTargeted,
-		eInitialized,
-		eStarted,
-		eRunning,
-		ePaused,
-		eStopped,
-		eFinalized,
-		eDeleted,
-
-		eEnd
-	};
-
-	enum class EException {
-		eBegin = ComponentPart_Id,
-		eNotAllocated,
-		eReceiverNotFound,
-		eNotAssociated,
-		eNotTargeted,
-		eEventNotSupported,
-		eNotStopped,
-		eEnd
-	};
-
+class ComponentPart : public BaseObject, public IComponent {
 protected:
 	//private:
 		// UId, Component Id, EventQueue *
 	UId* m_pUId;
-	EState m_eState;
+	IComponent::EState m_eState;
 
 	// <receiverName, receiverComponent UId>
 	Map<unsigned, UId, MAXRECEIVERCOMPONENTS>* m_pmReceivers;
 	// <targetGroupName, vector<targetUId>>
 	Map<unsigned, Vector<UId, MAXTARGETCOMPONENTS>*, MAXTARGETGROUPS>* m_pmTargetsGroups;
 
-	// for Sequencing
-	Event* m_pEventSequenceFront;
-	Event* m_pEventSequenceRear;
-
+	// for nested event
 	Event *m_pEventParent;
-	
-	void RegisterExceptions();
 
 public:
 	// for Component
@@ -73,8 +39,8 @@ public:
 	virtual void Finalize();
 
 	// getters and setters
-	virtual EState GetEState() { return this->m_eState; }
-	virtual void SetEState(EState eState) { this->m_eState = eState; }
+	virtual IComponent::EState GetEState() { return this->m_eState; }
+	virtual void SetEState(IComponent::EState eState) { this->m_eState = eState; }
 
 	UId* GetPUId() { return m_pUId; }
 	UId GetUId() { return *m_pUId; }
