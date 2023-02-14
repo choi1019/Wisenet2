@@ -18,8 +18,8 @@ void PLifecycleManager::RegisterUserShedulers() {
 	// this->RegisterAScheduler((int)EComponents::eVideoInput, new("eVideoInput") VideoInput());
 }
 void PLifecycleManager::RegisterUserComponents() {
-	this->RegisterAComponent((int)EComponents::eTimer1, new("eTimerLinux1") PTimerLinux(1));
-	this->RegisterAComponent((int)EComponents::eTimer2, new("eTimerLinux2") PTimerLinux(1));
+	this->RegisterAComponent((int)EComponents::eTimer1, new("eTimerLinux1") PTimerLinux(500));
+	this->RegisterAComponent((int)EComponents::eTimer2, new("eTimerLinux2") PTimerLinux(500));
 	// this->RegisterAComponent((int)EComponents::eVideoManager, new("VideoManager") VideoManager());
 }
 void PLifecycleManager::AllocateUserComponents() {

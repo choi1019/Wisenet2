@@ -10,15 +10,20 @@
 
 extern void* CallBackPTimerLinux(void *pObject);
 
+#define TIMER_NUMMAX 4
 class PTimerLinux : public Timer, public PThread {
 public:
-	static PTimerLinux *s_pPTimer;
-	static pthread_mutex_t *s_pMutex;
+	static PTimerLinux *s_apPTimer[TIMER_NUMMAX];
+	static void(*CallbackSignal[TIMER_NUMMAX])(int);
+	static int s_counterId;
 
 private:
-	size_t m_szPeriod;
+	int m_nId;
+	unsigned m_msecInterval;
+	unsigned m_secInterval;
 	unsigned m_uCounter;
-		
+
+	pthread_mutex_t m_mutex;		
 public:
 	PTimerLinux(size_t szPeriod, int nComponentId = _PTimerLinux_Id, const char* sComponentName = _PTimerLinux_Name);
 
@@ -28,10 +33,10 @@ public:
 
 	void Start() override;
 	void Stop() override;
+
 	void RunThread() override;
-
+	void Signal();
 	void TimeOut(Event *pEvent) override;
-
 
 	void ProcessAEvent(Event *pEvent) override;
 };
