@@ -1,5 +1,7 @@
 #include <13PTechnical/PTimer/PTimerLinux.h>
 #include <signal.h>
+#include <sys/time.h>
+//#include <linux/time.h>
 
 PTimerLinux *PTimerLinux::s_pPTimer = nullptr;
 pthread_mutex_t *PTimerLinux::s_pMutex;
