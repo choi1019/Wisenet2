@@ -6,24 +6,31 @@
 
 #include <03Technical/Timer/Timer.h>
 #include <13PTechnical/PThread/PThread.h>
-//#include <linux/hrtimer.h>
+#include <unistd.h>
+#include <time.h>
+#include <signal.h>
 
-#define TIMER_NUMMAX 4
-extern void* CallBackPTimerLinux(void *pObject);
-//static void SignalPTimerLinux0(int signum);
-extern void(*CallbackSignal[TIMER_NUMMAX])(int);
+
+static void* CallBackPTimerLinux(void *pObject);
+static void(*CallbackSignal)(int, siginfo_t, void*);
 
 class PTimerLinux : public Timer, public PThread {
 public:
-	static PTimerLinux *s_apPTimer[TIMER_NUMMAX];
 	static int s_counterId;
 private:
 	int m_nId;
+	timer_t m_tId;
+
 	unsigned m_msecInterval;
 	unsigned m_secInterval;
 	unsigned m_uCounter;
 
-	pthread_mutex_t m_mutex;		
+	struct sigevent m_sigEvent;
+	struct sigaction m_sigAction;
+	struct itimerspec m_iTimerSpec;
+
+	pthread_mutex_t m_mutex;
+
 public:
 	PTimerLinux(size_t szPeriod, int nComponentId = _PTimerLinux_Id, const char* sComponentName = _PTimerLinux_Name);
 

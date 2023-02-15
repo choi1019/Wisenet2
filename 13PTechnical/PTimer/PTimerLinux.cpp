@@ -1,40 +1,16 @@
 #include <13PTechnical/PTimer/PTimerLinux.h>
-#include <signal.h>
-#include <sys/time.h>
 
-PTimerLinux *PTimerLinux::s_apPTimer[TIMER_NUMMAX] = {};
 int PTimerLinux::s_counterId = 0;
-
-//////////////////////////////////////////////
 // timer signal call back
-void SignalPTimerLinux0(int signum) {
-	PTimerLinux::s_apPTimer[0]->Signal();
+void SignalPTimerLinux(int sig, siginfo_t *si, void *uc) {
+    PTimerLinux *pPTimerLinux = (PTimerLinux *) si->_sifields._rt.si_sigval.sival_ptr;
 }
-void SignalPTimerLinux1(int signum) {
-	PTimerLinux::s_apPTimer[1]->Signal();
-}
-void SignalPTimerLinux2(int signum) {
-	PTimerLinux::s_apPTimer[2]->Signal();
-}
-void SignalPTimerLinux3(int signum) {
-	PTimerLinux::s_apPTimer[3]->Signal();
-}
-void(*CallbackSignal[TIMER_NUMMAX])(int) = {
-    &SignalPTimerLinux0,
-    &SignalPTimerLinux1,
-    &SignalPTimerLinux2,
-    &SignalPTimerLinux3
-};
-//////////////////////////////////////////////
-
-//////////////////////////////////////////////
 // thread callback
 void* CallBackPTimerLinux(void *pObject) {
     PTimerLinux *pPTimerLinux = (PTimerLinux *)pObject;
     pPTimerLinux->RunThread();
     return nullptr;
 }
-//////////////////////////////////////////////
 
 // PTimer
 PTimerLinux::PTimerLinux(size_t msecInterval, int nComponentId, const char* sComponentName) 
@@ -42,10 +18,30 @@ PTimerLinux::PTimerLinux(size_t msecInterval, int nComponentId, const char* sCom
     , m_uCounter(0)
 {
     m_nId = s_counterId++;
-    PTimerLinux::s_apPTimer[m_nId] = this;
+
+    int result = pthread_mutex_init(&m_mutex, nullptr);
+    pthread_mutex_lock(&m_mutex);
 
     m_msecInterval = msecInterval % 1000;
     m_secInterval = msecInterval / 1000;
+
+    /* Register signal handler */
+    m_sigAction.sa_flags = SA_SIGINFO;
+    m_sigAction.sa_sigaction = SignalPTimerLinux;
+    sigemptyset(&m_sigAction.sa_mask);
+    result = sigaction(SIGVTALRM, &m_sigAction, NULL);
+    if ( result == -1){
+        throw Exception();
+    }
+
+    /* create timer */
+    m_sigEvent.sigev_notify = SIGEV_SIGNAL; // Linux-specific
+    m_sigEvent.sigev_signo = SIGRTMIN;
+    m_sigEvent.sigev_value.sival_ptr = &m_tId;
+    result = timer_create(CLOCK_REALTIME, &m_sigEvent, &m_tId);
+    if ( result != 0) {
+        throw Exception();
+    }
 }
 
 PTimerLinux::~PTimerLinux() {
@@ -63,22 +59,21 @@ void PTimerLinux::Finalize() {
 
 void PTimerLinux::Start() {
     Timer::Start();
-    PThread::Fork(&CallBackPTimerLinux, this);
+    PThread::Fork(CallBackPTimerLinux, this);
 }
 
 // Thread
 void PTimerLinux::RunThread() {
-    int result = pthread_mutex_init(&m_mutex, nullptr);
-    
-    struct itimerval m_timeNew;
-	struct itimerval m_timeOld;
-    m_timeNew.it_value.tv_sec = 1;
-    m_timeNew.it_value.tv_usec = 0;
-    m_timeNew.it_interval.tv_sec = m_secInterval;
-    m_timeNew.it_interval.tv_usec = m_msecInterval * 1000;
-    setitimer(ITIMER_REAL, &m_timeNew, &m_timeOld);
-    signal(SIGALRM, CallbackSignal[m_nId]);
-    pthread_mutex_lock(&m_mutex);
+    /* start timer */
+    m_iTimerSpec.it_value.tv_sec  = 1;
+    m_iTimerSpec.it_value.tv_nsec = 0;
+    m_iTimerSpec.it_interval.tv_sec  = m_msecInterval;
+    m_iTimerSpec.it_interval.tv_nsec = m_secInterval; 
+    int result = timer_settime(m_tId, 0, &m_iTimerSpec, NULL);
+    if ( result != 0) {
+        throw Exception();
+    }
+    // wait until
     pthread_mutex_lock(&m_mutex);
 }
 
