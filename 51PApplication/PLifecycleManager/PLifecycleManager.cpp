@@ -14,17 +14,17 @@ PLifecycleManager::~PLifecycleManager() {}
 
 void PLifecycleManager::RegisterUserShedulers() {
 	this->RegisterAScheduler((int)EComponents::eScheduler1, new("eScheduler1") PScheduler());
-//	this->RegisterAScheduler((int)EComponents::eScheduler2, new("eScheduler2") PScheduler());
+	this->RegisterAScheduler((int)EComponents::eScheduler2, new("eScheduler2") PScheduler());
 	// this->RegisterAScheduler((int)EComponents::eVideoInput, new("eVideoInput") VideoInput());
 }
 void PLifecycleManager::RegisterUserComponents() {
 	this->RegisterAComponent((int)EComponents::eTimer1, new("eTimerLinux1") PTimerLinux(500));
-//	this->RegisterAComponent((int)EComponents::eTimer2, new("eTimerLinux2") PTimerLinux(500));
+	this->RegisterAComponent((int)EComponents::eTimer2, new("eTimerLinux2") PTimerLinux(500));
 	// this->RegisterAComponent((int)EComponents::eVideoManager, new("VideoManager") VideoManager());
 }
 void PLifecycleManager::AllocateUserComponents() {
 	this->AllocateAComponent((int)EComponents::eTimer1, (int)EComponents::eScheduler1);
-//	this->AllocateAComponent((int)EComponents::eTimer2, (int)EComponents::eScheduler2);
+	this->AllocateAComponent((int)EComponents::eTimer2, (int)EComponents::eScheduler2);
 	// this->AllocateAComponent((int)EComponents::eVideoManager, (int)EComponents::eScheduler1);
 }
 void PLifecycleManager::AssociateUserSendersNReceivers() {
@@ -45,11 +45,10 @@ void PLifecycleManager::Finalize() {
 }
 
 void PLifecycleManager::StartComponents() {
-//	this->SendReplyEvent((int)EComponents::eVideoManager, (int)Component::EEventType::eStart);
-	BaseObject::s_pMemory->Show("Static");
-	ValueObject::s_pMemory->Show("Dynamic");
+	// BaseObject::s_pMemory->Show("Static");
+	// ValueObject::s_pMemory->Show("Dynamic");
 	this->SendReplyEvent((int)EComponents::eTimer1, (int)IComponent::EEventType::eStart);
-//	this->m_mapComponents[(int)EComponents::eTimer2]->Start();;
+	this->SendReplyEvent((int)EComponents::eTimer2, (int)IComponent::EEventType::eStart);
 }
 
 void PLifecycleManager::StopComponents() {

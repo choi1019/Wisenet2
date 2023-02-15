@@ -2,29 +2,29 @@
 #include <signal.h>
 #include <sys/time.h>
 
-PTimerLinux *PTimerLinux::s_pPTimer = nullptr;
+PTimerLinux *PTimerLinux::s_apPTimer[TIMER_NUMMAX] = {};
 int PTimerLinux::s_counterId = 0;
 
 //////////////////////////////////////////////
 // timer signal call back
 void SignalPTimerLinux0(int signum) {
-	PTimerLinux::s_pPTimer->Signal();
+	PTimerLinux::s_apPTimer[0]->Signal();
 }
-// void SignalPTimerLinux1(int signum) {
-// 	PTimerLinux::s_apPTimer[1]->Signal();
-// }
-// void SignalPTimerLinux2(int signum) {
-// 	PTimerLinux::s_apPTimer[2]->Signal();
-// }
-// void SignalPTimerLinux3(int signum) {
-// 	PTimerLinux::s_apPTimer[3]->Signal();
-// }
-// void(*CallbackSignal[TIMER_NUMMAX])(int) = {
-//     &SignalPTimerLinux0,
-//     &SignalPTimerLinux1,
-//     &SignalPTimerLinux2,
-//     &SignalPTimerLinux3
-// };
+void SignalPTimerLinux1(int signum) {
+	PTimerLinux::s_apPTimer[1]->Signal();
+}
+void SignalPTimerLinux2(int signum) {
+	PTimerLinux::s_apPTimer[2]->Signal();
+}
+void SignalPTimerLinux3(int signum) {
+	PTimerLinux::s_apPTimer[3]->Signal();
+}
+void(*CallbackSignal[TIMER_NUMMAX])(int) = {
+    &SignalPTimerLinux0,
+    &SignalPTimerLinux1,
+    &SignalPTimerLinux2,
+    &SignalPTimerLinux3
+};
 //////////////////////////////////////////////
 
 //////////////////////////////////////////////
@@ -42,7 +42,7 @@ PTimerLinux::PTimerLinux(size_t msecInterval, int nComponentId, const char* sCom
     , m_uCounter(0)
 {
     m_nId = s_counterId++;
-    PTimerLinux::s_pPTimer = this;
+    PTimerLinux::s_apPTimer[m_nId] = this;
 
     m_msecInterval = msecInterval % 1000;
     m_secInterval = msecInterval / 1000;
@@ -77,7 +77,7 @@ void PTimerLinux::RunThread() {
     m_timeNew.it_interval.tv_sec = m_secInterval;
     m_timeNew.it_interval.tv_usec = m_msecInterval * 1000;
     setitimer(ITIMER_REAL, &m_timeNew, &m_timeOld);
-    signal(SIGALRM, SignalPTimerLinux0);
+    signal(SIGALRM, CallbackSignal[m_nId]);
     pthread_mutex_lock(&m_mutex);
     pthread_mutex_lock(&m_mutex);
 }

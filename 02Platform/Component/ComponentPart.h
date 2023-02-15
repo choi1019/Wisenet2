@@ -62,7 +62,7 @@ public:
 
 protected:
 	void SendAEvent(Event* pEvent);
-	void ReplyEvent(Event* pEvent, long long lArg = 0, ValueObject* pArg = nullptr);
+	void ReplyEvent(Event* pEvent);
 
 	void SendReplyEvent(UId uIdTarget, int nEventType, long long lArg = 0, ValueObject* pArg = nullptr, int ReplyType = UNDEFINED);
 	void SendReplyEvent(int nReceiverName, int nEventType, long long lArg = 0, ValueObject* pArg = nullptr, int ReplyType = UNDEFINED);

@@ -9,13 +9,13 @@
 //#include <linux/hrtimer.h>
 
 #define TIMER_NUMMAX 4
-static void* CallBackPTimerLinux(void *pObject);
-static void SignalPTimerLinux0(int signum);
-//extern void(*CallbackSignal[TIMER_NUMMAX])(int);
+extern void* CallBackPTimerLinux(void *pObject);
+//static void SignalPTimerLinux0(int signum);
+extern void(*CallbackSignal[TIMER_NUMMAX])(int);
 
 class PTimerLinux : public Timer, public PThread {
 public:
-	static PTimerLinux *s_pPTimer;
+	static PTimerLinux *s_apPTimer[TIMER_NUMMAX];
 	static int s_counterId;
 private:
 	int m_nId;

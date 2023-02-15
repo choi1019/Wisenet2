@@ -97,35 +97,20 @@ void ComponentPart::SendAEvent(Event* pEvent) {
 			"EventQueue is not allocated"
 		);
 	}
-	// event is synchronous
-	if (pEvent->IsSynchronous()) {
-		if (m_pEventParent != nullptr) {
-			pEvent->SetPParent(m_pEventParent);
-			// parent event wait replying untill all the children finish
-			pEvent->GetPParent()->IncrementCountChildren();
-		}
-	}
 	pEvent->GetUIdTarget().GetPEventQueue()->PushBack(pEvent);
 }
 
 ///////////////////////////////////////
 // reply a event
 ///////////////////////////////////////
-void ComponentPart::ReplyEvent(Event* pEvent, long long lArg, ValueObject* pArg) {
+void ComponentPart::ReplyEvent(Event* pEvent) {
 	// set pEvent as a Reply
 	pEvent->SetBReply(true);
 	// swap source and destination
 	pEvent->SetUIdTarget(pEvent->GetUIdSource());
 	pEvent->SetUIdSource(*m_pUId);
-	// reply argument
-	pEvent->SetlArg(lArg);
-	pEvent->SetPArg(pArg);
 	// Send event
 	pEvent->GetUIdTarget().GetPEventQueue()->PushBack(pEvent);
-	// LOG_NEWLINE("ReplyEvent"			
-	// 			, SHOW_COMPONENTNAME(pEvent->GetUIdSource().GetComponentId())
-	// 			, SHOW_COMPONENTNAME(pEvent->GetUIdTarget().GetComponentId())	
-	// 			, SHOW_EVENTNAME(pEvent->GetType()));
 }
 
 ///////////////////////////////////////
@@ -134,7 +119,13 @@ void ComponentPart::ReplyEvent(Event* pEvent, long long lArg, ValueObject* pArg)
 void ComponentPart::SendReplyEvent(UId uIdTarget, int nEventType, long long lArg, ValueObject* pArg, int ReplyType)
 {
 	Event* pEvent = new("Event") Event(*m_pUId, uIdTarget, nEventType, lArg, pArg, ReplyType);
+	// event is synchronous
 	pEvent->SetBSynchronous(true);
+	if (m_pEventParent != nullptr) {
+		pEvent->SetPParent(m_pEventParent);
+		// parent event wait replying untill all the children finish
+		pEvent->GetPParent()->IncrementCountChildren();
+	}
 	this->SendAEvent(pEvent);
 }
 void ComponentPart::SendReplyEvent(int nReceiverName, int nEventType, long long lArg, ValueObject* pArg, int ReplyType)
