@@ -6,20 +6,20 @@
 
 #include <03Technical/Timer/Timer.h>
 #include <13PTechnical/PThread/PThread.h>
+
 #include <unistd.h>
 #include <time.h>
 #include <signal.h>
 
-
-static void* CallBackPTimerLinux(void *pObject);
-static void(*CallbackSignal)(int, siginfo_t, void*);
+extern void* CallBackPTimerLinux(void *pObject);
+extern void(*CallbackSignal)(int, siginfo_t, void*);
 
 class PTimerLinux : public Timer, public PThread {
 public:
 	static int s_counterId;
 private:
 	int m_nId;
-	timer_t m_tId;
+	timer_t m_idTimer;
 
 	unsigned m_msecInterval;
 	unsigned m_secInterval;

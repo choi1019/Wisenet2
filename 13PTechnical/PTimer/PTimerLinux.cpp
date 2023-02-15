@@ -3,7 +3,7 @@
 int PTimerLinux::s_counterId = 0;
 // timer signal call back
 void SignalPTimerLinux(int sig, siginfo_t *si, void *uc) {
-    PTimerLinux *pPTimerLinux = (PTimerLinux *) si->_sifields._rt.si_sigval.sival_ptr;
+    //PTimerLinux *pPTimerLinux = (PTimerLinux *) si->_sifields._rt.si_sigval.sival_ptr;
 }
 // thread callback
 void* CallBackPTimerLinux(void *pObject) {
@@ -25,26 +25,28 @@ PTimerLinux::PTimerLinux(size_t msecInterval, int nComponentId, const char* sCom
     m_msecInterval = msecInterval % 1000;
     m_secInterval = msecInterval / 1000;
 
-    /* Register signal handler */
+    // Register signal action - bitwise OR with default actions
     m_sigAction.sa_flags = SA_SIGINFO;
+    sigemptyset(&(m_sigAction.sa_mask));
     m_sigAction.sa_sigaction = SignalPTimerLinux;
-    sigemptyset(&m_sigAction.sa_mask);
-    result = sigaction(SIGVTALRM, &m_sigAction, NULL);
+    result = sigaction(SIGRTMIN, &m_sigAction, NULL);
     if ( result == -1){
-        throw Exception();
+        throw Exception((int)ITimer::EException::eInvalidEvent, "PTimerLinux::PTimerLinux", result);
     }
 
-    /* create timer */
+    // sigevent - how the caller should be notified when the timer expires.
     m_sigEvent.sigev_notify = SIGEV_SIGNAL; // Linux-specific
     m_sigEvent.sigev_signo = SIGRTMIN;
-    m_sigEvent.sigev_value.sival_ptr = &m_tId;
-    result = timer_create(CLOCK_REALTIME, &m_sigEvent, &m_tId);
+    m_sigEvent.sigev_value.sival_ptr = this;
+    // create a timer
+    result = timer_create(CLOCK_REALTIME, &m_sigEvent, &m_idTimer);
     if ( result != 0) {
-        throw Exception();
+        throw Exception((int)ITimer::EException::eInvalidHandler, "PTimerLinux::PTimerLinux", result);
     }
 }
 
 PTimerLinux::~PTimerLinux() {
+    timer_delete(m_idTimer);
  	pthread_mutex_destroy(&m_mutex);
 }
 
@@ -64,16 +66,16 @@ void PTimerLinux::Start() {
 
 // Thread
 void PTimerLinux::RunThread() {
-    /* start timer */
+    // start the timer
     m_iTimerSpec.it_value.tv_sec  = 1;
     m_iTimerSpec.it_value.tv_nsec = 0;
     m_iTimerSpec.it_interval.tv_sec  = m_msecInterval;
     m_iTimerSpec.it_interval.tv_nsec = m_secInterval; 
-    int result = timer_settime(m_tId, 0, &m_iTimerSpec, NULL);
+    int result = timer_settime(m_idTimer, 0, &m_iTimerSpec, NULL);
     if ( result != 0) {
-        throw Exception();
+        throw Exception((int)ITimer::EException::eSetTimerError, "PTimerLinux::PTimerLinux", result);
     }
-    // wait until
+    // wait until unlock
     pthread_mutex_lock(&m_mutex);
 }
 

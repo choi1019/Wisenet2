@@ -34,9 +34,9 @@ public:
 	enum class EException {
 		eBegin = _Timer_Id,
 		eTimerCreationError,
-		eSetTimerError,
-		eTimerOut,
 		eInvalidEvent,
+		eInvalidHandler,
+		eSetTimerError,
 		eEnd
 	};
 };
