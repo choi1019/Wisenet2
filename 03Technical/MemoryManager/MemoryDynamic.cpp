@@ -157,7 +157,7 @@ void MemoryDynamic::SafeFree(void* pObject) {
 
 // maintenance
 void MemoryDynamic::Show(const char* pTitle) {
-    LOG_HEADER("Show-", pTitle, (size_t)s_pCurrent, s_pCurrent);
+    LOG_HEADER("MemoryDynamic::Show", pTitle, (size_t)s_pCurrent, s_pCurrent);
     m_pPageList->Show("");
     SlotList* pSlotList = this->m_pSlotListHead;
     while (pSlotList != nullptr) {

@@ -53,24 +53,25 @@ void ComponentPart::BeginSequence(Event* pEvent) {
 			m_pEventParent = pEvent->GetPParent();
 		}
 	} 
-	// else {
-	// 	// syncrhnous event - wait until all children replied
-	// 	if (pEvent->IsSynchronous()) {
-	// 		// for nested events
-	// 		m_pEventParent = pEvent;
-	// 	}
-	// }
 }
 
 void ComponentPart::EndSequence(Event*pEvent) {
 	if (pEvent->IsReply()) {
-		// nested
 		if (pEvent->GetPParent() != nullptr) {
+			// nested
 			if (pEvent->GetPParent()->GetCoundChildren() == 0) {
-				ReplyEvent(pEvent->GetPParent());
+				if (pEvent->GetPParent()->IsSynchronous()) {
+					// symchronous event
+					ReplyEvent(pEvent->GetPParent());
+				} else {
+					// asyncrhonous event
+					delete pEvent;
+				}
 			}
+		} else {
+			// this is root
+			delete pEvent;	
 		}
-		delete pEvent;	
 	} else {
 		// no child, reply
 //		if (pEvent->IsSynchronous()) {

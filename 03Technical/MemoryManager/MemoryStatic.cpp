@@ -72,12 +72,12 @@ void MemoryStatic::SafeFree(void* pObject) {
 
 // maintenance
 void MemoryStatic::Show(const char* pTitle) {
-    LOG_HEADER("Show-", pTitle);
+    LOG_HEADER("MemoryStatic::Show", pTitle);
     LOG_NEWLINE("MemoryStatic(szAllocated,pAllocated,szCurrent,pCurrent)"
     	, s_szAllocated
     	, (size_t)s_pAllocated
         , s_szCurrent
     	, (size_t)s_pCurrent
     );
-    LOG_FOOTER("MemoryStatic::Show");
+    LOG_FOOTER("MemoryStatic::Show", pTitle);
 }

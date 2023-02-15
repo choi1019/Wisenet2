@@ -133,11 +133,11 @@ void Scheduler::RunOnce()
 			if (pTargetComponent == nullptr) {
 				throw Exception((unsigned)IScheduler::EError::eComponentNotFound, this->GetClassName(), __func__, "eComponentNotFound");
 			}
-			pEvent->Show("*Begin:Scheduler::RunOnce(ComponentId)", this->GetComponentId());
+			pEvent->Show("<*Begin Scheduler::RunOnce(ComponentId)", this->GetComponentId());
 			pTargetComponent->BeginSequence(pEvent);
 			pTargetComponent->ProcessAEvent(pEvent);
 			pTargetComponent->EndSequence(pEvent);
-			pEvent->Show("*End:Scheduler::RunOnce", this->GetComponentId());
+			pEvent->Show("*End> Scheduler::RunOnce", this->GetComponentId());
 		}
 
 	}
