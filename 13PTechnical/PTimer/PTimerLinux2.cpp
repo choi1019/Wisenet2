@@ -2,36 +2,95 @@
 
 int PTimerLinux2::s_counterId = 0;
 
+// thread callback
+static void* CallBackPTimerLinux2(void *pObject) {
+    PTimerLinux2 *pPTimerLinux = (PTimerLinux2 *)pObject;
+    pPTimerLinux->RunThread();
+    return nullptr;
+}
 // timer signal call back
 static void SignalPTimerLinux2(int sig, siginfo_t *si, void *uc) {
     PTimerLinux2 *pPTimerLinux2 = (PTimerLinux2 *) si->si_value.sival_ptr;
 }
 
-// thread callback
-static void* CallBackPTimerLinux2(void *pObject) {
-    PTimerLinux2 *pPTimerLinux2 = (PTimerLinux2 *)pObject;
-    pPTimerLinux2->RunThread();
-    return nullptr;
+// Thread
+void PTimerLinux2::RunThread() {	
+    timer_t *m_pTimer;
+    m_pTimer = new timer_t();
+
+    // Register signal action - bitwise OR with default actions
+    struct sigaction m_sigAction;
+    m_sigAction.sa_flags = SA_SIGINFO; 
+    m_sigAction.sa_sigaction = &SignalPTimerLinux2; 
+    sigemptyset(&m_sigAction.sa_mask);
+    int result = sigaction(SIGRTMIN, &m_sigAction, NULL);
+    if ( result == -1){
+        throw Exception((int)ITimer::EException::eInvalidEvent, "PTimerLinux2::PTimerLinux2", result);
+    }
+
+    // Block timer signal temporarily.
+    sigset_t mask;
+    sigemptyset(&mask);
+    sigaddset(&mask, SIGRTMIN);
+    result = sigprocmask(SIG_SETMASK, &mask, NULL) ;
+    if (result != 0) {
+        throw Exception((int)ITimer::EException::eInvalidHandler, "PTimerLinux2::PTimerLinux2", result);
+    }
+
+    // sigevent - how the caller should be notified when the timer expires.
+    struct sigevent m_sigEvent;
+    m_sigEvent.sigev_notify = SIGEV_SIGNAL; // Linux-specific
+    m_sigEvent.sigev_signo = SIGRTMIN;
+    m_sigEvent.sigev_value.sival_ptr = m_pTimer;
+    // create a timer
+    result = timer_create(CLOCK_REALTIME, &m_sigEvent, m_pTimer);
+    if ( result != 0) {
+        throw Exception((int)ITimer::EException::eInvalidHandler, "PTimerLinux2::PTimerLinux2", result);
+    }
+
+    // start the timer
+    struct itimerspec m_intervalTimerSpec;
+    m_intervalTimerSpec.it_value.tv_sec  = m_secInterval;
+    m_intervalTimerSpec.it_value.tv_nsec = m_msecInterval * 1000000;
+    m_intervalTimerSpec.it_interval.tv_sec  = m_secInterval;
+    m_intervalTimerSpec.it_interval.tv_nsec = m_msecInterval * 1000000; 
+    result = timer_settime(*m_pTimer, 0, &m_intervalTimerSpec, NULL);
+    if ( result != 0) {
+        throw Exception((int)ITimer::EException::eSetTimerError, "PTimerLinux2::PTimerLinux2", result);
+    }
+    sleep(2);
+    /* Unlock the timer signal, so that timer notification can be delivered. */
+    result = sigprocmask(SIG_UNBLOCK, &mask, NULL) ;
+    if (result != 0) {
+        throw Exception((int)ITimer::EException::eInvalidHandler, "PTimerLinux2::PTimerLinux2", result);
+    }
+    // wait until unlock
+    pthread_mutex_lock(&m_mutex);
 }
 
+void PTimerLinux2::Signal() {
+    SendNoReplyEvent(this->GetUId(), (unsigned)ITimer::EEventType::eTimeOut);
+}
+
+////////////////////////////////////////////////////////////////
 // PTimer
 PTimerLinux2::PTimerLinux2(size_t msecInterval, int nComponentId, const char* sComponentName) 
     : Timer(nComponentId, sComponentName) 
     , m_uCounter(0)
 {
     m_nId = s_counterId++;
-    m_pIdTimer = new timer_t();
+    m_msecInterval = msecInterval % 1000;
+    m_secInterval = msecInterval / 1000;
+
+ 
 
     int result = pthread_mutex_init(&m_mutex, nullptr);
     pthread_mutex_lock(&m_mutex);
 
-    m_msecInterval = msecInterval % 1000;
-    m_secInterval = msecInterval / 1000;
+
 }
 
 PTimerLinux2::~PTimerLinux2() {
-    timer_delete(*m_pIdTimer);
-    delete m_pIdTimer;
  	pthread_mutex_destroy(&m_mutex);
 }
 
@@ -47,43 +106,6 @@ void PTimerLinux2::Finalize() {
 void PTimerLinux2::Start() {
     Timer::Start();
     PThread::Fork(CallBackPTimerLinux2, this);
-}
-
-// Thread
-void PTimerLinux2::RunThread() {
-    // Register signal action - bitwise OR with default actions
-    m_sigAction.sa_flags = SA_SIGINFO; 
-    m_sigAction.sa_sigaction = SignalPTimerLinux2; 
-    sigemptyset(&m_sigAction.sa_mask);
-    int result = sigaction(SIGRTMIN, &m_sigAction, NULL);
-    if ( result == -1){
-        throw Exception((int)ITimer::EException::eInvalidEvent, "PTimerLinux2::PTimerLinux2", result);
-    }
-
-    // sigevent - how the caller should be notified when the timer expires.
-    m_sigEvent.sigev_notify = SIGEV_SIGNAL; // Linux-specific
-    m_sigEvent.sigev_signo = SIGRTMIN;
-    m_sigEvent.sigev_value.sival_ptr = m_pIdTimer;
-    // create a timer
-    result = timer_create(CLOCK_REALTIME, &m_sigEvent, m_pIdTimer);
-    if ( result != 0) {
-        throw Exception((int)ITimer::EException::eInvalidHandler, "PTimerLinux2::PTimerLinux2", result);
-    }
-    // start the timer
-    m_iTimerSpec.it_value.tv_sec  = 1;
-    m_iTimerSpec.it_value.tv_nsec = 0;
-    m_iTimerSpec.it_interval.tv_sec  = m_secInterval;
-    m_iTimerSpec.it_interval.tv_nsec = m_msecInterval * 1000000; 
-    result = timer_settime(*m_pIdTimer, 0, &m_iTimerSpec, NULL);
-    if ( result != 0) {
-        throw Exception((int)ITimer::EException::eSetTimerError, "PTimerLinux2::PTimerLinux2", result);
-    }
-    // wait until unlock
-    pthread_mutex_lock(&m_mutex);
-}
-
-void PTimerLinux2::Signal() {
-    SendNoReplyEvent(this->GetUId(), (unsigned)ITimer::EEventType::eTimeOut);
 }
 
 void PTimerLinux2::Stop() {

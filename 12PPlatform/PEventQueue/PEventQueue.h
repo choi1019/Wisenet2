@@ -7,6 +7,7 @@
 
 #include <02Platform/EventQueue/EventQueue.h>
 #include <01Base/Aspect/Log.h>
+#include <01Base/Aspect/Exception.h>
 #include <pthread.h>
 #include <semaphore.h>
 
@@ -15,8 +16,8 @@
 class PEventQueue: public EventQueue {
 private:
 	pthread_mutex_t m_mutex;
-	sem_t m_semaphoreFull;
-	sem_t m_semaphoreEmpty;
+	sem_t m_pSemaphoreFull;
+	sem_t m_pSemaphoreEmpty;
 
 protected:
 	void Lock() {
@@ -35,9 +36,17 @@ public:
 		: EventQueue(nSchedulerId, nClassId, pcClassName)
 	{
 		int result = pthread_mutex_init(&m_mutex, nullptr);
-		// 
-		sem_init(&m_semaphoreFull, 0, MAXLENGTH_EVENTQUEUE);
-		sem_init(&m_semaphoreEmpty, 0, 0);
+		if (result != 0) {
+			throw Exception(-1, "PEventQueue::PEventQueue");
+		}
+		result = sem_init(&m_semaphoreFull, 0, MAXLENGTH_EVENTQUEUE);
+		if (result != 0) {
+			throw Exception(-1, "PEventQueue::PEventQueue");
+		}
+		result = sem_init(&m_semaphoreEmpty, 0, MAXLENGTH_EVENTQUEUE);
+		if (result != 0) {
+			throw Exception(-1, "PEventQueue::PEventQueue");
+		}
 		LOG_NEWLINE("PEventQueue::pthread_mutex_init(result)", result);
 	}
 	virtual ~PEventQueue() 
@@ -45,7 +54,6 @@ public:
 		sem_destroy(&m_semaphoreEmpty);
 		sem_destroy(&m_semaphoreFull);
 		pthread_mutex_destroy(&m_mutex);
-
 	}
 
 	void Initialize() override {

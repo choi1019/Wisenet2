@@ -18,7 +18,8 @@ void PLifecycleManager::RegisterUserShedulers() {
 	//	this->RegisterAScheduler((int)EComponents::eScheduler2, new("eScheduler2") PScheduler());
 }
 void PLifecycleManager::RegisterUserComponents() {
-	this->RegisterAComponent((int)EComponents::eTimerLinux, new("eTimerLinux") PTimerLinux(900));
+	// this->RegisterAComponent((int)EComponents::eTimerLinux, new("eTimerLinux") PTimerLinux(900));
+	this->RegisterAComponent((int)EComponents::eTimerLinux, new("eTimerLinux") PTimerLinux2(900));
 	//	this->RegisterAComponent((int)EComponents::eTimerRTC, new("PTimerRTC") PTimerRTC(2000));
 }
 void PLifecycleManager::AllocateUserComponents() {

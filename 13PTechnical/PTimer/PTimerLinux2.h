@@ -17,15 +17,10 @@ public:
 	static int s_counterId;
 private:
 	int m_nId;
-	timer_t *m_pIdTimer;
 
 	long long m_msecInterval;
 	unsigned m_secInterval;
 	unsigned m_uCounter;
-
-	struct sigevent m_sigEvent;
-	struct sigaction m_sigAction;
-	struct itimerspec m_iTimerSpec;
 
 	pthread_mutex_t m_mutex;
 

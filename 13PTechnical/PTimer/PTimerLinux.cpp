@@ -27,8 +27,7 @@ void PTimerLinux::RunThread() {
 
     /* Start a virtual timer. It counts down whenever this process is executing. */
     int result = setitimer (ITIMER_REAL, &intervalTimerValue, &intervalTimerValueOld);
-    if (result == -1)  
-    {  
+    if (result == -1) {  
         throw Exception((int)ITimer::EException::eInvalidEvent);
     } 
     signal(SIGALRM, SignalPTimerLinux);
