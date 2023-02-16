@@ -84,6 +84,7 @@ void PTimerLinux1::Signal() {
 }
 
 void PTimerLinux1::Stop() {
+    
     // Disable periodic interrupts
     pthread_mutex_unlock(&m_mutex);
     Timer::Stop();
