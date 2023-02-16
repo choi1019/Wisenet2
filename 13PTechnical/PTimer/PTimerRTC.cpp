@@ -43,7 +43,8 @@ void PTimerRTC::Start() {
     Timer::Start();
     PThread::Fork(&CallBackPTimerRTC, this);
     // Enable periodic interrupts
-	int retval = ioctl(m_nFd, RTC_UIE_ON, 0);
+//	int retval = ioctl(m_nFd, RTC_UIE_ON, 0);
+    int retval = ioctl(m_nFd, RTC_PIE_ON, 0);
 	if (retval == -1) {
 	}
 }
@@ -56,6 +57,7 @@ void PTimerRTC::RunThread() {
         size_t data;
         int retval = read(m_nFd, &data, sizeof(unsigned long));
         if (retval == -1) {
+            throw Exception((int)ITimer::EException::eInvalidEvent, "PTimerRTC::RunThread()");
         }
         SendNoReplyEvent(this->GetUId(), (unsigned)ITimer::EEventType::eTimeOut);
     }
@@ -63,7 +65,8 @@ void PTimerRTC::RunThread() {
 
 void PTimerRTC::Stop() {
     // Disable periodic interrupts
-	int retval = ioctl(m_nFd, RTC_UIE_OFF, 0);
+	int retval = ioctl(m_nFd, RTC_PIE_OFF, 0);
+//    int retval = ioctl(m_nFd, RTC_UIE_OFF, 0);
 	if (retval == -1) {
 	}
     Timer::Stop();

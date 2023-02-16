@@ -1,27 +1,25 @@
 #pragma once
 
 #include <13PTechnical/typedef.h>
-#define _PTimerLinux_Id _GET_CLASS_UID(_ELayer_PTechnical::_ePTimerLinux)
-#define _PTimerLinux_Name "PTimerLinux"
+#define _PTimerLinux2_Id _GET_CLASS_UID(_ELayer_PTechnical::_ePTimerLinux2)
+#define _PTimerLinux2_Name "PTimerLinux2"
 
 #include <03Technical/Timer/Timer.h>
 #include <13PTechnical/PThread/PThread.h>
 
 #include <unistd.h>
 #include <time.h>
+#include <sys/time.h>
 #include <signal.h>
 
-extern void* CallBackPTimerLinux(void *pObject);
-extern void(*CallbackSignal)(int, siginfo_t, void*);
-
-class PTimerLinux : public Timer, public PThread {
+class PTimerLinux2 : public Timer, public PThread {
 public:
 	static int s_counterId;
 private:
 	int m_nId;
-	timer_t m_idTimer;
+	timer_t *m_pIdTimer;
 
-	unsigned m_msecInterval;
+	long long m_msecInterval;
 	unsigned m_secInterval;
 	unsigned m_uCounter;
 
@@ -32,9 +30,9 @@ private:
 	pthread_mutex_t m_mutex;
 
 public:
-	PTimerLinux(size_t szPeriod, int nComponentId = _PTimerLinux_Id, const char* sComponentName = _PTimerLinux_Name);
+	PTimerLinux2(size_t szPeriod, int nComponentId = _PTimerLinux2_Id, const char* sComponentName = _PTimerLinux2_Name);
 
-	~PTimerLinux() override;
+	~PTimerLinux2() override;
 	void Initialize() override;
 	void Finalize() override;
 

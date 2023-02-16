@@ -11,7 +11,8 @@ enum class _ELayer_PTechnical {
 	_ePMemoryManager,
 
 	_ePTimerRTC,
-	_ePTimerLinux,
+	_ePTimerLinux1,
+	_ePTimerLinux2,
 
 	_eEnd
 };
