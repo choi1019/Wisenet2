@@ -16,8 +16,8 @@
 class PEventQueue: public EventQueue {
 private:
 	pthread_mutex_t m_mutex;
-	sem_t m_pSemaphoreFull;
-	sem_t m_pSemaphoreEmpty;
+	sem_t m_semaphoreFull;
+	sem_t m_semaphoreEmpty;
 
 protected:
 	void Lock() {
@@ -43,7 +43,7 @@ public:
 		if (result != 0) {
 			throw Exception(-1, "PEventQueue::PEventQueue");
 		}
-		result = sem_init(&m_semaphoreEmpty, 0, MAXLENGTH_EVENTQUEUE);
+		result = sem_init(&m_semaphoreEmpty, 0, 0);
 		if (result != 0) {
 			throw Exception(-1, "PEventQueue::PEventQueue");
 		}
@@ -64,18 +64,18 @@ public:
 	}
 
 	void PushBack(Event* pEvent) override {
-		sem_wait(&m_semaphoreFull);
+//		sem_wait(&m_semaphoreFull);
 		Lock();
 		EventQueue::PushBack(pEvent);
 		UnLock();
-		sem_post(&m_semaphoreEmpty);
+//		sem_post(&m_semaphoreEmpty);
 	}
 	Event* PopFront() override {
-		sem_wait(&m_semaphoreEmpty);
+//		sem_wait(&m_semaphoreEmpty);
 		Lock();
 		Event *pEvent = EventQueue::PopFront();
 		UnLock();
-		sem_post(&m_semaphoreFull);
+//		sem_post(&m_semaphoreFull);
 		return pEvent;
 	}
 };

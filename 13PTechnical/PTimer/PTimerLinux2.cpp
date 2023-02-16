@@ -50,10 +50,10 @@ void PTimerLinux2::RunThread() {
 
     // start the timer
     struct itimerspec m_intervalTimerSpec;
-    m_intervalTimerSpec.it_value.tv_sec  = m_secInterval;
-    m_intervalTimerSpec.it_value.tv_nsec = m_msecInterval * 1000000;
+    m_intervalTimerSpec.it_value.tv_sec  = 1;
+    m_intervalTimerSpec.it_value.tv_nsec = 0;
     m_intervalTimerSpec.it_interval.tv_sec  = m_secInterval;
-    m_intervalTimerSpec.it_interval.tv_nsec = m_msecInterval * 1000000; 
+    m_intervalTimerSpec.it_interval.tv_nsec = m_msecInterval * 1000; 
     result = timer_settime(*m_pTimer, 0, &m_intervalTimerSpec, NULL);
     if ( result != 0) {
         throw Exception((int)ITimer::EException::eSetTimerError, "PTimerLinux2::PTimerLinux2", result);
