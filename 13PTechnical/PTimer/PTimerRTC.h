@@ -28,7 +28,7 @@ public:
 	void Stop() override;
 
 	void TimeOut(Event *pEvent) override;
-	void RunThread() override;
+	void RunThread();
 
 	void ProcessAEvent(Event *pEvent) override;
 };

@@ -30,8 +30,6 @@ Component::Component(unsigned uClassId, const char* sClassName)
 	: ComponentPart(uClassId, sClassName)
 {
 	this->SetPUId(new("UId") UId(this->GetObjectId(), nullptr));
-	//		BaseObject::s_pMemory->SetId(this);
-
 	this->SetPMReceivers(new("ReceiversMap") Map<unsigned, UId, MAXRECEIVERCOMPONENTS>());
 	this->SetPMTargetsGroups(new("TargetsMap") Map<unsigned, Vector<UId, MAXTARGETCOMPONENTS>*, MAXTARGETGROUPS>());
 
@@ -65,7 +63,6 @@ ComponentPart* Component::GetPart(unsigned uName) {
 }
 ComponentPart* Component::RemovePart(unsigned uName) {
 	ComponentPart* pComponentPart = this->m_mComponentParts[uName];
-
 	if (pComponentPart->GetEState() == IComponent::EState::eRunning) {
 		throw Exception(
 			(unsigned)EException::eNotStopped,
@@ -74,9 +71,7 @@ ComponentPart* Component::RemovePart(unsigned uName) {
 			String("ComponentPart(") + String(uName) + ") is not terminated"
 		);
 	}
-
 	this->m_mComponentParts.Remove(uName);
-
 	return pComponentPart;
 }
 void Component::RemovePartAll() {
@@ -91,7 +86,6 @@ void Component::RemovePartAll() {
 			);
 		}
 	}
-
 	this->m_mComponentParts.Clear();
 }
 
@@ -147,7 +141,6 @@ void Component::Finalize() {
 	SetEState(IComponent::EState::eFinalized);
 	LOG_NEWLINE(Directory::s_dirComponents[this->GetComponentId()], __func__);
 }
-
 void Component::Start() {
 	SetEState(IComponent::EState::eRunning);
 }

@@ -39,7 +39,7 @@ public:
 	void Start() override;
 	void Stop() override;
 
-	void RunThread() override;
+	void RunThread();
 	void Signal();
 	void TimeOut(Event *pEvent) override;
 

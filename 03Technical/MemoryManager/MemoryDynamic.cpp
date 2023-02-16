@@ -63,7 +63,7 @@ void* MemoryDynamic::Malloc(size_t szObject, const char* sMessage) {
         szSlot += m_szUnit;
     }
     
-    LOG_NEWLINE("MemoryDynamic::Malloc(sMessage,szObject)", sMessage, szObject);
+ //   LOG_NEWLINE("MemoryDynamic::Malloc(sMessage,szObject)", sMessage, szObject);
     SlotList *pPrevious = nullptr;
     SlotList *pCurrent = m_pSlotListHead; 
     while (pCurrent != nullptr) {
@@ -111,12 +111,11 @@ void* MemoryDynamic::Malloc(size_t szObject, const char* sMessage) {
         pPrevious = pCurrent;
         pCurrent = pCurrent->GetPNext();
     } 
-    throw Exception((unsigned)IMemory::EException::_eSlotlistAllocationFailed
-                                        , "MemoryDynamic", "Malloc", "Failed");
+    throw Exception((unsigned)IMemory::EException::_eSlotlistAllocationFailed, "MemoryDynamic", "Malloc", "Failed");
 }
 
 void MemoryDynamic::Free(void* pObject) {
-    LOG_NEWLINE("MemoryDynamic::Free(pObject)", (size_t)pObject);
+//    LOG_NEWLINE("MemoryDynamic::Free(pObject)", (size_t)pObject);
     
     size_t idxPage = ((size_t)pObject - (size_t)s_pAllocated) / m_szPage;
     SlotList *pCurrent = m_pSlotListHead->GetPNext(); 

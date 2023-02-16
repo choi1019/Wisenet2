@@ -1,8 +1,6 @@
 #pragma once
 
-
 #include <02Platform/Component/ComponentPart.h>
-
 class Component : public ComponentPart
 {
 private:
@@ -21,11 +19,9 @@ public:
 	void SetPEventQueue(EventQueue* pEventQueue);
 
 	void BeginSequence(Event* pEvent);
+	virtual void ProcessAEvent(Event* pEvent);
 	void EndSequence(Event* pEvent);
-public:
-	virtual void Run();
-	virtual void Start();
-
+	
 protected:
 	virtual void RegisterEventTypes();
 	virtual void RegisterExceptions();
@@ -36,9 +32,10 @@ protected:
 	virtual void Initialize();
 	virtual void Finalize();
 
+	virtual void Start();
 	virtual void Stop();
 	virtual void Pause();
-
+	virtual void Run();
 
 protected:
 	virtual void AssociateAReceiver(Event* pEvent);
@@ -51,7 +48,4 @@ protected:
 	virtual void Stop(Event* pEvent);
 	virtual void Run(Event* pEvent);
 	virtual void Pause(Event* pEvent);
-
-public:
-	virtual void ProcessAEvent(Event* pEvent);
 };
