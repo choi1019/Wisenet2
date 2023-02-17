@@ -86,6 +86,7 @@ public:
 			, m_sMessage4.c_str()
 			//			,String(m_tTime).c_str()
 		);
+		fflush(stdout);
 	}
 	void Println() {
 		printf(
@@ -100,6 +101,7 @@ public:
 			, m_sMessage4.c_str()
 			///			,String(m_tTime).c_str()
 		);
+		fflush(stdout);
 	}
 	void PrintHeader() {
 		printf(
@@ -114,6 +116,7 @@ public:
 			, m_sMessage4.c_str()
 			//			,String(m_tTime).c_str()
 		);
+		fflush(stdout);
 		this->AddTab();
 	}
 	void PrintFooter() {
@@ -130,6 +133,7 @@ public:
 			, m_sMessage4.c_str()
 			//			,String(m_tTime).c_str()
 		);
+		fflush(stdout);
 	}
 };
 

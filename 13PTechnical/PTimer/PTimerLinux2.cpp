@@ -2,74 +2,64 @@
 
 int PTimerLinux2::s_counterId = 0;
 
+
+// timer signal call back
+static void SignalActionPTimerLinux2(int idSig, siginfo_t *pSigInfo, void *pUc) {
+    ((PTimerLinux2 *) pSigInfo->si_value.sival_ptr)->Signal();
+}
+void PTimerLinux2::Signal() {
+    SendNoReplyEvent(this->GetUId(), (unsigned)ITimer::EEventType::eTimeOut);
+}
+
 // thread callback
 static void* CallBackPTimerLinux2(void *pObject) {
     PTimerLinux2 *pPTimerLinux = (PTimerLinux2 *)pObject;
     pPTimerLinux->RunThread();
     return nullptr;
 }
-// timer signal call back
-static void SignalPTimerLinux2(int sig, siginfo_t *si, void *uc) {
-    PTimerLinux2 *pPTimerLinux2 = (PTimerLinux2 *) si->si_value.sival_ptr;
-}
-
-// Thread
-void PTimerLinux2::RunThread() {	
-    timer_t *m_pTimer;
-    m_pTimer = new timer_t();
+void PTimerLinux2::RunThread() {
+    // int result = pthread_mutex_init(&s_mutexSignal, nullptr);
 
     // Register signal action - bitwise OR with default actions
-    struct sigaction m_sigAction;
-    m_sigAction.sa_flags = SA_SIGINFO; 
-    m_sigAction.sa_sigaction = &SignalPTimerLinux2; 
+        // struct sigaction {
+        // void     (*sa_handler)(int);
+        // void     (*sa_sigaction)(int, siginfo_t *, void *);
+        // sigset_t   sa_mask;
+        // int        sa_flags;
+        // void     (*sa_restorer)(void);
+        // };
+    m_sigAction.sa_flags = SA_SIGINFO;
+    m_sigAction.sa_sigaction = SignalActionPTimerLinux2; 
     sigemptyset(&m_sigAction.sa_mask);
-    int result = sigaction(SIGRTMIN, &m_sigAction, NULL);
+    int result = sigaction(SIGALRM, &m_sigAction, NULL);
     if ( result == -1){
         throw Exception((int)ITimer::EException::eInvalidEvent, "PTimerLinux2::PTimerLinux2", result);
     }
 
-    // Block timer signal temporarily.
-    sigset_t mask;
-    sigemptyset(&mask);
-    sigaddset(&mask, SIGRTMIN);
-    result = sigprocmask(SIG_SETMASK, &mask, NULL) ;
-    if (result != 0) {
-        throw Exception((int)ITimer::EException::eInvalidHandler, "PTimerLinux2::PTimerLinux2", result);
-    }
-
     // sigevent - how the caller should be notified when the timer expires.
-    struct sigevent m_sigEvent;
-    m_sigEvent.sigev_notify = SIGEV_SIGNAL; // Linux-specific
-    m_sigEvent.sigev_signo = SIGRTMIN;
-    m_sigEvent.sigev_value.sival_ptr = m_pTimer;
+    m_sigEvent.sigev_notify = SIGEV_SIGNAL;
+    m_sigEvent.sigev_signo = SIGALRM;
+    m_sigEvent.sigev_value.sival_ptr = this;
     // create a timer
-    result = timer_create(CLOCK_REALTIME, &m_sigEvent, m_pTimer);
+    result = timer_create(CLOCK_REALTIME, &m_sigEvent, &m_timer);
     if ( result != 0) {
         throw Exception((int)ITimer::EException::eInvalidHandler, "PTimerLinux2::PTimerLinux2", result);
     }
 
-    // start the timer
-    struct itimerspec m_intervalTimerSpec;
+    // // start the timer
+    // // If new_value->it_value specifies a nonzero value (i.e., either subfield is nonzero), 
+    // // then timer_settime() arms (starts) the timer
     m_intervalTimerSpec.it_value.tv_sec  = 1;
     m_intervalTimerSpec.it_value.tv_nsec = 0;
     m_intervalTimerSpec.it_interval.tv_sec  = m_secInterval;
-    m_intervalTimerSpec.it_interval.tv_nsec = m_msecInterval * 1000; 
-    result = timer_settime(*m_pTimer, 0, &m_intervalTimerSpec, NULL);
+    m_intervalTimerSpec.it_interval.tv_nsec = m_msecInterval * 1000000; 
+    result = timer_settime(m_timer, 0, &m_intervalTimerSpec, NULL);
     if ( result != 0) {
         throw Exception((int)ITimer::EException::eSetTimerError, "PTimerLinux2::PTimerLinux2", result);
     }
-    sleep(2);
-    /* Unlock the timer signal, so that timer notification can be delivered. */
-    result = sigprocmask(SIG_UNBLOCK, &mask, NULL) ;
-    if (result != 0) {
-        throw Exception((int)ITimer::EException::eInvalidHandler, "PTimerLinux2::PTimerLinux2", result);
-    }
+
     // wait until unlock
     pthread_mutex_lock(&m_mutex);
-}
-
-void PTimerLinux2::Signal() {
-    SendNoReplyEvent(this->GetUId(), (unsigned)ITimer::EEventType::eTimeOut);
 }
 
 ////////////////////////////////////////////////////////////////
@@ -82,12 +72,8 @@ PTimerLinux2::PTimerLinux2(size_t msecInterval, int nComponentId, const char* sC
     m_msecInterval = msecInterval % 1000;
     m_secInterval = msecInterval / 1000;
 
- 
-
     int result = pthread_mutex_init(&m_mutex, nullptr);
     pthread_mutex_lock(&m_mutex);
-
-
 }
 
 PTimerLinux2::~PTimerLinux2() {
@@ -109,9 +95,9 @@ void PTimerLinux2::Start() {
 }
 
 void PTimerLinux2::Stop() {
+    Timer::Stop();
     // Disable periodic interrupts
     pthread_mutex_unlock(&m_mutex);
-    Timer::Stop();
     PThread::Join();
 }
 

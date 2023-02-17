@@ -15,16 +15,18 @@ PLifecycleManager::~PLifecycleManager() {}
 
 void PLifecycleManager::RegisterUserShedulers() {
 	this->RegisterAScheduler((int)EComponents::eScheduler1, new("eScheduler1") PScheduler());
-	//	this->RegisterAScheduler((int)EComponents::eScheduler2, new("eScheduler2") PScheduler());
+	this->RegisterAScheduler((int)EComponents::eScheduler2, new("eScheduler2") PScheduler());
 }
 void PLifecycleManager::RegisterUserComponents() {
-	// this->RegisterAComponent((int)EComponents::eTimerLinux, new("eTimerLinux") PTimerLinux(900));
-	this->RegisterAComponent((int)EComponents::eTimerLinux, new("eTimerLinux") PTimerLinux2(900));
+	this->RegisterAComponent((int)EComponents::eTimerLinux, new("eTimerLinux") PTimerLinux(900));
+	// this->RegisterAComponent((int)EComponents::eTimerLinux1, new("eTimerLinux") PTimerLinux2(500));
+	//	this->RegisterAComponent((int)EComponents::eTimerLinux2, new("eTimerLinux") PTimerLinux2(1000));
 	//	this->RegisterAComponent((int)EComponents::eTimerRTC, new("PTimerRTC") PTimerRTC(2000));
 }
 void PLifecycleManager::AllocateUserComponents() {
-	this->AllocateAComponent((int)EComponents::eTimerLinux, (int)EComponents::eScheduler1);
-	// this->AllocateAComponent((int)EComponents::eTimerRTC, (int)EComponents::eScheduler2);
+	this->AllocateAComponent((int)EComponents::eTimerLinux, (int)EComponents::eScheduler2);
+	// this->AllocateAComponent((int)EComponents::eTimerLinux1, (int)EComponents::eScheduler1);
+	//	this->AllocateAComponent((int)EComponents::eTimerLinux2, (int)EComponents::eScheduler2);
 }
 void PLifecycleManager::AssociateUserSendersNReceivers() {
 	// this->AssociateASenderNAReceiver(
@@ -47,6 +49,8 @@ void PLifecycleManager::StartComponents() {
 	// BaseObject::s_pMemory->Show("Static");
 	// ValueObject::s_pMemory->Show("Dynamic");
 	this->SendReplyEvent((int)EComponents::eTimerLinux, (int)IComponent::EEventType::eStart);
+	// this->SendReplyEvent((int)EComponents::eTimerLinux1, (int)IComponent::EEventType::eStart);
+	//	this->SendReplyEvent((int)EComponents::eTimerLinux2, (int)IComponent::EEventType::eStart);
 	// this->SendReplyEvent((int)EComponents::eTimerRTC, (int)IComponent::EEventType::eStart);
 }
 

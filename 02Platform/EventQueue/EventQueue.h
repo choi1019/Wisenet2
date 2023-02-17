@@ -15,6 +15,11 @@ private:
 	Event* m_pFront;
 	Event* m_pRear;
 	unsigned m_nLength;
+protected:
+	virtual void PushLock() = 0;
+	virtual void PushUnlock() = 0;
+	virtual void PopLock() = 0;
+	virtual void PopUnlock() = 0;
 
 public:
 	int GetSchedulerId() { return this->m_nSchedulerId; }
@@ -41,6 +46,7 @@ public:
 	}
 
 	virtual void PushBack(Event* pEvent) {
+		this->PushLock();
 		if (m_nLength == 0) {
 			this->m_pRear = pEvent;
 			this->m_pFront = pEvent;
@@ -50,6 +56,7 @@ public:
 			this->m_pRear = pEvent;
 		}
 		this->m_nLength++;
+		this->PushUnlock();
 	}
 	
 	virtual Event* Front() {
@@ -57,12 +64,14 @@ public:
 	}
 
 	virtual Event* PopFront(){
+		this->PopLock();
 		if (m_nLength == 0) {
 			return nullptr;
 		}
 		Event *pEvent = m_pFront;
 		this->m_pFront = m_pFront->GetPQueueNext();
 		this->m_nLength--;
+		this->PopUnlock();
 		return pEvent;	
 	}
 

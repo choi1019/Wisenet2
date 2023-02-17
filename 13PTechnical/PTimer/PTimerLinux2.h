@@ -8,7 +8,6 @@
 #include <13PTechnical/PThread/PThread.h>
 
 #include <unistd.h>
-#include <time.h>
 #include <sys/time.h>
 #include <signal.h>
 
@@ -21,6 +20,12 @@ private:
 	long long m_msecInterval;
 	unsigned m_secInterval;
 	unsigned m_uCounter;
+
+    timer_t m_timer;
+    struct sigaction m_sigAction;
+    struct sigevent m_sigEvent;
+    struct itimerspec m_intervalTimerSpec;
+	sigset_t m_mask;
 
 	pthread_mutex_t m_mutex;
 

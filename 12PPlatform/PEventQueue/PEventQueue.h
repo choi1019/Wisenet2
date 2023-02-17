@@ -4,7 +4,6 @@
 #define _PEventQueue_Id _GET_CLASS_UID(_EPPlatform::_ePEventQueue)
 #define _PEventQueue_Name "PEventQueue"
 
-
 #include <02Platform/EventQueue/EventQueue.h>
 #include <01Base/Aspect/Log.h>
 #include <01Base/Aspect/Exception.h>
@@ -20,13 +19,21 @@ private:
 	sem_t m_semaphoreEmpty;
 
 protected:
-	void Lock() {
-//		EnterCriticalSection(&CriticalSection);
+	void PushLock() override {
+		sem_wait(&m_semaphoreFull);
         pthread_mutex_lock(&m_mutex);
 	}
-	void UnLock() {
-//		LeaveCriticalSection(&CriticalSection);
+	void PushUnlock() override {
         pthread_mutex_unlock(&m_mutex);
+		sem_post(&m_semaphoreEmpty);
+	}
+	void PopLock() override {
+		sem_wait(&m_semaphoreEmpty);
+        pthread_mutex_lock(&m_mutex);
+	}
+	void PopUnlock() override {
+        pthread_mutex_unlock(&m_mutex);
+		sem_post(&m_semaphoreFull);
 	}
 public:
 	PEventQueue(
@@ -61,21 +68,5 @@ public:
 	}
 	void Finalize() override {
 		EventQueue::Finalize();        
-	}
-
-	void PushBack(Event* pEvent) override {
-//		sem_wait(&m_semaphoreFull);
-		Lock();
-		EventQueue::PushBack(pEvent);
-		UnLock();
-//		sem_post(&m_semaphoreEmpty);
-	}
-	Event* PopFront() override {
-//		sem_wait(&m_semaphoreEmpty);
-		Lock();
-		Event *pEvent = EventQueue::PopFront();
-		UnLock();
-//		sem_post(&m_semaphoreFull);
-		return pEvent;
 	}
 };

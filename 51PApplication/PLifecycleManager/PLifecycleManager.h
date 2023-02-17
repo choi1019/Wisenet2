@@ -14,6 +14,8 @@ public:
 		eScheduler2,
 		eScheduler3,
 		eTimerLinux,
+		eTimerLinux1,
+		eTimerLinux2,
 		eTimerRTC,
 		
 		eVideoManager,

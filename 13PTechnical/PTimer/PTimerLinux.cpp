@@ -19,14 +19,14 @@ static void SignalPTimerLinux(int noSig) {
 
 // Thread Method
 void PTimerLinux::RunThread() {
-    struct itimerval intervalTimerValue, intervalTimerValueOld;
+    struct itimerval intervalTimerValue;
     intervalTimerValue.it_value.tv_sec = 1;
     intervalTimerValue.it_value.tv_usec = 0;
     intervalTimerValue.it_interval.tv_sec = m_secInterval;
     intervalTimerValue.it_interval.tv_usec = m_msecInterval * 1000;
 
     /* Start a virtual timer. It counts down whenever this process is executing. */
-    int result = setitimer (ITIMER_REAL, &intervalTimerValue, &intervalTimerValueOld);
+    int result = setitimer (ITIMER_REAL, &intervalTimerValue, nullptr);
     if (result == -1) {  
         throw Exception((int)ITimer::EException::eInvalidEvent);
     } 
@@ -75,7 +75,7 @@ void PTimerLinux::Stop() {
     PThread::Join();
 }
 void PTimerLinux::TimeOut(Event *pEvent) {
-    SendTargetEvents((unsigned)ITimer::EGroups::eGroup1, (unsigned)ITimer::EEventType::eTimeOut);
+//    SendTargetEvents((unsigned)ITimer::EGroups::eGroup1, (unsigned)ITimer::EEventType::eTimeOut);
     LOG_NEWLINE("%%%%", this->GetObjectId(), " PTimer::TimeOut()", m_uCounter++);
 }
 void PTimerLinux::ProcessAEvent(Event *pEvent) {
