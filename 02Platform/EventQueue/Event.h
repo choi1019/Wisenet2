@@ -21,24 +21,16 @@ private:
 	// Arguments
 	long long m_lArg;
 	ValueObject* m_pPArg;
-
 	// for Reply
 	bool m_bReply;
 	int m_nReplyType;
-
-	// Synchronous
+	// synchronous
 	bool m_bSynchronous;
-//	bool m_bBlocked;
-	// Sequential
-//	bool m_bSequential;
-	// Nested
-//	bool m_bNested;
-
-	// for working
-	Event *m_pQueueNext;
-//	Event *m_pSequenceNext;
+	// nested
 	Event *m_pParent;
 	unsigned m_countChildren;
+	// event queue
+	Event *m_pQueueNext;
 
 public:
 	Event(
@@ -47,16 +39,10 @@ public:
 		int nType,
 		long long lArg,
 		ValueObject* pArg = nullptr,
-		int nReplyType =UNDEFINED,
-		
-		bool bSynchronous = false,
-//		bool bSequential = false,
-//		bool bNested = false,
 
 		unsigned uClassId = _Event_Id,
 		const char* pcClassName = _Event_Name
-	)
-		: ValueObject(uClassId, pcClassName)
+		) : ValueObject(uClassId, pcClassName)
 		, m_nId(s_uCounter++)
 		, m_uidSource(uidSource)
 		, m_uidTarget(uidTarget)
@@ -65,25 +51,21 @@ public:
 		, m_pPArg(pArg)
 
 		, m_bReply(false)
-		, m_nReplyType(nReplyType)
+		, m_nReplyType(UNDEFINED)
 
-		, m_bSynchronous(bSynchronous)
-//		, m_bBlocked(false)
-//		, m_bSequential(bSequential)
-//		, m_bNested(bNested)
-		, m_pQueueNext(nullptr)
-//		, m_pSequenceNext(nullptr)
+		, m_bSynchronous(false)
 		, m_pParent(nullptr)
 		, m_countChildren(0)
+		, m_pQueueNext(nullptr)
 	{
 	}
-
+	// copy constructor
 	Event(
 		const Event& event,
+
 		unsigned uClassId = _Event_Id,
 		const char* pcClassName = _Event_Name
-	)
-		: ValueObject(uClassId, pcClassName)
+		) : ValueObject(uClassId, pcClassName)
 		, m_nId(s_uCounter++)
 		, m_uidSource(event.m_uidSource)
 		, m_uidTarget(event.m_uidTarget)
@@ -95,13 +77,9 @@ public:
 		, m_nReplyType(event.m_nReplyType)
 
 		, m_bSynchronous(event.m_bSynchronous)
-		// , m_bBlocked( event.m_bBlocked)
-		// , m_bSequential(event.m_bSequential)
-		// , m_bNested(event.m_bNested)
-		, m_pQueueNext(event.m_pQueueNext)
-//		, m_pSequenceNext(event.m_pSequenceNext)
 		, m_pParent(event.m_pParent)
 		, m_countChildren(event.m_countChildren)
+		, m_pQueueNext(event.m_pQueueNext)
 	{
 	}
 	virtual ~Event() {
@@ -138,29 +116,17 @@ public:
 	// Synchronous 
 	bool IsSynchronous() { return this->m_bSynchronous; }
 	void SetBSynchronous(bool bSynchronous) { this->m_bSynchronous = bSynchronous; }
-	// bool IsBlocked() { return this->m_bBlocked; }
-	// void SetBBlocked(bool bBlocked) { this->m_bBlocked = bBlocked; }
-	// Sequence
-	// bool IsSequential() { return this->m_bSequential; }
-	// void SetBSequential(bool bSequential) { this->m_bSequential = bSequential; }
-	// Nested
-	// bool IsNested() { return this->m_bNested; }
-	// void SetBNested(bool bNested) { this->m_bNested = bNested; }
-	// int GetIdParent() { return this->m_idParent; }
-	// void SetIdParent(int idParent) { this->m_idParent = idParent; }
-
-	// Working - Serialization is not needed
-	Event *GetPQueueNext() { return m_pQueueNext; }
-	void SetPQueueNext(Event *pQueueNext) { m_pQueueNext = pQueueNext; }
-//	Event *GetPSequenceNext() { return m_pSequenceNext; }
-//	void SetPSequenceNext(Event *pSequenceNext) { m_pSequenceNext = pSequenceNext; }
+	// nested
 	Event *GetPParent() { return m_pParent; }
 	void SetPParent(Event *pParent) { m_pParent = pParent; }
-
 	void IncrementCountChildren() { m_countChildren++; }
 	void DecrementCountChildren() { m_countChildren--; }
 	unsigned GetCoundChildren() { return m_countChildren; }
 	void SetCountChildren(unsigned countChildren) { m_countChildren = countChildren; }
+	// event queue
+	Event *GetPQueueNext() { return m_pQueueNext; }
+	void SetPQueueNext(Event *pQueueNext) { m_pQueueNext = pQueueNext; }
+
 	bool IsAllReplied() {
 		if (this->m_pParent!=nullptr) {
 			if (this->m_pParent->GetCoundChildren() == 0) {
@@ -168,6 +134,18 @@ public:
 			}
 		}
 		return false;
+	}
+
+	// cloneable
+	ValueObject* Clone() override {
+		return new("Event::Clone") Event(*this);
+	}
+
+	// serializable
+	char* Serialize() override {
+		return nullptr;
+	}
+	void DeSerialize(char* pBuffer) override {
 	}
 
 	void Show(const char* sMessage, int nMessage = 0);

@@ -65,9 +65,6 @@ public:
 
 	virtual Event* PopFront(){
 		this->PopLock();
-		if (m_nLength == 0) {
-			return nullptr;
-		}
 		Event *pEvent = m_pFront;
 		this->m_pFront = m_pFront->GetPQueueNext();
 		this->m_nLength--;

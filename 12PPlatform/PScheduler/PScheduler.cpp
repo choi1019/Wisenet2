@@ -9,14 +9,15 @@ void* CallBackPScheduler(void *pObject) {
 }
 
 void PScheduler::Fork() {
-	m_idThared = pthread_create((&m_thread), NULL, CallBackPScheduler, (void*)this);
-	if(m_idThared < 0) {
-		throw Exception();
-	}
+	PThread::Fork(CallBackPScheduler, this);
 }
 
 void PScheduler::Join() {
-	pthread_join(m_thread, (void**)&m_stsThread);
+	PThread::Join();
+}
+
+void PScheduler::RunThread() {
+
 }
 
 PScheduler::PScheduler(

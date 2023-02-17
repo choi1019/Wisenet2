@@ -6,16 +6,14 @@
 
 #include <02Platform/Scheduler/Scheduler.h>
 #include <12PPlatform/PEventQueue/PEventQueue.h>
-#include <pthread.h>
+#include <13PTechnical/PThread/PThread.h>
 
 #define PRIORITY 100
 
-class PScheduler : public Scheduler
+class PScheduler : public Scheduler, public PThread
 {
 private:
-		pthread_t m_thread;
-		int m_idThared;
-		int m_stsThread;
+
 public:
 	PScheduler(
 		int uClassId = _PScheduler_Id,
@@ -27,6 +25,7 @@ public:
 
 	void Fork() override;
 	void Join() override;
+	void RunThread() override;
 
 protected:
 	virtual void Initialize();
