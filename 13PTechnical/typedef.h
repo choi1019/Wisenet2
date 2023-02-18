@@ -10,10 +10,15 @@ enum class _ELayer_PTechnical {
 	_ePMemoryEven,
 	_ePMemoryManager,
 
+	_ePThread,
+	
 	_ePTimerRTC,
 	_ePTimerLinux,
 	_ePTimerLinux1,
 	_ePTimerLinux2,
+
+	_ePStub,
+	_ePSkeleton,
 
 	_eEnd
 };

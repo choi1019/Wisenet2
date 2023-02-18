@@ -19,7 +19,7 @@ public:
 		eAssociated,
 		eTargeted,
 		eInitialized,
-		eStarted,
+//		eStarted,
 		eRunning,
 		ePaused,
 		eStopped,

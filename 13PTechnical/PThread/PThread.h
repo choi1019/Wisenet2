@@ -1,6 +1,10 @@
 #pragma once
-#include <pthread.h>
 
+#include <13PTechnical/typedef.h>
+#define _PThread_Id _GET_CLASS_UID(_ELayer_PTechnical::_ePThread)
+#define _PThread_Name "PThread"
+
+#include <pthread.h>
 class PThread
 {
 private:
@@ -8,7 +12,7 @@ private:
     int m_idThared;
     int m_stsThread;
 public:
-	PThread();
+	PThread(int nComponentId = _PThread_Id, const char* sComponentName = _PThread_Name);
 
 	virtual ~PThread();
 

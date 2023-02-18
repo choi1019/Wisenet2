@@ -19,7 +19,7 @@ void PThread::Join() {
 	pthread_join(m_thread, (void**)&m_stsThread);
 }
 
-PThread::PThread()
+PThread::PThread(int nComponentId, const char* sComponentName)
 {
 }
 PThread::~PThread() 

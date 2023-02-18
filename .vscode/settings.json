@@ -1,6 +1,7 @@
 {
   "files.associations": {
-    "functional": "cpp"
+    "functional": "cpp",
+    "cstdlib": "cpp"
   },
   "C_Cpp_Runner.msvcBatchPath": "",
   "C_Cpp_Runner.cCompilerPath": "gcc",

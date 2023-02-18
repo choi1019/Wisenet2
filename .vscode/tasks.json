@@ -33,6 +33,7 @@
                 "${workspaceFolder}/13PTechnical/PMemoryManager/*.cpp",
                 "${workspaceFolder}/13PTechnical/PTimer/*.cpp",
                 "${workspaceFolder}/13PTechnical/PThread/*.cpp",
+ //               "${workspaceFolder}/13PTechnical/PRemote/*.cpp",
 
                 "${workspaceFolder}/12PPlatform/PEventQueue/*.cpp",
                 "${workspaceFolder}/12PPlatform/PScheduler/*.cpp",
