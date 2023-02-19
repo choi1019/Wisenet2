@@ -207,6 +207,14 @@ void Component::Pause(Event* pEvent) {
 	this->Pause();
 }
 
+void Component::BeginSequence(Event* pEvent) {
+	ComponentPart::BeginSequence(pEvent);
+}
+
+void Component::EndSequence(Event* pEvent) {
+	ComponentPart::EndSequence(pEvent);
+}
+
 void Component::ProcessAEvent(Event* pEvent) {
 	switch (pEvent->GetType()) {
 	case (unsigned)EEventType::eAssociateAReceiver:
@@ -241,20 +249,4 @@ void Component::ProcessAEvent(Event* pEvent) {
 			SHOW_EVENTNAME(pEvent->GetType());
 		break;
 	}
-}
-
-void Component::BeginSequence(Event* pEvent) {
-	ComponentPart::BeginSequence(pEvent);
-	//for (auto const& part : m_mComponentParts) {
-	//	ComponentPart* pPart = part.second;
-	//	pPart->BeginSequence(pEvent);
-	//}
-}
-
-void Component::EndSequence(Event* pEvent) {
-	// for (auto const& part: m_mComponentParts) {
-	// 	ComponentPart* pPart = part.second;
-	// 	pPart->EndSequence(pEvent);
-	// }
-	ComponentPart::EndSequence(pEvent);
 }

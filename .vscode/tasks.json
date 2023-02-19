@@ -6,7 +6,7 @@
             "command": "/usr/bin/g++-11",
             "args": [
                 "-fdiagnostics-color=always",
-                "-I/home/choisw/source/ComponentLinux/",
+                "-I/home/choisw/source/Skeleton/",
                 "-g",
                 "${workspaceFolder}/Main.cpp",
                 "${workspaceFolder}/92TestApplication/PTestMain/PTestMain.cpp",
@@ -52,7 +52,7 @@
                 "${workspaceFolder}/01Base/Aspect/*.cpp",
                 "${workspaceFolder}/01Base/Object/*.cpp",
                 "-o",
-                "${workspaceFolder}/bin/ComponentLinux"
+                "${workspaceFolder}/bin/Skeleton"
             ],
             "options": {
                 "cwd": "/usr/bin"

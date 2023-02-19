@@ -409,6 +409,19 @@ void LifecycleManager::StopSystem(Event* pEvent) {
 ///////////////////////////////////////////////////
 // FinalizeAsALifecycleManager
 ///////////////////////////////////////////////////
+void LifecycleManager::StopComponents(Event* pEvent) {
+	if (pEvent->IsReply()) {
+		if (pEvent->IsAllReplied()) {
+			LOG_FOOTER(__func__);
+		}
+	}
+	else {
+		LOG_HEADER(__func__);
+		for (auto& itr : this->m_mapComponents) {
+			this->SendReplyEvent(itr.second->GetUId(), (int)Component::EEventType::eStop);
+		}
+	}
+}
 
 void LifecycleManager::FinalizeComponents(Event* pEvent) {
 	if (pEvent->IsReply()) {
@@ -452,6 +465,9 @@ void LifecycleManager::FinalizeSchedulers(Event* pEvent) {
 void LifecycleManager::FinalizeAsALifecycleManager(Event* pEvent) {
 	if (pEvent->IsReply()) {
 		switch (pEvent->GetReplyType()) {
+		case (int)ILifecycleManager::EEventType::eStopComponents:
+			this->SendReplyEvent(this->GetUId(), (int)ILifecycleManager::EEventType::eFinalizeComponents);
+			break;
 		case (int)ILifecycleManager::EEventType::eFinalizeComponents:
 			this->SendReplyEvent(this->GetUId(), (int)ILifecycleManager::EEventType::eStopSchedulers);
 			break;
@@ -514,6 +530,9 @@ void LifecycleManager::ProcessAEvent(Event* pEvent) {
 
 	case (int)ILifecycleManager::EEventType::eFinalizeAsALifecycleManager:
 		this->FinalizeAsALifecycleManager(pEvent);
+		break;
+	case (int)ILifecycleManager::EEventType::eStopComponents:
+		this->StopComponents(pEvent);
 		break;
 	case (int)ILifecycleManager::EEventType::eFinalizeComponents:
 		this->FinalizeComponents(pEvent);

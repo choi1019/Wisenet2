@@ -19,6 +19,7 @@ enum class _ELayer_PTechnical {
 
 	_ePStub,
 	_ePSkeleton,
+	_ePSkeletonWorker,
 
 	_eEnd
 };

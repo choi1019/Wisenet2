@@ -74,6 +74,7 @@ protected:
 	virtual void AssociateUserSourcesNTargets() = 0;
 	//////////////////////////////////////////////////////////////////////////
 	virtual void StartComponents() = 0;
+	virtual void StopComponents() = 0;
 	//////////////////////////////////////////////////////////////////////////
 
 private: 
@@ -109,9 +110,12 @@ private:
 	///////////////////////////////////////////////////
 	// FinalizeAsALifecycleManager
 	///////////////////////////////////////////////////
+	void StopComponents(Event* pEvent);
 	void FinalizeComponents(Event* pEvent);
+
 	void StopSchedulers(Event* pEvent);
 	void FinalizeSchedulers(Event* pEvent);
+
 	void FinalizeAsALifecycleManager(Event* pEvent);
 
 protected:

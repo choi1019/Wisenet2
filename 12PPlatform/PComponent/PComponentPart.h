@@ -20,10 +20,8 @@ public:
 	// for Component
 	PComponentPart(int uClassId = PComponentPart_Id, const char* acClassName = PComponentPart_Name);
 	virtual ~PComponentPart();
-	virtual void Initialize();
-	virtual void Finalize();
 
 	virtual void Start();
 	virtual void Stop();
-	virtual void Run() {}
+	virtual void Run() = 0;
 };

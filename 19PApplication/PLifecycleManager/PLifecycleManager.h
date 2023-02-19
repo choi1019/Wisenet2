@@ -21,6 +21,9 @@ public:
 		eVideoManager,
 		eVideoInput,
 
+		eStub,
+		eSkeleton,
+
 		eEnd
 	};
 public:

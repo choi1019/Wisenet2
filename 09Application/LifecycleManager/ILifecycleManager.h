@@ -34,7 +34,7 @@ public:
 		eFinalizeComponents,
 
 		eStartComponents,
-//		eStopComponents,
+		eStopComponents,
 		eEnd
 	};
 

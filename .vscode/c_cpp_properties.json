@@ -17,7 +17,7 @@
         "databaseFilename": "${default}",
         "path": [
           "${default}",
-          "/home/choisw/source/ComponentLinux"
+          "/home/choisw/source/Skeleton"
         ]
       },
       "intelliSenseMode": "linux-gcc-x64",

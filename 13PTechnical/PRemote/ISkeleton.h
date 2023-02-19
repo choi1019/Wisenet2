@@ -12,6 +12,8 @@ enum class EException {
         eBind,
         eListen,
         eAccept,
+		eRead,
+		eWrite,
 		eEnd
 	};
 
@@ -22,6 +24,7 @@ enum class EException {
 
 	enum class EParts {
 		eBegin = _PSkeleton_Id,
+		ePSkeletonPart,
 		eEnd
 	};
 	enum class EReceivers {
