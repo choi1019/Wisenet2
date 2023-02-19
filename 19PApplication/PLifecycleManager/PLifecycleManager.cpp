@@ -1,7 +1,8 @@
-#include <52PApplication/PLifecycleManager/PLifecycleManager.h>
+#include <19PApplication/PLifecycleManager/PLifecycleManager.h>
 
 #include <12PPlatform/PComponent/PComponent.h>
 #include <12PPlatform/PScheduler/PScheduler.h>
+
 #include <13PTechnical/PTimer/PTimerRTC.h>
 #include <13PTechnical/PTimer/PTimerLinux.h>
 #include <13PTechnical/PTimer/PTimerLinux2.h>

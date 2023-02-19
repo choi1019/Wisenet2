@@ -2,7 +2,7 @@
 
 #include <01Base/StdLib/Map.h>
 #include <01Base/StdLib/Vector.h>
-#include <02Platform/LifecycleManager/ILifecycleManager.h>
+#include <09Application/LifecycleManager/ILifecycleManager.h>
 
 class LifecycleManager : public ILifecycleManager, public Component{
 

@@ -12,8 +12,6 @@ enum class _ELayer_Platform {
 	_eComponent,
 	_eComponentStub,
 	_eScheduler,
-	_eLifecycleManager,
-	_eMain,
 
 	_eEnd
 };

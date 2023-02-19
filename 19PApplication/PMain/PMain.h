@@ -1,10 +1,10 @@
 #pragma once
 
-#include <52PApplication/typedef.h>
-#define _PMain_Id _GET_CLASS_UID(_EPApplication::_ePMain)
+#include <19PApplication/typedef.h>
+#define _PMain_Id _GET_CLASS_UID(_ELayer_PApplication::_ePMain)
 #define _PMain_Name "PMain"
 
-#include <02Platform/Main/Main.h>
+#include <09Application/Main/Main.h>
 
 class PMain : public Main
 {

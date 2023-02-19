@@ -12,10 +12,12 @@ enum class _ELayer {
 	_ePlatform = 2,
 	_eTechnical = 3,
 	_eAspect = 4,
+	_eApplication = 9,
 
 	_ePPlatform = 12,
 	_ePTechnical = 13,
 	_ePAspect = 14,
+	_ePApplication = 19,
 
 	_eDomain = 21,
 	_eCamera = 22,
@@ -25,7 +27,7 @@ enum class _ELayer {
 	_ePCamera = 32,
 	_ePRecoreder = 33,
 
-	_ePApplication = 51,
+
 
 	_eEnd
 };

@@ -24,8 +24,8 @@
                 "${workspaceFolder}/91TestPlatform/TestAspect/*.cpp",
                 "${workspaceFolder}/91TestPlatform/TestObject/*.cpp",
 
-                "${workspaceFolder}/51PApplication/PMain/*.cpp",
-                "${workspaceFolder}/51PApplication/PLifecycleManager/*.cpp",
+                "${workspaceFolder}/19PApplication/PMain/*.cpp",
+                "${workspaceFolder}/19PApplication/PLifecycleManager/*.cpp",
 
                 "${workspaceFolder}/21Domain/VideoManager/*.cpp",
                 "${workspaceFolder}/21Domain/VideoInput/*.cpp",
@@ -39,11 +39,12 @@
                 "${workspaceFolder}/12PPlatform/PScheduler/*.cpp",
                 "${workspaceFolder}/12PPlatform/PComponent/*.cpp",
 
+                "${workspaceFolder}/09Application/Main/*.cpp",
+                "${workspaceFolder}/09Application/LifecycleManager/*.cpp",
+
                 "${workspaceFolder}/03Technical/MemoryManager/*.cpp",
                 "${workspaceFolder}/03Technical/Timer/*.cpp",
 
-                "${workspaceFolder}/02Platform/Main/*.cpp",
-                "${workspaceFolder}/02Platform/LifecycleManager/*.cpp",
                 "${workspaceFolder}/02Platform/EventQueue/*.cpp",
                 "${workspaceFolder}/02Platform/Scheduler/*.cpp",
                 "${workspaceFolder}/02Platform/Component/*.cpp",

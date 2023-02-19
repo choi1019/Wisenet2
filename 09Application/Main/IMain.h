@@ -1,7 +1,7 @@
 #pragma once
 
-#include <02Platform/typedef.h>
-#define _Main_Id _GET_CLASS_UID(_ELayer_Platform::_eMain)
+#include <09Application/typedef.h>
+#define _Main_Id _GET_CLASS_UID(_ELayer_Application::_eMain)
 #define _Main_Name "Main"
 
 class IMain {

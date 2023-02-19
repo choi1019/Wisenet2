@@ -1,7 +1,7 @@
-#include <52PApplication/PMain/PMain.h>
+#include <19PApplication/PMain/PMain.h>
 
 #include <13PTechnical/PMemoryManager/PMemoryManager.h>
-#include <52PApplication/PLifecycleManager/PLifecycleManager.h>
+#include <19PApplication/PLifecycleManager/PLifecycleManager.h>
 #include <12PPlatform/PEventQueue/PEventQueue.h>
 #include <01Base/Aspect/Exception.h>
 #include <01Base/Aspect/Log.h>

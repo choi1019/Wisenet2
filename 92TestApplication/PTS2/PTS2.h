@@ -12,7 +12,7 @@
 // #include <92TestApplication/PTS2/PTC21/PTC21.h>
 // #include <92TestApplication/PTS2/PTC22/PTC22.h>
 
-#include <51PApplication/PMain/PMain.h>
+#include <19PApplication/PMain/PMain.h>
 
 class PTS2: public TestSuite {
 private:

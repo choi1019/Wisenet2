@@ -1,10 +1,10 @@
 #pragma once
 
-#include <52PApplication/PLifecycleManager/PLifecycleManager.h>
-#define _PLifecycleManager_Id _GET_CLASS_UID(_EPApplication::_ePLifecycleManager)
+#include <19PApplication/typedef.h>
+#define _PLifecycleManager_Id _GET_CLASS_UID(_ELayer_PApplication::_ePLifecycleManager)
 #define _PLifecycleManager_name "PLifecycleManager"
 
-#include <02Platform/LifecycleManager/LifecycleManager.h>
+#include <09Application/LifecycleManager/LifecycleManager.h>
 
 class PLifecycleManager : public LifecycleManager {
 public:

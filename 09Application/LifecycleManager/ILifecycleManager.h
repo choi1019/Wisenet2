@@ -1,7 +1,7 @@
 #pragma once
 
-#include <02Platform/typedef.h>
-#define _LifecycleManager_Id _GET_CLASS_UID(_ELayer_Platform::_eLifecycleManager)
+#include <09Application/typedef.h>
+#define _LifecycleManager_Id _GET_CLASS_UID(_ELayer_Application::_eLifecycleManager)
 #define _LifecycleManager_Name "LifecycleManager"
 
 #include <01Base/Object/ValueObject.h>
