@@ -6,7 +6,8 @@ enum class _ELayer_Domain {
 	_eBegin = _GET_LAYER_UID(_ELayer::_eDomain),
 
 	_eVideoManager,
-	_eVideoInput,
+	_eVideoRequesterManager,
+	_eVideoProviderManager,
 
 	_eGenerator,
 	_eStreamContext,

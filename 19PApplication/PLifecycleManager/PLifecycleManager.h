@@ -19,7 +19,8 @@ public:
 		eTimerRTC,
 		
 		eVideoManager,
-		eVideoInput,
+		eVideoRequesterManager,
+		eVideoProviderManager,
 
 		eStub,
 		eSkeleton,

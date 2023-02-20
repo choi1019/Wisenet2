@@ -1,20 +1,20 @@
 #pragma once
 
 #include <21Domain/typedef.h>
-#define _VideoInput_Id _GET_CLASS_UID(_ELayer_Domain::_eVideoInput)
-#define _VideoInput_Name "VideoInput"
+#define _VideoProviderManager_Id _GET_CLASS_UID(_ELayer_Domain::_eVideoProviderManager)
+#define _VideoProviderManager_Name "VideoProviderManager"
 
 #include <01Base/Object/ValueObject.h>
 #include <01Base/StdLib/String.h>
 
-class IVideoInput {
+class IVideoProviderManager {
 public:
 	///////////////////////////////////////
 	// Component Parts
 	///////////////////////////////////////
 	enum class EPart {
-		eBegin = _VideoInput_Id,
-		eVideoInputPart,
+		eBegin = _VideoProviderManager_Id,
+		eVideoProvider,
 		eEnd
 	};
 
@@ -22,8 +22,8 @@ public:
 	// Required interface
 	////////////////////////////////////////
 	enum class EReceivers {
-		eBegin = _VideoInput_Id,
-		eVideoOutput,
+		eBegin = _VideoProviderManager_Id,
+		eVideoRequesterManager,
 		eEnd
 	};
 
@@ -32,8 +32,8 @@ public:
 	///////////////////////////////////////
 	// event type
 	enum class EEventType {
-		eBegin = _VideoInput_Id,
-		eParseFrame,
+		eBegin = _VideoProviderManager_Id,
+		eRegister,
 		eEnd
 	};
 

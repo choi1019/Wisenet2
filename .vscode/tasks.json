@@ -28,7 +28,8 @@
                 "${workspaceFolder}/19PApplication/PLifecycleManager/*.cpp",
 
                 "${workspaceFolder}/21Domain/VideoManager/*.cpp",
-                "${workspaceFolder}/21Domain/VideoInput/*.cpp",
+                "${workspaceFolder}/21Domain/VideoProviderManager/*.cpp",
+                "${workspaceFolder}/21Domain/VideoRequesterManager/*.cpp",
 
                 "${workspaceFolder}/13PTechnical/PMemoryManager/*.cpp",
                 "${workspaceFolder}/13PTechnical/PTimer/*.cpp",

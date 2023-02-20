@@ -10,6 +10,10 @@
 #include <13PTechnical/PRemote/PSkeleton.h>
 #include <13PTechnical/PRemote/PStub.h>
 
+#include <21Domain/VideoManager/VideoManager.h>
+#include <21Domain/VideoProviderManager/VideoProviderManager.h>
+#include <21Domain/VideoRequesterManager/VideoRequesterManager.h>
+
 PLifecycleManager::PLifecycleManager(
 		unsigned typeId,
 		const char* pClassName)
@@ -19,11 +23,14 @@ PLifecycleManager::~PLifecycleManager() {}
 
 void PLifecycleManager::RegisterUserShedulers() {
 	this->RegisterAScheduler((int)EComponents::eScheduler1, new("eScheduler1") PScheduler());
-//	this->RegisterAScheduler((int)EComponents::eScheduler2, new("eScheduler2") PScheduler());
+	this->RegisterAScheduler((int)EComponents::eScheduler2, new("eScheduler2") PScheduler());
 	this->RegisterAScheduler((int)EComponents::eSkeleton, new("eSkeleton") PSkeleton(10000));
 }
 void PLifecycleManager::RegisterUserComponents() {
 	this->RegisterAComponent((int)EComponents::eStub, new("eStub") PStub(10000));
+	this->RegisterAComponent((int)EComponents::eVideoManager, new("eVideoManager") VideoManager());
+	this->RegisterAComponent((int)EComponents::eVideoProviderManager, new("eVideoProviderManager") VideoProviderManager());
+	this->RegisterAComponent((int)EComponents::eVideoRequesterManager, new("eVideoRequesterManager") VideoRequesterManager());
 	// this->RegisterAComponent((int)EComponents::eTimerLinux, new("eTimerLinux") PTimerLinux(900));
 	// this->RegisterAComponent((int)EComponents::eTimerLinux1, new("eTimerLinux") PTimerLinux2(500));
 	//	this->RegisterAComponent((int)EComponents::eTimerLinux2, new("eTimerLinux") PTimerLinux2(1000));
@@ -31,6 +38,9 @@ void PLifecycleManager::RegisterUserComponents() {
 }
 void PLifecycleManager::AllocateUserComponents() {
 	this->AllocateAComponent((int)EComponents::eStub, (int)EComponents::eScheduler1);
+	this->AllocateAComponent((int)EComponents::eVideoManager, (int)EComponents::eScheduler1);
+	this->AllocateAComponent((int)EComponents::eVideoProviderManager, (int)EComponents::eScheduler2);
+	this->AllocateAComponent((int)EComponents::eVideoRequesterManager, (int)EComponents::eScheduler2);
 	// this->AllocateAComponent((int)EComponents::eTimerLinux, (int)EComponents::eScheduler2);
 	// this->AllocateAComponent((int)EComponents::eTimerLinux1, (int)EComponents::eScheduler1);
 	//	this->AllocateAComponent((int)EComponents::eTimerLinux2, (int)EComponents::eScheduler2);
@@ -38,8 +48,12 @@ void PLifecycleManager::AllocateUserComponents() {
 void PLifecycleManager::AssociateUserSendersNReceivers() {
 	// this->AssociateASenderNAReceiver(
 	// 	(int)EComponents::eVideoManager, (int)IVideoManager::ESources::eTimer, (int)EComponents::eTimer33);
-	// this->AssociateASenderNAReceiver(
-	// 	(int)EComponents::eVideoManager, (int)IVideoManager::EReceivers::eVideoInput, (int)EComponents::eVideoInput);
+	this->AssociateASenderNAReceiver(
+		(int)EComponents::eVideoManager, (int)IVideoManager::EReceivers::eVideoProviderManager, 
+		(int)EComponents::eVideoProviderManager);
+	this->AssociateASenderNAReceiver(
+		(int)EComponents::eVideoProviderManager, (int)IVideoProviderManager::EReceivers::eVideoRequesterManager, 
+		(int)EComponents::eVideoRequesterManager);
 }
 void PLifecycleManager::AssociateUserSourcesNTargets() {
 	// this->AssociateASourceNATarget((int)EComponents::eTimer33, (int)Timer::EGroups::eGroup1, (int)EComponents::eVideoManager);
@@ -61,6 +75,8 @@ void PLifecycleManager::StartComponents() {
 	// this->SendReplyEvent((int)EComponents::eTimerLinux1, (int)IComponent::EEventType::eStart);
 	//	this->SendReplyEvent((int)EComponents::eTimerLinux2, (int)IComponent::EEventType::eStart);
 	// this->SendReplyEvent((int)EComponents::eTimerRTC, (int)IComponent::EEventType::eStart);
+
+	this->SendReplyEvent((int)EComponents::eVideoManager, (int)IComponent::EEventType::eStart);
 }
 
 void PLifecycleManager::StopComponents() {

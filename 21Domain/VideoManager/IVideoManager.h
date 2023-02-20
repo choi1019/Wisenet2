@@ -11,7 +11,8 @@ public:
 	////////////////////////////////////////
 	enum class EReceivers {
 		eBegin = _VideoManager_Id,
-		eVideoInput,
+		eVideoRequesterManager,
+		eVideoProviderManager,
 		eEnd
 	};
 	enum class ESources {
@@ -26,6 +27,7 @@ public:
 	// event type
 	enum class EEventType {
 		eBegin = _VideoManager_Id,
+		eRegister,
 		eEnd
 	};
 };

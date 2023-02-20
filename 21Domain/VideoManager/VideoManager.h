@@ -7,7 +7,7 @@
 
 // required interface
 #include <03Technical/Timer/ITimer.h>
-#include <21Domain/VideoInput/IVideoInput.h>
+#include <21Domain/VideoProviderManager/IVideoProviderManager.h>
 
 class VideoManager : public IVideoManager, public Component {
 
@@ -32,67 +32,41 @@ protected:
 		Component::RegisterExceptions();
 	}
 
-	void Initialize() {
-		Component::Initialize();
-	}
-	void Finalize() {
-		Component::Finalize();
-	}
-
-	void Stop() {
-		Component::Stop();
-
-	}
-
 private:
 	void Start(Event* pEvent) {
 		if (pEvent->IsReply()) {
-			if (pEvent->GetReplyType() == (int)Component::EEventType::eStart) {
-				if (pEvent->GetUIdSource().GetComponentId() == this->FindUid((int)IVideoManager::EReceivers::eVideoInput).GetComponentId()) {
-					this->SendReplyEvent((int)IVideoManager::ESources::eTimer, (int)Component::EEventType::eStart);
-				}
-			}
+			LOG_FOOTER("VideoManager::Start");
 		}
 		else {
+			LOG_HEADER("VideoManager::Start");
 			Component::Start(pEvent);
-			this->SendReplyEvent((int)IVideoManager::EReceivers::eVideoInput, (int)Component::EEventType::eStart);
+			this->SendReplyEvent(this->GetUId(), (int)IVideoManager::EEventType::eRegister);
 		}
 	}
 
-	void Stop(Event* pEvent) {
+	void Register(Event* pEvent) {
 		if (pEvent->IsReply()) {
+			LOG_FOOTER("VideoManager::Register");
 		}
 		else {
+			LOG_HEADER("VideoManager::Register");
 			Component::Stop(pEvent);
-			this->SendReplyEvent((int)IVideoManager::ESources::eTimer, (int)Component::EEventType::eStop);
+			this->SendReplyEvent(
+				(int)IVideoManager::EReceivers::eVideoProviderManager, 
+				(int)IVideoProviderManager::EEventType::eRegister);
 		}
-	}
-
-	void Run(Event* pEvent) {
-		if (pEvent->IsReply()) {
-			if (pEvent->GetReplyType() == (int)IVideoInput::EEventType::eParseFrame) {
-				LOG(this->GetClassName(), __func__, "Reply eParseFrame");
-			}
-		}
-		else {
-			IVideoInput::ParamCompute* pParamCompute = new("ParamCompute") IVideoInput::ParamCompute(1, "eParseFrame");
-			this->SendReplyEvent((int)IVideoManager::EReceivers::eVideoInput, (int)IVideoInput::EEventType::eParseFrame, 0, pParamCompute);
-		}
-	}
-
-	void Pause(Event* pEvent) {
 	}
 
 protected:
-	// void ProcessAEvent(Event* pEvent) {
-	// 	switch (pEvent->GetType()) {
-	// 	case (int)ITimer::EEventType::eTimeOut:
-	// 		this->Run(pEvent);
-	// 		//this->Stop(pEvent);
-	// 		break;
-	// 	default:
-	// 		Component::ProcessAEvent(pEvent);
-	// 		break;
-	// 	}
-	// }
+	void ProcessAEvent(Event* pEvent) {
+		switch (pEvent->GetType()) {
+		case (int)IVideoManager::EEventType::eRegister:
+			this->Register(pEvent);
+			//this->Stop(pEvent);
+			break;
+		default:
+			Component::ProcessAEvent(pEvent);
+			break;
+		}
+	}
 };

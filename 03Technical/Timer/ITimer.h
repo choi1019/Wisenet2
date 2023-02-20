@@ -1,4 +1,5 @@
 
+#pragma once
 #include <03Technical/typedef.h>
 #define _Timer_Id _GET_CLASS_UID(_ELayer_Technical::_eTimer)
 #define _Timer_Name "Timer"
