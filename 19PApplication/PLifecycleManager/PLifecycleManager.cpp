@@ -1,6 +1,5 @@
 #include <19PApplication/PLifecycleManager/PLifecycleManager.h>
 
-#include <12PPlatform/PComponent/PComponent.h>
 #include <12PPlatform/PScheduler/PScheduler.h>
 
 #include <13PTechnical/PTimer/PTimerRTC.h>
@@ -19,7 +18,14 @@ PLifecycleManager::PLifecycleManager(
 		const char* pClassName)
 		: LifecycleManager(typeId, pClassName)
 	{}
-PLifecycleManager::~PLifecycleManager() {}
+PLifecycleManager::~PLifecycleManager() {
+}
+void PLifecycleManager::Initialize() {
+	LifecycleManager::Initialize();
+}
+void PLifecycleManager::Finalize() {
+	LifecycleManager::Finalize();
+}
 
 void PLifecycleManager::RegisterUserShedulers() {
 	this->RegisterAScheduler((int)EComponents::eScheduler1, new("eScheduler1") PScheduler());
@@ -59,14 +65,7 @@ void PLifecycleManager::AssociateUserSourcesNTargets() {
 	// this->AssociateASourceNATarget((int)EComponents::eTimer33, (int)Timer::EGroups::eGroup1, (int)EComponents::eVideoManager);
 }
 
-void PLifecycleManager::Initialize() {
-	LifecycleManager::Initialize();
-}
-void PLifecycleManager::Finalize() {
-	LifecycleManager::Finalize();
-}
-
-void PLifecycleManager::StartComponents() {
+void PLifecycleManager::StartSystem() {
 	// BaseObject::s_pMemory->Show("Static");
 	// ValueObject::s_pMemory->Show("Dynamic");
 	// this->SendReplyEvent((int)EComponents::eSkeleton, (int)IComponent::EEventType::eStart);
@@ -79,6 +78,6 @@ void PLifecycleManager::StartComponents() {
 	this->SendReplyEvent((int)EComponents::eVideoManager, (int)IComponent::EEventType::eStart);
 }
 
-void PLifecycleManager::StopComponents() {
+void PLifecycleManager::StopSystem() {
 	// this->SendReplyEvent((int)EComponents::eTimerLinux, (int)Component::EEventType::eStop);
 }

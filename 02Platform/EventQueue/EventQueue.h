@@ -45,7 +45,7 @@ public:
 		BaseObject::Finalize();
 	}
 
-	virtual void PushBack(Event* pEvent) {
+	void PushBack(Event* pEvent) {
 		this->PushLock();
 		if (m_nLength == 0) {
 			this->m_pRear = pEvent;
@@ -59,11 +59,11 @@ public:
 		this->PushUnlock();
 	}
 	
-	virtual Event* Front() {
+	Event* Front() {
 		return this->m_pFront;
 	}
 
-	virtual Event* PopFront(){
+	Event* PopFront(){
 		this->PopLock();
 		Event *pEvent = m_pFront;
 		this->m_pFront = m_pFront->GetPQueueNext();
@@ -72,7 +72,7 @@ public:
 		return pEvent;	
 	}
 
-	virtual bool IsEmpty() {
+	bool IsEmpty() {
 		return (m_nLength == 0) ? true : false;
 	}
 

@@ -6,7 +6,7 @@
 
 class LifecycleManager : public ILifecycleManager, public Component{
 
-protected:
+private:
 	// <schedulerName, schedulerPtr>
 	typedef Map<int, Scheduler*> MapSchedulers;
 	// <componentName, ComponentPtr>
@@ -27,15 +27,11 @@ protected:
 	MapSendersNReceivers m_mapSendersNReceivers;
 	MapSourcesNTargets	m_mapSourcesNTargets;
 
-
 	// calback pointer to PMain
 	Scheduler* m_pMainScheduler;
 
 	void RegisterEventTypes();
 	void RegisterExceptions();
-
-	void InitializeVariables();
-	void DeleteComponents();
 
 	Scheduler* FindAScheduler(UId uId);
 	Component* FindAComponent(UId uId);
@@ -49,74 +45,46 @@ protected:
 	virtual void Initialize();
 	virtual void Finalize();
 
-protected:
 	void RegisterAScheduler(int name, Scheduler* pScheduler);
-	void RegisterAComponent(int name, Component* pComponent);
-	void AllocateAComponent(int componentName, int schedulerName);
-	void AssociateASenderNAReceiver(int senderName, int receiverId, int receiverName);
-	// <sourceName, source.GroupName + vector<tarGetName>*
-	void AssociateASourceNATarget(int nSourceName, int nGroupId, int nTarGetName);
-
-	/////////////////////////////////////////////////////////////////////////
 	virtual void RegisterSystemSchedulers();
 	virtual void RegisterUserShedulers() = 0;
-	/////////////////////////////////////////////////////////////////////////
+	void RegisterAComponent(int name, Component* pComponent);
 	virtual void RegisterSystemComponents();
 	virtual void RegisterUserComponents() = 0;
-	/////////////////////////////////////////////////////////////////////////
+	void AllocateAComponent(int componentName, int schedulerName);
 	virtual void AllocateSystemComponents();
 	virtual void AllocateUserComponents() = 0;
-	/////////////////////////////////////////////////////////////////////////
+	void AssociateASenderNAReceiver(int senderName, int receiverId, int receiverName);
 	virtual void AssociateSystemSendersNReceivers();
 	virtual void AssociateUserSendersNReceivers() = 0;
-	//////////////////////////////////////////////////////////////////////////
+	void AssociateASourceNATarget(int nSourceName, int nGroupId, int nTarGetName);
 	virtual void AssociateSystemSourcesNTargets();
 	virtual void AssociateUserSourcesNTargets() = 0;
-	//////////////////////////////////////////////////////////////////////////
-	virtual void StartComponents() = 0;
-	virtual void StopComponents() = 0;
-	//////////////////////////////////////////////////////////////////////////
+
+	virtual void StartSystem() = 0;
+	virtual void StopSystem() = 0;
 
 private: 
-	///////////////////////////////////////////////////
-	// InitializeAsALifecycleManager
-	///////////////////////////////////////////////////
 	//  InitializeAsALifecycleManager
-	void InitializeAsALifecycleManager(Event* pEvent);
-
-	// Register Schedulers
-	void RegisterSchedulers(Event* pEvent);
-	// Initialize Schedulers
-	void InitializeSchedulers(Event* pEvent);
-	// Start Schedulers
-	void StartSchedulers(Event* pEvent);
-	// Register Components
+	void InitializeAsALifecycleManager(Event* pEvent);	
+	void RegisterSchedulers(Event* pEvent);	
+	void InitializeSchedulers(Event* pEvent);	
+	void StartSchedulers(Event* pEvent);	
 	void RegisterComponents(Event* pEvent);
-	// Allocate Components
 	void AllocateComponents(Event* pEvent);
-	// associate senders and recievers
 	void AssociateSendersNReceivers(Event* pEvent);
-	// associate a source and targets
 	void AssociateSourcesNTargets(Event* pEvent);
-	// Initialize Components
 	void InitializeComponents(Event* pEvent);
-	//  start Components
-	void StartComponents(Event* pEvent);
 
-private:
-	// Stop System
+	void StartSystem(Event* pEvent);
 	void StopSystem(Event* pEvent);
-
-	///////////////////////////////////////////////////
+	
 	// FinalizeAsALifecycleManager
-	///////////////////////////////////////////////////
+	void FinalizeAsALifecycleManager(Event* pEvent);
 	void StopComponents(Event* pEvent);
 	void FinalizeComponents(Event* pEvent);
-
 	void StopSchedulers(Event* pEvent);
-	void FinalizeSchedulers(Event* pEvent);
-
-	void FinalizeAsALifecycleManager(Event* pEvent);
+	void FinalizeSchedulers(Event* pEvent);	
 
 protected:
 	virtual void ProcessAEvent(Event* pEvent);

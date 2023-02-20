@@ -7,25 +7,6 @@
 
 //unsigned Component::s_uCounter = 0;
 
-void Component::RegisterEventTypes() {
-	Directory::s_dirEvents[(unsigned)EEventType::eAssociateAReceiver] = "eAssociateAReceiver";
-	Directory::s_dirEvents[(unsigned)EEventType::eAssociateATarget] = "eAssociateATarget";
-	Directory::s_dirEvents[(unsigned)EEventType::eInitialize] = "eInitialize";
-	Directory::s_dirEvents[(unsigned)EEventType::eFinalize] = "eFinalize";
-	Directory::s_dirEvents[(unsigned)EEventType::eStart] = "eStart";
-	Directory::s_dirEvents[(unsigned)EEventType::eStop] = "eStop";
-	Directory::s_dirEvents[(unsigned)EEventType::eRun] = "eRun";
-	Directory::s_dirEvents[(unsigned)EEventType::ePause] = "ePause";
-}
-
-void Component::RegisterExceptions() {
-	Directory::s_dirExceptions[(unsigned)EException::eNotAllocated] = "eNotAllocated";
-	Directory::s_dirExceptions[(unsigned)EException::eReceiverNotFound] = "eReceiverNotFound";
-	Directory::s_dirExceptions[(unsigned)EException::eNotAssociated] = "eNotAssociated";
-	Directory::s_dirExceptions[(unsigned)EException::eNotTargeted] = "eNotTargeted";
-	Directory::s_dirExceptions[(unsigned)EException::eEventNotSupported] = "eEventNotSupported";
-}
-
 Component::Component(unsigned uClassId, const char* sClassName)
 	: ComponentPart(uClassId, sClassName)
 {
@@ -49,6 +30,25 @@ Component::~Component() {
 	}
 	delete this->GetPMTargetsGroups();
 	// LOG
+}
+
+void Component::RegisterEventTypes() {
+	Directory::s_dirEvents[(unsigned)EEventType::eAssociateAReceiver] = "eAssociateAReceiver";
+	Directory::s_dirEvents[(unsigned)EEventType::eAssociateATarget] = "eAssociateATarget";
+	Directory::s_dirEvents[(unsigned)EEventType::eInitialize] = "eInitialize";
+	Directory::s_dirEvents[(unsigned)EEventType::eFinalize] = "eFinalize";
+	Directory::s_dirEvents[(unsigned)EEventType::eStart] = "eStart";
+	Directory::s_dirEvents[(unsigned)EEventType::eStop] = "eStop";
+	Directory::s_dirEvents[(unsigned)EEventType::eRun] = "eRun";
+	Directory::s_dirEvents[(unsigned)EEventType::ePause] = "ePause";
+}
+
+void Component::RegisterExceptions() {
+	Directory::s_dirExceptions[(unsigned)EException::eNotAllocated] = "eNotAllocated";
+	Directory::s_dirExceptions[(unsigned)EException::eReceiverNotFound] = "eReceiverNotFound";
+	Directory::s_dirExceptions[(unsigned)EException::eNotAssociated] = "eNotAssociated";
+	Directory::s_dirExceptions[(unsigned)EException::eNotTargeted] = "eNotTargeted";
+	Directory::s_dirExceptions[(unsigned)EException::eEventNotSupported] = "eEventNotSupported";
 }
 
 void Component::AddPart(unsigned uName, ComponentPart* pComponentPart) {

@@ -1,79 +1,12 @@
 #include <09Application/LifecycleManager/LifecycleManager.h>
 
-#include <02Platform/Component/Component.h>
-#include <02Platform/Scheduler/Scheduler.h>
+// #include <02Platform/Component/Component.h>
+// #include <02Platform/Scheduler/Scheduler.h>
 #include <09Application/Main/IMain.h>
+
 #include <01Base/Aspect/Directory.h>
 #include <01Base/Aspect/Exception.h>
 #include <01Base/Aspect/Log.h>
-
-void LifecycleManager::RegisterEventTypes() {
-	Directory::s_dirEvents[(unsigned)ILifecycleManager::EEventType::eStopSystem] = "eStopSystem";
-	Directory::s_dirEvents[(unsigned)ILifecycleManager::EEventType::eInitializeAsALifecycleManager] = "eInitializeAsALifecycleManager";
-	Directory::s_dirEvents[(unsigned)ILifecycleManager::EEventType::eFinalizeAsALifecycleManager] = "eFinalizeAsALifecycleManager";
-	Directory::s_dirEvents[(unsigned)ILifecycleManager::EEventType::eRegisterSchedulers] = "eRegisterSchedulers";
-	Directory::s_dirEvents[(unsigned)ILifecycleManager::EEventType::eInitializeSchedulers] = "eInitializeSchedulers";
-	Directory::s_dirEvents[(unsigned)ILifecycleManager::EEventType::eStartSchedulers] = "eStartSchedulers";
-	Directory::s_dirEvents[(unsigned)ILifecycleManager::EEventType::eFinalizeSchedulers] = "eFinalizeSchedulers";
-	Directory::s_dirEvents[(unsigned)ILifecycleManager::EEventType::eStopSchedulers] = "eStopSchedulers";
-	Directory::s_dirEvents[(unsigned)ILifecycleManager::EEventType::eRegisterComponents] = "eRegisterComponents";
-	Directory::s_dirEvents[(unsigned)ILifecycleManager::EEventType::eAllocateComponents] = "eAllocateComponents";
-	Directory::s_dirEvents[(unsigned)ILifecycleManager::EEventType::eAssociateSendersNReceivers] = "eAssociateSendersNReceivers";
-	Directory::s_dirEvents[(unsigned)ILifecycleManager::EEventType::eAssociateSourcesNTargets] = "eAssociateSourcesNTargets";
-	Directory::s_dirEvents[(unsigned)ILifecycleManager::EEventType::eInitializeComponents] = "eInitializeComponents";
-	Directory::s_dirEvents[(unsigned)ILifecycleManager::EEventType::eFinalizeComponents] = "eFinalizeComponents";
-	Directory::s_dirEvents[(unsigned)ILifecycleManager::EEventType::eStartComponents] = "eStartComponents";
-}
-
-void  LifecycleManager::RegisterExceptions() {
-	Directory::s_dirExceptions[(unsigned)ILifecycleManager::EException::eEventTypeError] = "eEventTypeError";
-	Directory::s_dirExceptions[(unsigned)ILifecycleManager::EException::eSchedulerNotRegistered] = "eSchedulerNotRegistered";
-	Directory::s_dirExceptions[(unsigned)ILifecycleManager::EException::eComponentNotRegistered] = "eComponentNotRegistered";
-	Directory::s_dirExceptions[(unsigned)ILifecycleManager::EException::eInitializationReplyError] = "eInitializationReplyError";
-}
-
-void LifecycleManager::InitializeVariables() {
-	LOG_HEADER(this->GetClassName(), __func__);
-	this->m_mapSchedulers.Clear();
-	this->m_mapComponents.Clear();
-	this->m_mapAllocations.Clear();
-	this->m_mapSendersNReceivers.Clear();
-	this->m_mapSourcesNTargets.Clear();
-
-	this->m_pMainScheduler = nullptr;
-	LOG_FOOTER(this->GetClassName(), __func__);
-}
-
-void LifecycleManager::DeleteComponents() {
-	LOG_HEADER(this->GetClassName(), __func__);
-	for (auto itr : m_mapComponents) {
-		if (itr.second != this && itr.second != this->m_pMainScheduler) {
-			delete itr.second;
-			Directory::s_dirComponents.Remove((long long)itr.second);
-		}
-	}
-	for (auto itr : this->m_mapSourcesNTargets) {
-		delete itr.second;
-	}
-	LOG_FOOTER(this->GetClassName(), __func__);
-}
-
-Scheduler* LifecycleManager::FindAScheduler(UId uId) {
-	for (auto itr : this->m_mapSchedulers) {
-		if (itr.second->GetUId() == uId) {
-			return itr.second;
-		}
-	}
-	return nullptr;
-}
-Component* LifecycleManager::FindAComponent(UId uId) {
-	for (auto itr : this->m_mapComponents) {
-		if (itr.second->GetUId() == uId) {
-			return itr.second;
-		}
-	}
-	return nullptr;
-}
 
 LifecycleManager::LifecycleManager(int nClassId, const char* pcClassName)
 	: Component(nClassId, pcClassName)
@@ -93,143 +26,125 @@ void LifecycleManager::Finalize() {
 	Component::Finalize();
 }
 
-void LifecycleManager::RegisterAScheduler(int name, Scheduler* pScheduler) {
-	this->m_mapSchedulers[name] = pScheduler;
-	LOG_NEWLINE(__func__, Directory::s_dirComponents[pScheduler->GetComponentId()]);
-	this->RegisterAComponent(name, pScheduler);
+void LifecycleManager::RegisterEventTypes() {
+	Directory::s_dirEvents[(unsigned)ILifecycleManager::EEventType::eStopSystem] = "eStopSystem";
+	Directory::s_dirEvents[(unsigned)ILifecycleManager::EEventType::eInitializeAsALifecycleManager] = "eInitializeAsALifecycleManager";
+	Directory::s_dirEvents[(unsigned)ILifecycleManager::EEventType::eFinalizeAsALifecycleManager] = "eFinalizeAsALifecycleManager";
+	Directory::s_dirEvents[(unsigned)ILifecycleManager::EEventType::eRegisterSchedulers] = "eRegisterSchedulers";
+	Directory::s_dirEvents[(unsigned)ILifecycleManager::EEventType::eInitializeSchedulers] = "eInitializeSchedulers";
+	Directory::s_dirEvents[(unsigned)ILifecycleManager::EEventType::eStartSchedulers] = "eStartSchedulers";
+	Directory::s_dirEvents[(unsigned)ILifecycleManager::EEventType::eFinalizeSchedulers] = "eFinalizeSchedulers";
+	Directory::s_dirEvents[(unsigned)ILifecycleManager::EEventType::eStopSchedulers] = "eStopSchedulers";
+	Directory::s_dirEvents[(unsigned)ILifecycleManager::EEventType::eRegisterComponents] = "eRegisterComponents";
+	Directory::s_dirEvents[(unsigned)ILifecycleManager::EEventType::eAllocateComponents] = "eAllocateComponents";
+	Directory::s_dirEvents[(unsigned)ILifecycleManager::EEventType::eAssociateSendersNReceivers] = "eAssociateSendersNReceivers";
+	Directory::s_dirEvents[(unsigned)ILifecycleManager::EEventType::eAssociateSourcesNTargets] = "eAssociateSourcesNTargets";
+	Directory::s_dirEvents[(unsigned)ILifecycleManager::EEventType::eInitializeComponents] = "eInitializeComponents";
+	Directory::s_dirEvents[(unsigned)ILifecycleManager::EEventType::eFinalizeComponents] = "eFinalizeComponents";
+	Directory::s_dirEvents[(unsigned)ILifecycleManager::EEventType::eStartSystem] = "eStartSystem";
 }
 
-void LifecycleManager::RegisterAComponent(int name, Component* pComponent) {
-	this->m_mapComponents[name] = pComponent;
-	LOG_NEWLINE(__func__, Directory::s_dirComponents[pComponent->GetComponentId()]);
+void  LifecycleManager::RegisterExceptions() {
+	Directory::s_dirExceptions[(unsigned)ILifecycleManager::EException::eEventTypeError] = "eEventTypeError";
+	Directory::s_dirExceptions[(unsigned)ILifecycleManager::EException::eSchedulerNotRegistered] = "eSchedulerNotRegistered";
+	Directory::s_dirExceptions[(unsigned)ILifecycleManager::EException::eComponentNotRegistered] = "eComponentNotRegistered";
+	Directory::s_dirExceptions[(unsigned)ILifecycleManager::EException::eInitializationReplyError] = "eInitializationReplyError";
 }
 
-void LifecycleManager::AllocateAComponent(int componentName, int schedulerName) {
-	this->m_mapAllocations[componentName] = schedulerName;
-	/*
-	LOG_NEWLINE(__func__,
-		Directory::s_dirComponents[this->m_mapComponents[componentName]->GetComponentId()],
-		Directory::s_dirComponents[this->m_mapSchedulers[schedulerName]->GetComponentId()]
-	);
-	*/
-}
-
-void LifecycleManager::AssociateASenderNAReceiver(int senderName, int receiverId, int receiverName) {
-	this->m_mapSendersNReceivers[MapPairSender(senderName, receiverId)] = receiverName;
-	Component* pSenderComponent = this->m_mapComponents[senderName];
-	Component* pReceiverComponent = this->m_mapComponents[receiverName];
-	/*
-	LOG(__func__,
-		Directory::s_dirComponents[pSenderComponent->GetComponentId()],
-		Directory::s_dirComponents[pReceiverComponent->GetComponentId()]
-	);
-	*/
-}
-
-// <sourceName, source.GroupName + vector<tarGetName>*
-void LifecycleManager::AssociateASourceNATarget(int nSourceName, int nGroupId, int nTarGetName) {
-	auto itr = this->m_mapSourcesNTargets.Find(MapPairSource(nSourceName, nGroupId));
-	if (itr == this->m_mapSourcesNTargets.end()) {
-		this->m_mapSourcesNTargets[MapPairSource(nSourceName, nGroupId)] = new("VectorTargetNames") VectorTargetNames();
+Scheduler* LifecycleManager::FindAScheduler(UId uId) {
+	for (auto itr : this->m_mapSchedulers) {
+		if (itr.second->GetUId() == uId) {
+			return itr.second;
+		}
 	}
-	this->m_mapSourcesNTargets[MapPairSource(nSourceName, nGroupId)]->Add(nTarGetName);
-
-	Component* pSourceComponent = this->m_mapComponents[nSourceName];
-	Component* pTargetComponent = this->m_mapComponents[nTarGetName];
-	/*
-	LOG(__func__,
-		Directory::s_dirComponents[pSourceComponent->GetComponentId()],
-		nGroupId,
-		Directory::s_dirComponents[pTargetComponent->GetComponentId()]
-	);
-	*/
+	return nullptr;
+}
+Component* LifecycleManager::FindAComponent(UId uId) {
+	for (auto itr : this->m_mapComponents) {
+		if (itr.second->GetUId() == uId) {
+			return itr.second;
+		}
+	}
+	return nullptr;
 }
 
 /////////////////////////////////////////////////////////////////////////
+void LifecycleManager::RegisterAScheduler(int name, Scheduler* pScheduler) {
+	this->m_mapSchedulers[name] = pScheduler;
+	this->RegisterAComponent(name, pScheduler);
+	LOG_NEWLINE("- RegisterAScheduler: ", name, Directory::s_dirComponents[pScheduler->GetComponentId()]);
+}
 void LifecycleManager::RegisterSystemSchedulers() {
 	this->RegisterAScheduler((int)ILifecycleManager::EReceivers::eMainScheduler, m_pMainScheduler);
 }
-/////////////////////////////////////////////////////////////////////////
-void LifecycleManager::RegisterSystemComponents() {
-	this->RegisterAComponent((int)ILifecycleManager::EReceivers::eLifecycleManager, this);
-}
-/////////////////////////////////////////////////////////////////////////
-void LifecycleManager::AllocateSystemComponents() {
-	this->AllocateAComponent((int)ILifecycleManager::EReceivers::eLifecycleManager, (int)ILifecycleManager::EReceivers::eMainScheduler);
-}
-/////////////////////////////////////////////////////////////////////////
-void LifecycleManager::AssociateSystemSendersNReceivers() {
-	// Components -> LifecycleManager
-	for (auto itr : this->m_mapComponents) {
-		this->AssociateASenderNAReceiver(
-			itr.first, (int)Component::EReceivers::eLifecycleManager, (int)ILifecycleManager::EReceivers::eLifecycleManager);
-	}
-	// lifecycleManager -> components
-	for (auto itr : this->m_mapComponents) {
-		this->AssociateASenderNAReceiver(
-			(int)ILifecycleManager::EReceivers::eLifecycleManager, itr.first, itr.first);
-	}
-}
-//////////////////////////////////////////////////////////////////////////
-void LifecycleManager::AssociateSystemSourcesNTargets() {
-}
-//////////////////////////////////////////////////////////////////////////
-
-
-///////////////////////////////////////////////////
-// InitializeAsALifecycleManager
-///////////////////////////////////////////////////
-
 // Register Schedulers
 void LifecycleManager::RegisterSchedulers(Event* pEvent) {
-	LOG_HEADER(__func__);
+	LOG_HEADER("LifecycleManager::RegisterSchedulers");
 	this->RegisterSystemSchedulers();
 	this->RegisterUserShedulers();
-	LOG_FOOTER(__func__);
+	LOG_FOOTER("LifecycleManager::RegisterSchedulers");
 }
-
 // Initialize Schedulers
 void LifecycleManager::InitializeSchedulers(Event* pEvent) {
-	LOG_HEADER(__func__);
+	LOG_HEADER("LifecycleManager::InitializeSchedulers");
 	for (auto itr : m_mapSchedulers) {
 		itr.second->InitializeAsAScheduler(0);
+		LOG_NEWLINE(Directory::s_dirComponents[itr.second->GetComponentId()]);
 	}
-	LOG_FOOTER(__func__);
+	LOG_FOOTER("LifecycleManager::InitializeSchedulers");
 }
 
 // Start Schedulers
 void LifecycleManager::StartSchedulers(Event* pEvent) {
 	if (pEvent->IsReply()) {
+		LOG_NEWLINE("- StartSchedulers -", Directory::s_dirComponents[pEvent->GetUIdSource().GetComponentId()]);
 		if (pEvent->IsAllReplied()) {
-			LOG_FOOTER(__func__);
+			LOG_FOOTER("LifecycleManager::StartSchedulers");
 		}
 	}
 	else {
-		LOG_HEADER(__func__);
+		LOG_HEADER("LifecycleManager::StartSchedulers");
 		for (auto itr : m_mapSchedulers) {
 			itr.second->Fork();
 			this->SendReplyEvent(itr.second->GetUId(), (int)IScheduler::EEventType::eStart);
 		}
 	}
 }
-
+/////////////////////////////////////////////////////////////////////////
+void LifecycleManager::RegisterAComponent(int name, Component* pComponent) {
+	this->m_mapComponents[name] = pComponent;
+	LOG_NEWLINE("- RegisterAComponent: ", name, Directory::s_dirComponents[pComponent->GetComponentId()]);
+}
+void LifecycleManager::RegisterSystemComponents() {
+	this->RegisterAComponent((int)ILifecycleManager::EReceivers::eLifecycleManager, this);
+}
 // Register Components
 void LifecycleManager::RegisterComponents(Event* pEvent) {
-	LOG_HEADER(__func__);
+	LOG_HEADER("LifecycleManager::RegisterComponents");
 	this->RegisterSystemComponents();
 	this->RegisterUserComponents();
-	LOG_FOOTER(__func__);
+	LOG_FOOTER("LifecycleManager::RegisterComponents");
 }
-
+/////////////////////////////////////////////////////////////////////////
+void LifecycleManager::AllocateAComponent(int componentName, int schedulerName) {
+	this->m_mapAllocations[componentName] = schedulerName;
+	LOG_NEWLINE("- AllocateAComponent: ", 
+		componentName, m_mapComponents[componentName]->GetClassName(),
+		schedulerName, m_mapSchedulers[schedulerName]->GetClassName()
+		);
+}
+void LifecycleManager::AllocateSystemComponents() {
+	this->AllocateAComponent((int)ILifecycleManager::EReceivers::eLifecycleManager, (int)ILifecycleManager::EReceivers::eMainScheduler);
+}
 // Allocate Components
 void LifecycleManager::AllocateComponents(Event* pEvent) {
 	if (pEvent->IsReply()) {
 		if (pEvent->IsAllReplied()) {
-			LOG_FOOTER(__func__);
+			LOG_FOOTER("LifecycleManager::AllocateComponents");
 		}
 	}
 	else {
-		LOG_HEADER(__func__);
+		LOG_HEADER("LifecycleManager::AllocateComponents");
 		this->AllocateSystemComponents();
 		this->AllocateUserComponents();
 
@@ -258,15 +173,39 @@ void LifecycleManager::AllocateComponents(Event* pEvent) {
 	}
 }
 
+/////////////////////////////////////////////////////////////////////////
+void LifecycleManager::AssociateASenderNAReceiver(int senderName, int receiverId, int receiverName) {
+	this->m_mapSendersNReceivers[MapPairSender(senderName, receiverId)] = receiverName;
+	Component* pSenderComponent = this->m_mapComponents[senderName];
+	Component* pReceiverComponent = this->m_mapComponents[receiverName];
+
+	LOG_NEWLINE("- AssociateASenderNAReceiver: ", 
+		senderName, pSenderComponent->GetClassName(), receiverId,
+		receiverName, pReceiverComponent->GetClassName()
+		);
+}
+
+void LifecycleManager::AssociateSystemSendersNReceivers() {
+	// Components -> LifecycleManager
+	for (auto itr : this->m_mapComponents) {
+		this->AssociateASenderNAReceiver(
+			itr.first, (int)Component::EReceivers::eLifecycleManager, (int)ILifecycleManager::EReceivers::eLifecycleManager);
+	}
+	// lifecycleManager -> components
+	for (auto itr : this->m_mapComponents) {
+		this->AssociateASenderNAReceiver(
+			(int)ILifecycleManager::EReceivers::eLifecycleManager, itr.first, itr.first);
+	}
+}
 // associate senders and recievers
 void LifecycleManager::AssociateSendersNReceivers(Event* pEvent) {
 	if (pEvent->IsReply()) {
 		if (pEvent->IsAllReplied()) {
-			LOG_FOOTER(__func__);
+			LOG_FOOTER("LifecycleManager::AssociateSendersNReceivers");
 		}
 	}
 	else {
-		LOG_HEADER(__func__);
+		LOG_HEADER("LifecycleManager::AssociateSendersNReceivers");
 		this->AssociateSystemSendersNReceivers();
 		this->AssociateUserSendersNReceivers();
 
@@ -286,16 +225,34 @@ void LifecycleManager::AssociateSendersNReceivers(Event* pEvent) {
 
 	}
 }
+/////////////////////////////////////////////////////////////////////////
+// <sourceName, source.GroupName + vector<tarGetName>*
+void LifecycleManager::AssociateASourceNATarget(int nSourceName, int nGroupId, int nTarGetName) {
+	auto itr = this->m_mapSourcesNTargets.Find(MapPairSource(nSourceName, nGroupId));
+	if (itr == this->m_mapSourcesNTargets.end()) {
+		this->m_mapSourcesNTargets[MapPairSource(nSourceName, nGroupId)] = new("VectorTargetNames") VectorTargetNames();
+	}
+	this->m_mapSourcesNTargets[MapPairSource(nSourceName, nGroupId)]->Add(nTarGetName);
 
+	Component* pSourceComponent = this->m_mapComponents[nSourceName];
+	Component* pTargetComponent = this->m_mapComponents[nTarGetName];
+
+	LOG_NEWLINE("- AssociateASourceNATarget: ", 
+		nSourceName, m_mapComponents[nSourceName]->GetClassName(), nGroupId,
+		nTarGetName, m_mapSchedulers[nTarGetName]->GetClassName()
+		);
+}
+void LifecycleManager::AssociateSystemSourcesNTargets() {
+}
 // associate a source and targets
 void LifecycleManager::AssociateSourcesNTargets(Event* pEvent) {
 	if (pEvent->IsReply()) {
 		if (pEvent->IsAllReplied()) {
-			LOG_FOOTER(__func__);
+			LOG_FOOTER("LifecycleManager::AssociateSourcesNTargets");
 		}
 	}
 	else {
-		LOG_HEADER(__func__);
+		LOG_HEADER("LifecycleManager::AssociateSourcesNTargets");
 		this->AssociateSystemSourcesNTargets();
 		this->AssociateUserSourcesNTargets();
 
@@ -316,108 +273,103 @@ void LifecycleManager::AssociateSourcesNTargets(Event* pEvent) {
 		}
 	}
 }
-
+/////////////////////////////////////////////////////////////////////////
 // Initialize Components
 void LifecycleManager::InitializeComponents(Event* pEvent) {
 	if (pEvent->IsReply()) {
+		LOG_NEWLINE("- InitializeComponents: ", 
+			Directory::s_dirComponents[pEvent->GetUIdSource().GetComponentId()]);
 		if (pEvent->IsAllReplied()) {
-			LOG_FOOTER(__func__);
+			LOG_FOOTER("LifecycleManager::InitializeComponents");
 		}
 	}
 	else {
-		LOG_HEADER(__func__);
+		LOG_HEADER("LifecycleManager::InitializeComponents");
 		for (auto& itrMapComponents : this->m_mapComponents) {
 			this->SendReplyEvent(itrMapComponents.second->GetUId(), (int)Component::EEventType::eInitialize);
 		}
 	}
 }
-
-// start Components
-void LifecycleManager::StartComponents(Event* pEvent) {
-	if (pEvent->IsReply()) {
-		if (pEvent->IsAllReplied()) {
-			LOG_FOOTER("LifecycleManager", __func__);
-//			this->SendReplyEvent(this->GetUId(), (int)ILifecycleManager::EEventType::eFinalizeAsALifecycleManager);
-		}
-	}
-	else {
-		LOG_HEADER("LifecycleManager", __func__);
-		this->StartComponents();
-	}
-}
-
+/////////////////////////////////////////////////////////////////////////
 //  InitializeAsALifecycleManager
 void LifecycleManager::InitializeAsALifecycleManager(Event* pEvent) {
 	if (pEvent->IsReply()) {
-//		if (pEvent->IsAllReplied()) {
-			switch (pEvent->GetReplyType()) {
-			case (int)ILifecycleManager::EEventType::eRegisterSchedulers:
-				this->SendReplyEvent(this->GetUId(), (int)ILifecycleManager::EEventType::eInitializeSchedulers);
-				break;
-			case (int)ILifecycleManager::EEventType::eInitializeSchedulers:
-				this->SendReplyEvent(this->GetUId(), (int)ILifecycleManager::EEventType::eStartSchedulers);
-				break;
-			case (int)ILifecycleManager::EEventType::eStartSchedulers:
-				this->SendReplyEvent(this->GetUId(), (int)ILifecycleManager::EEventType::eRegisterComponents);
-				break;
-			case (int)ILifecycleManager::EEventType::eRegisterComponents:
-				this->SendReplyEvent(this->GetUId(), (int)ILifecycleManager::EEventType::eAllocateComponents);
-				break;
-			case (int)ILifecycleManager::EEventType::eAllocateComponents:
-				this->SendReplyEvent(this->GetUId(), (int)ILifecycleManager::EEventType::eAssociateSendersNReceivers);
-				break;
-			case (int)ILifecycleManager::EEventType::eAssociateSendersNReceivers:
-				this->SendReplyEvent(this->GetUId(), (int)ILifecycleManager::EEventType::eAssociateSourcesNTargets);
-				break;
-			case (int)ILifecycleManager::EEventType::eAssociateSourcesNTargets:
-				this->SendReplyEvent(this->GetUId(), (int)ILifecycleManager::EEventType::eInitializeComponents);
-				break;
-			case (int)ILifecycleManager::EEventType::eInitializeComponents:
-				LOG_FOOTER(this->GetClassName(), __func__);
-				break;
-			default:
-				throw Exception((int)ILifecycleManager::EException::eInitializationReplyError, this->GetClassName(), __func__);
-				break;
-			}
-//		}
+		switch (pEvent->GetReplyType()) {
+		case (int)ILifecycleManager::EEventType::eRegisterSchedulers:
+			this->SendReplyEvent(this->GetUId(), (int)ILifecycleManager::EEventType::eInitializeSchedulers); break;
+		case (int)ILifecycleManager::EEventType::eInitializeSchedulers:
+			this->SendReplyEvent(this->GetUId(), (int)ILifecycleManager::EEventType::eStartSchedulers); break;
+		case (int)ILifecycleManager::EEventType::eStartSchedulers:
+			this->SendReplyEvent(this->GetUId(), (int)ILifecycleManager::EEventType::eRegisterComponents); break;
+		case (int)ILifecycleManager::EEventType::eRegisterComponents:
+			this->SendReplyEvent(this->GetUId(), (int)ILifecycleManager::EEventType::eAllocateComponents); break;
+		case (int)ILifecycleManager::EEventType::eAllocateComponents:
+			this->SendReplyEvent(this->GetUId(), (int)ILifecycleManager::EEventType::eAssociateSendersNReceivers); break;
+		case (int)ILifecycleManager::EEventType::eAssociateSendersNReceivers:
+			this->SendReplyEvent(this->GetUId(), (int)ILifecycleManager::EEventType::eAssociateSourcesNTargets); break;
+		case (int)ILifecycleManager::EEventType::eAssociateSourcesNTargets:
+			this->SendReplyEvent(this->GetUId(), (int)ILifecycleManager::EEventType::eInitializeComponents); break;
+		case (int)ILifecycleManager::EEventType::eInitializeComponents:
+			LOG_FOOTER("LifecycleManager::InitializeAsALifecycleManager"); break;
+		default:
+			throw Exception((int)ILifecycleManager::EException::eInitializationReplyError, 
+					"LifecycleManager::InitializeAsALifecycleManager", __LINE__); 
+			break;
+		}
 	}
 	else {
-		LOG_HEADER(this->GetClassName(), __func__);
-		this->InitializeVariables();
+		LOG_HEADER("LifecycleManager::InitializeAsALifecycleManager");
+		this->m_mapSchedulers.Clear();
+		this->m_mapComponents.Clear();
+		this->m_mapAllocations.Clear();
+		this->m_mapSendersNReceivers.Clear();
+		this->m_mapSourcesNTargets.Clear();
+		this->m_pMainScheduler = nullptr; 		
 
 		// unmarshalling
 		ParamInitializeAsALifecycleManager* pParamInitializeAsALifecycleManager = (ParamInitializeAsALifecycleManager*)pEvent->GetPArg();
 		this->m_pMainScheduler = pParamInitializeAsALifecycleManager->GetPMainScheduler();
-
 		this->SendReplyEvent(this->GetUId(), (int)ILifecycleManager::EEventType::eRegisterSchedulers);
-
 	}
 }
+/////////////////////////////////////////////////////////////////////////
 
-///////////////////////////////////////////////////
-// Event Mapping Methods before Unmarshalling
-///////////////////////////////////////////////////
 
-// Stop System
-void LifecycleManager::StopSystem(Event* pEvent) {
-	LOG_HEADER(__func__);
-	this->SendNoReplyEvent(
-		(int)ILifecycleManager::EReceivers::eMainScheduler,
-		(int)IMain::EEventType::eFinalizeAsAMain);
-	LOG_FOOTER(__func__);
-}
-
-///////////////////////////////////////////////////
-// FinalizeAsALifecycleManager
-///////////////////////////////////////////////////
-void LifecycleManager::StopComponents(Event* pEvent) {
+// start System
+void LifecycleManager::StartSystem(Event* pEvent) {
 	if (pEvent->IsReply()) {
+		LOG_NEWLINE("- StartSystem: ", 
+			Directory::s_dirComponents[pEvent->GetUIdSource().GetComponentId()]);
 		if (pEvent->IsAllReplied()) {
-			LOG_FOOTER(__func__);
+			LOG_FOOTER("LifecycleManager::StartSystem");
 		}
 	}
 	else {
-		LOG_HEADER(__func__);
+		LOG_HEADER("LifecycleManager::StartSystem");
+		this->StartSystem();
+	}
+}
+// Stop System
+void LifecycleManager::StopSystem(Event* pEvent) {
+	LOG_HEADER("LifecycleManager::StopSystem");
+	this->SendNoReplyEvent(
+		(int)ILifecycleManager::EReceivers::eMainScheduler,
+		(int)IMain::EEventType::eFinalizeAsAMain);
+	LOG_FOOTER("LifecycleManager::StopSystem");
+}
+
+/////////////////////////////////////////////////////////////////////////
+// FinalizeAsALifecycleManager
+void LifecycleManager::StopComponents(Event* pEvent) {
+	if (pEvent->IsReply()) {
+		LOG_NEWLINE("- StopComponents: ", 
+			Directory::s_dirComponents[pEvent->GetUIdSource().GetComponentId()]);
+		if (pEvent->IsAllReplied()) {
+			LOG_FOOTER("LifecycleManager::StopComponents");
+		}
+	}
+	else {
+		LOG_HEADER("LifecycleManager::StopComponents");
 		for (auto& itr : this->m_mapComponents) {
 			this->SendReplyEvent(itr.second->GetUId(), (int)Component::EEventType::eStop);
 		}
@@ -426,12 +378,14 @@ void LifecycleManager::StopComponents(Event* pEvent) {
 
 void LifecycleManager::FinalizeComponents(Event* pEvent) {
 	if (pEvent->IsReply()) {
+		LOG_NEWLINE("- FinalizeComponents: ", 
+			Directory::s_dirComponents[pEvent->GetUIdSource().GetComponentId()]);
 		if (pEvent->IsAllReplied()) {
-			LOG_FOOTER(__func__);
+			LOG_FOOTER("LifecycleManager::FinalizeComponents");
 		}
 	}
 	else {
-		LOG_HEADER(__func__);
+		LOG_HEADER("LifecycleManager::FinalizeComponents");
 		for (auto& itr : this->m_mapComponents) {
 			this->SendReplyEvent(itr.second->GetUId(), (int)Component::EEventType::eFinalize);
 		}
@@ -440,15 +394,17 @@ void LifecycleManager::FinalizeComponents(Event* pEvent) {
 
 void LifecycleManager::StopSchedulers(Event* pEvent) {
 	if (pEvent->IsReply()) {
+		LOG_NEWLINE("- StopSchedulers: ", 
+			Directory::s_dirComponents[pEvent->GetUIdSource().GetComponentId()]);
 		if (pEvent->IsAllReplied()) {
 			for (auto itr : m_mapSchedulers) {
 				itr.second->Join();
 			}
-			LOG_FOOTER(__func__);
+			LOG_FOOTER("LifecycleManager::StopSchedulers");
 		}
 	}
 	else {
-		LOG_HEADER(__func__);
+		LOG_HEADER("LifecycleManager::StopSchedulers");
 		for (auto itr : m_mapSchedulers) {
 			this->SendReplyEvent(itr.second->GetUId(), (int)IScheduler::EEventType::eStop);
 		}
@@ -456,11 +412,13 @@ void LifecycleManager::StopSchedulers(Event* pEvent) {
 }
 
 void LifecycleManager::FinalizeSchedulers(Event* pEvent) {
-	LOG_HEADER(__func__);
+	LOG_HEADER("LifecycleManager::FinalizeSchedulers");
 	for (auto itr : m_mapSchedulers) {
 		itr.second->FinalizeAsAScheduler();
+		LOG_NEWLINE("- StopSchedulers: ", 
+			Directory::s_dirComponents[itr.second->GetComponentId()]);
 	}
-	LOG_FOOTER(__func__);
+	LOG_FOOTER("LifecycleManager::FinalizeSchedulers");
 }
 
 void LifecycleManager::FinalizeAsALifecycleManager(Event* pEvent) {
@@ -476,76 +434,57 @@ void LifecycleManager::FinalizeAsALifecycleManager(Event* pEvent) {
 			this->SendReplyEvent(this->GetUId(), (int)ILifecycleManager::EEventType::eFinalizeSchedulers);
 			break;
 		case (int)ILifecycleManager::EEventType::eFinalizeSchedulers:
-			this->DeleteComponents();
-			LOG_FOOTER(this->GetClassName(), __func__);
+			LOG_FOOTER("LifecycleManager::FinalizeAsALifecycleManager");
 			break;
 		default:
-			throw Exception((int)ILifecycleManager::EException::eInitializationReplyError, this->GetClassName(), __func__);
+			throw Exception((int)ILifecycleManager::EException::eInitializationReplyError, 
+					"LifecycleManager::FinalizeAsALifecycleManager", __LINE__);
 			break;
 		}
 	}
 	else {
-		LOG_HEADER(this->GetClassName(), __func__);
-		this->SendReplyEvent(this->GetUId(), (int)ILifecycleManager::EEventType::eFinalizeComponents);
-
+		LOG_HEADER("LifecycleManager::FinalizeAsALifecycleManager");
+		this->SendReplyEvent(this->GetUId(), (int)ILifecycleManager::EEventType::eStopComponents);
 	}
 }
 
 void LifecycleManager::ProcessAEvent(Event* pEvent) {
 	switch (pEvent->GetType()) {
 	case (int)ILifecycleManager::EEventType::eInitializeAsALifecycleManager:
-		this->InitializeAsALifecycleManager(pEvent);
-		break;
+		this->InitializeAsALifecycleManager(pEvent); break;
 	case (int)ILifecycleManager::EEventType::eRegisterSchedulers:
-		this->RegisterSchedulers(pEvent);
-		break;
+		this->RegisterSchedulers(pEvent);  break;
 	case (int)ILifecycleManager::EEventType::eInitializeSchedulers:
-		this->InitializeSchedulers(pEvent);
-		break;
+		this->InitializeSchedulers(pEvent); break;
 	case (int)ILifecycleManager::EEventType::eStartSchedulers:
-		this->StartSchedulers(pEvent);
-		break;
+		this->StartSchedulers(pEvent); break;
 	case (int)ILifecycleManager::EEventType::eRegisterComponents:
-		this->RegisterComponents(pEvent);
-		break;
+		this->RegisterComponents(pEvent); break;
 	case (int)ILifecycleManager::EEventType::eAllocateComponents:
-		this->AllocateComponents(pEvent);
-		break;
+		this->AllocateComponents(pEvent); break;
 	case (int)ILifecycleManager::EEventType::eAssociateSendersNReceivers:
-		this->AssociateSendersNReceivers(pEvent);
-		break;
+		this->AssociateSendersNReceivers(pEvent); break;
 	case (int)ILifecycleManager::EEventType::eAssociateSourcesNTargets:
-		this->AssociateSourcesNTargets(pEvent);
-		break;
+		this->AssociateSourcesNTargets(pEvent); break;
 	case (int)ILifecycleManager::EEventType::eInitializeComponents:
-		this->InitializeComponents(pEvent);
-		break;
+		this->InitializeComponents(pEvent); break;
 
-	case (int)ILifecycleManager::EEventType::eStartComponents:
-		this->StartComponents(pEvent);
-		break;
-
+	case (int)ILifecycleManager::EEventType::eStartSystem:
+		this->StartSystem(pEvent); break;
 	case (int)ILifecycleManager::EEventType::eStopSystem:
-		this->StopSystem(pEvent);
-		break;
+		this->StopSystem(pEvent); break;
 
 	case (int)ILifecycleManager::EEventType::eFinalizeAsALifecycleManager:
-		this->FinalizeAsALifecycleManager(pEvent);
-		break;
+		this->FinalizeAsALifecycleManager(pEvent); break;
 	case (int)ILifecycleManager::EEventType::eStopComponents:
-		this->StopComponents(pEvent);
-		break;
+		this->StopComponents(pEvent); break;
 	case (int)ILifecycleManager::EEventType::eFinalizeComponents:
-		this->FinalizeComponents(pEvent);
-		break;
+		this->FinalizeComponents(pEvent); break;
 	case (int)ILifecycleManager::EEventType::eStopSchedulers:
-		this->StopSchedulers(pEvent);
-		break;
+		this->StopSchedulers(pEvent); break;
 	case (int)ILifecycleManager::EEventType::eFinalizeSchedulers:
-		this->FinalizeSchedulers(pEvent);
-		break;
+		this->FinalizeSchedulers(pEvent); break;
 	default:
-		Component::ProcessAEvent(pEvent);
-		break;
+		Component::ProcessAEvent(pEvent); break;
 	}
 }

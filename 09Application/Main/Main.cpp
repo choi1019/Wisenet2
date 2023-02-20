@@ -31,10 +31,11 @@ void Main::InitializeAsAMain(Event* pEvent) {
 	if (pEvent->IsReply()) {
 		if (pEvent->GetReplyType() == (int)ILifecycleManager::EEventType::eInitializeAsALifecycleManager) {
 			LOG_FOOTER("Main::InitializeAsAMain", "Send->m_pLifecycleManager(eInitializeAsALifecycleManager)");
-			this->SendNoReplyEvent(this->m_pLifecycleManager->GetUId(), (int)ILifecycleManager::EEventType::eStartComponents);
-			LOG_HEADER("Main::InitializeAsAMain", "Send->m_pLifecycleManager(eStartComponents)");
-		} else if (pEvent->GetReplyType() == (int)ILifecycleManager::EEventType::eStartComponents) {
-			LOG_FOOTER("Main::InitializeAsAMain", "Send->m_pLifecycleManager(eStartComponents)");
+			this->SendReplyEvent(this->m_pLifecycleManager->GetUId(), (int)ILifecycleManager::EEventType::eStartSystem);
+			LOG_HEADER("Main::InitializeAsAMain", "Send->m_pLifecycleManager(eStartSystem)");
+		} else if (pEvent->GetReplyType() == (int)ILifecycleManager::EEventType::eStartSystem) {
+			this->SendNoReplyEvent(this->GetUId(), (int)IMain::EEventType::eFinalizeAsAMain);
+			LOG_FOOTER("Main::InitializeAsAMain", "Send->Main(eFinalizeAsAMain)");
 		} else {
 			throw Exception ((unsigned)IComponent::EException::eEventNotSupported, "Main", "InitializeAsAMain", pEvent->GetType());
 		}
@@ -56,11 +57,11 @@ void Main::InitializeAsAMain(Event* pEvent) {
 
 void Main::FinalizeAsAMain(Event* pEvent) {
 	if (pEvent->IsReply()) {
-		Scheduler::Stop();
-		LOG_FOOTER(__func__);
+		Scheduler::StopAsAScheduler();
+		LOG_FOOTER("Main::FinalizeAsAMain");
 	}
 	else {
-		LOG_HEADER(__func__);
+		LOG_HEADER("Main::FinalizeAsAMain");
 		this->SendReplyEvent(this->m_pLifecycleManager->GetUId(),
 			(unsigned)ILifecycleManager::EEventType::eFinalizeAsALifecycleManager);
 	}

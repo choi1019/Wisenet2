@@ -24,9 +24,9 @@ private:
 	// attributes
 	int 	m_uObjectId;
 	int 	m_nClassId;
-	const char* m_pcClassName;
-	size_t 		m_szThis;
-	EState 		m_eState;
+	char 	m_pcClassName[30];
+	size_t 	m_szThis;
+	EState 	m_eState;
 
 public:
 	// getters and setters

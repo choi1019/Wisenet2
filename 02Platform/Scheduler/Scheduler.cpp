@@ -3,25 +3,22 @@
 #include <01Base/Aspect/Exception.h>
 #include <01Base/Aspect/Log.h>
 
-void Scheduler::InitializeVarialbes() {
-	this->m_mComponents.Clear();
-	//		this->m_pEventQueue->Clear();
+Scheduler::Scheduler(
+	unsigned classId, const char* className)
+	: Component(classId, className)
+	, m_pEventQueue(nullptr)
+{
+	this->RegisterEventTypes();
+	this->m_eState = IScheduler::EState::eCreated;
 }
-void Scheduler::DeleteVarialbes() {
-	LOG_HEADER("Scheduler::DeleteVarialbes", Directory::s_dirComponents[this->GetComponentId()], "EventQueue");
-	this->m_pEventQueue->Show(Directory::s_dirComponents[this->GetComponentId()].c_str());
+Scheduler::~Scheduler() {
+}
 
-//	this->GetPEventQueue()->ShowState("");
-	Event* pEvent = this->m_pEventQueue->Front();
-	while (pEvent != nullptr) {
-		LOG_NEWLINE(__func__, Directory::s_dirEvents[pEvent->GetType()]);
-		Event *pPoppedEvent = this->m_pEventQueue->PopFront();
-		if (pPoppedEvent != nullptr) {
-			delete pEvent;
-		}
-		pEvent = this->m_pEventQueue->Front();
-	}
-	LOG_FOOTER("Scheduler::DeleteVarialbes", Directory::s_dirComponents[this->GetComponentId()], "EventQueue");
+void Scheduler::Initialize() {
+	Component::Initialize();
+}
+void Scheduler::Finalize() {
+	Component::Finalize();
 }
 
 void Scheduler::RegisterEventTypes() {
@@ -39,26 +36,6 @@ void Scheduler::RegisterEventTypes() {
 	Directory::s_dirEvents[(unsigned)IScheduler::EEventType::eResume] = "eResumeScheduler";
 }
 
-Scheduler::Scheduler(
-	unsigned classId, const char* className)
-	: Component(classId, className)
-	//		, m_nSchedulerId(s_uCounter++)
-	, m_pEventQueue(nullptr)
-{
-	this->RegisterEventTypes();
-	this->m_eState = IScheduler::EState::eCreated;
-}
-Scheduler::~Scheduler() {
-}
-
-void Scheduler::Initialize() {
-	Component::Initialize();
-}
-void Scheduler::Finalize() {
-	Component::Finalize();
-}
-
-
 //	int GetSchedulerId() { return this->m_nSchedulerId; }
 EventQueue* Scheduler::GetPEventQueue() { 
 	return this->m_pEventQueue; 
@@ -71,12 +48,24 @@ void Scheduler::SetPEventQueue(EventQueue* pEventQueue) {
 
 // jobs to do before the thread is started
 void Scheduler::InitializeAsAScheduler(int uPriority) {
-	this->InitializeVarialbes();
+	this->m_mComponents.Clear();
 	this->m_eState = IScheduler::EState::eInitializedAsAScheduler;
 }
 void Scheduler::FinalizeAsAScheduler() {
 	this->m_eState = IScheduler::EState::eFinalizedAsAScheduler;
-	this->DeleteVarialbes();
+		LOG_HEADER("Scheduler::DeleteVarialbes", Directory::s_dirComponents[this->GetComponentId()], "EventQueue");
+	this->m_pEventQueue->Show(Directory::s_dirComponents[this->GetComponentId()].c_str());
+
+	Event* pEvent = this->m_pEventQueue->Front();
+	while (pEvent != nullptr) {
+		LOG_NEWLINE(__func__, Directory::s_dirEvents[pEvent->GetType()]);
+		Event *pPoppedEvent = this->m_pEventQueue->PopFront();
+		if (pPoppedEvent != nullptr) {
+			delete pEvent;
+		}
+		pEvent = this->m_pEventQueue->Front();
+	}
+	LOG_FOOTER("Scheduler::DeleteVarialbes", Directory::s_dirComponents[this->GetComponentId()], "EventQueue");
 }
 
 void Scheduler::PauseAsAScheduler() {

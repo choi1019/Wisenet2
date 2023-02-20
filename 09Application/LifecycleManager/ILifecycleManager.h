@@ -12,29 +12,24 @@ public:
 	enum class EEventType {
 		eBegin = _LifecycleManager_Id,
 
-//		eStartSystem,
-		eStopSystem,
-
 		eInitializeAsALifecycleManager,
-		eFinalizeAsALifecycleManager,
-
 		eRegisterSchedulers,
 		eInitializeSchedulers,
 		eStartSchedulers,
-		eFinalizeSchedulers,
-		eStopSchedulers,
-
 		eRegisterComponents,
 		eAllocateComponents,
-
 		eAssociateSendersNReceivers,
 		eAssociateSourcesNTargets,
-
 		eInitializeComponents,
-		eFinalizeComponents,
 
-		eStartComponents,
+		eStartSystem,
+		eStopSystem,
+
+		eFinalizeAsALifecycleManager,
+		eFinalizeComponents,
 		eStopComponents,
+		eStopSchedulers,
+		eFinalizeSchedulers,		
 		eEnd
 	};
 

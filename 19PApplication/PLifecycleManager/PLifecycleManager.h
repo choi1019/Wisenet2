@@ -31,7 +31,9 @@ public:
 	PLifecycleManager(
 		unsigned typeId = _PLifecycleManager_Id,
 		const char* pClassName = _PLifecycleManager_name);
-	virtual ~PLifecycleManager();
+	~PLifecycleManager() override;
+	void Initialize() override;
+	void Finalize() override;
 
 protected:
 	virtual void RegisterUserShedulers();
@@ -40,9 +42,6 @@ protected:
 	virtual void AssociateUserSendersNReceivers();
 	virtual void AssociateUserSourcesNTargets();
 
-	virtual void Initialize();
-	virtual void Finalize();
-
-	virtual void StartComponents();
-	virtual void StopComponents();
+	virtual void StartSystem();
+	virtual void StopSystem();
 };

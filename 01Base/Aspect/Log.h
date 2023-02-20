@@ -122,7 +122,7 @@ public:
 	void PrintFooter() {
 		this->RemoveTab();
 		printf(
-			"\n%sEnd>>%s %s %s %s %s %s %s"
+			"\n%sEnd>>%s %s %s %s %s %s %s\n"
 			, Aspect::GetTab()
 			, m_sObject.c_str()
 			, m_sFunction.c_str()

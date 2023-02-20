@@ -16,10 +16,7 @@ private:
 	EventQueue* m_pEventQueue;
 	IScheduler::EState m_eState;
 
-	virtual void InitializeVarialbes();
-	virtual void DeleteVarialbes();
-
-	void RegisterEventTypes();
+	virtual void RegisterEventTypes();
 
 public:
 	Scheduler(unsigned classId = _Scheduler_Id, const char* className = _Scheduler_Name);
