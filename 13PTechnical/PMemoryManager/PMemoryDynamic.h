@@ -24,6 +24,6 @@ public:
 		const char* pcClassName = _PMemoryDynamic_Name);
 	~PMemoryDynamic() override;
 
-	virtual void Initialize() override;
-	virtual void Finalize() override;
+	void Initialize() override;
+	void Finalize() override;
 };

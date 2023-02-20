@@ -16,18 +16,19 @@ void* MemoryDynamic::operator new(size_t szThis, void* pMemoryAllocated, size_t 
     s_pAllocated = pMemoryAllocated;
     s_szAllocated = szMemoryllocated;
 
-    void* pMemoryDynamic = BaseObject::s_pMemory->SafeMalloc(szThis, "pMemoryDynamic");    
+    void* pMemoryDynamic = BaseObject::s_pMemory->SafeMalloc(szThis, sMessage);    
     SlotList::s_pSlotListRecycle = nullptr;
 
+    MLOG_NEWLINE("MemoryDynamic::new", szThis, (size_t)pMemoryDynamic);
     return pMemoryDynamic;
 }
 void MemoryDynamic::operator delete(void* pObject) {
     MemoryObject::s_pMemory->SafeFree(pObject);
+    MLOG_NEWLINE("MemoryDynamic::delete", (size_t)pObject);
  }
 void MemoryDynamic::operator delete(void* pObject, void* pMemoryAllocated, size_t szMemoryllocated) {
-    throw Exception((unsigned)IMemory::EException::_eNotSupport, "delete MemoryDynamic", "_eNotSupport");
+    throw Exception((unsigned)IMemory::EException::_eNotSupport, "MemoryDynamic::delete", __LINE__);
 }
-
 
 // constructors and destructors
 MemoryDynamic::MemoryDynamic(unsigned szPage, unsigned szSlotUnit, int nClassId, const char* pClassName)
@@ -35,8 +36,8 @@ MemoryDynamic::MemoryDynamic(unsigned szPage, unsigned szSlotUnit, int nClassId,
     , m_szPage(szPage)
     , m_szUnit(szSlotUnit)
 {
-    this->m_pPageList = new("PageList") PageList((size_t)s_pAllocated, s_szAllocated, m_szPage);
-    this->m_pSlotListHead = new("SlotList 0") SlotList(0);
+    this->m_pPageList = new("MemoryDynamic::m_pPageList") PageList((size_t)s_pAllocated, s_szAllocated, m_szPage);
+    this->m_pSlotListHead = new("MemoryDynamic::m_pSlotListHead") SlotList(0);
     this->m_szUnitExponentOf2 = (unsigned)(log2(static_cast<double>(this->m_szUnit)));
  
     // set memory manager of ValueObject as this
@@ -55,6 +56,8 @@ void MemoryDynamic::Finalize() {
 
 // methods
 void* MemoryDynamic::Malloc(size_t szObject, const char* sMessage) { 
+//    MLOG_NEWLINE("MemoryDynamic::Malloc(szObject, sMessage)", szObject, sMessage);
+
      // multiple of WORD
     size_t szSlot = szObject;
     szSlot >>= m_szUnitExponentOf2;
@@ -62,8 +65,6 @@ void* MemoryDynamic::Malloc(size_t szObject, const char* sMessage) {
     if (szSlot < szObject) {
         szSlot += m_szUnit;
     }
-    
- //   LOG_NEWLINE("MemoryDynamic::Malloc(sMessage,szObject)", sMessage, szObject);
     SlotList *pPrevious = nullptr;
     SlotList *pCurrent = m_pSlotListHead; 
     while (pCurrent != nullptr) {
@@ -111,7 +112,7 @@ void* MemoryDynamic::Malloc(size_t szObject, const char* sMessage) {
         pPrevious = pCurrent;
         pCurrent = pCurrent->GetPNext();
     } 
-    throw Exception((unsigned)IMemory::EException::_eSlotlistAllocationFailed, "MemoryDynamic", "Malloc", "Failed");
+    throw Exception((unsigned)IMemory::EException::_eSlotlistAllocationFailed, " MemoryDynamic::Malloc", __LINE__);
 }
 
 void MemoryDynamic::Free(void* pObject) {
@@ -128,7 +129,7 @@ void MemoryDynamic::Free(void* pObject) {
                 pSiblingCurrent->FreeSlot((Slot *)pObject);
                 if (pSiblingCurrent->IsGarbage()) {
                     pSiblingPrevious->SetPSibling(pSiblingCurrent->GetPSibling());
-                    LOG_NEWLINE("MemoryDynamic::Free-Garbage", (size_t)pSiblingCurrent);
+                    MLOG_NEWLINE("MemoryDynamic::Free", "IsGarbage", (size_t)pSiblingCurrent);
                     delete pSiblingCurrent;
                 }
                 return;
@@ -138,7 +139,7 @@ void MemoryDynamic::Free(void* pObject) {
         }
         pCurrent = pCurrent->GetPNext();
     }
-    throw Exception((unsigned)IMemory::EException::_eSlotlistFreeFailed, "MemoryDynamic", "Free", (size_t)pObject);
+    throw Exception((unsigned)IMemory::EException::_eSlotlistFreeFailed, "MemoryDynamic::Free", __LINE__);
 }
 
 void* MemoryDynamic::SafeMalloc(size_t szAllocate, const char* pcName)

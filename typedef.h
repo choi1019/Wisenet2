@@ -27,8 +27,6 @@ enum class _ELayer {
 	_ePCamera = 32,
 	_ePRecoreder = 33,
 
-
-
 	_eEnd
 };
 
@@ -42,3 +40,4 @@ enum class _ELayer {
 #undef GetClassName
 
 #define _DEBUG 1
+#define _DEBUG_M 1

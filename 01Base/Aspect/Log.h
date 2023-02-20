@@ -152,9 +152,35 @@ public:
 	#define LOG_FOOTER(...)
 	
 	#define LOG_HEADER()
-	#define LOG_FOOTER())
+	#define LOG_FOOTER()
 
 	#define LOG_NEWLINE(CLASSNAME, ...)
 	#define LOG(CLASSNAME, ...)
 //	#define LOG_TIME(...) Log(__VA_ARGS__).PrintTime()
+#endif
+
+#if _DEBUG_M
+	#define MLOG_HEADER(...) Log(__VA_ARGS__).PrintHeader()
+	#define MLOG_FOOTER(...) Log(__VA_ARGS__).PrintFooter()
+
+	#define MLOG_HEADER0() Log(this->GetClassName(), __func__).PrintHeader()
+	#define MLOG_FOOTER0() Log(this->GetClassName(), __func__).PrintFooter()
+
+	#define MLOG_NEWLINE(...) Log(__VA_ARGS__).Println()
+	#define MLOG(...) Log(__VA_ARGS__).Print()
+//	#define MLOG_TIME(...) Log(__VA_ARGS__).PrintTime()
+
+ 	#define MLOG_SHOW(MEMORYNAME, ...) MEMORYNAME->Show("MEMORYNAME")
+#else
+	#define MLOG_HEADER(CLASSNAME, ...)
+	#define MLOG_FOOTER(...)
+	
+	#define MLOG_HEADER()
+	#define MLOG_FOOTER()
+
+	#define MLOG_NEWLINE(CLASSNAME, ...)
+	#define MLOG(CLASSNAME, ...)
+//	#define MLOG_TIME(...) Log(__VA_ARGS__).PrintTime()
+
+	#define MLOG_SHOW(MEMORYNAME, ...) 
 #endif

@@ -15,27 +15,31 @@ char* PMemoryManager::s_pApplicationMemeoryAllocated = nullptr;;
 PMemoryDynamic* PMemoryManager::s_pMemoryDynamic = nullptr;;
 
 void PMemoryManager::Allocate() {
+    MLOG_HEADER("PMemoryManager::Allocate");
     // system memory allocation
     s_pSystemMemeoryAllocated = new char[s_szSystemMemory];
-    s_pMemoryStatic = new(s_pSystemMemeoryAllocated, s_szSystemMemory, "PMemoryManager") PMemoryStatic();
+    s_pMemoryStatic = new(s_pSystemMemeoryAllocated, s_szSystemMemory, "s_pMemoryStatic") PMemoryStatic();
     s_pMemoryStatic->Initialize();
-    s_pMemoryStatic->Show("s_pMemoryStatic::Initialize()");
+    MLOG_SHOW(s_pMemoryStatic);
 
     // aplication memorty allocation
     s_pApplicationMemeoryAllocated = new char[s_szApplicationMemory];
-    s_pMemoryDynamic = new(s_pApplicationMemeoryAllocated, s_szApplicationMemory, "PMemoryManager") PMemoryDynamic(s_szPage, s_szSlotUnit);
+    s_pMemoryDynamic = new(s_pApplicationMemeoryAllocated, s_szApplicationMemory, "s_pMemoryDynamic") PMemoryDynamic(s_szPage, s_szSlotUnit);
     s_pMemoryDynamic->Initialize();
-    s_pMemoryDynamic->Show("s_pMemoryDynamic::Initialize()");
+    MLOG_SHOW(s_pMemoryDynamic);
+    MLOG_FOOTER("PMemoryManager::Allocate");
 }
 
 void PMemoryManager::Delocate() {
+    MLOG_HEADER("PMemoryManager::Delocate");
     s_pMemoryDynamic->Finalize();
-    s_pMemoryDynamic->Show("");
+    MLOG_SHOW(s_pMemoryStatic);
     delete s_pMemoryDynamic;
     delete[] s_pApplicationMemeoryAllocated;
 
     s_pMemoryStatic->Finalize();
-    s_pMemoryStatic->Show("");
+    MLOG_SHOW(s_pMemoryDynamic);
     delete s_pMemoryStatic;
     delete[] s_pSystemMemeoryAllocated;
+    MLOG_FOOTER("PMemoryManager::Delocate");
 }

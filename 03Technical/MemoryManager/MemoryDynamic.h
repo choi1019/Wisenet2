@@ -38,7 +38,7 @@ protected:
 	virtual void Lock() = 0;
 	virtual void UnLock() = 0;
 
-	void* Malloc(size_t szObject, const char* pcName = "");
+	void* Malloc(size_t szObject, const char* sMessage);
 	void Free(void* pObject);
 
 public:
@@ -54,7 +54,7 @@ public:
 	virtual void Finalize();
 
 	// methods
-	void* SafeMalloc(size_t szAllocate, const char* pcName = "") override;
+	void* SafeMalloc(size_t szAllocate, const char* sMessage) override;
 	void SafeFree(void* pObject) override;
 
 	// maintenance

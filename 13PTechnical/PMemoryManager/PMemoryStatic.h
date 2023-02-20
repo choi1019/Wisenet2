@@ -22,6 +22,6 @@ public:
 		const char* pcClassName = _PMemoryStatic_Name);
 	~PMemoryStatic() override;
 
-	virtual void Initialize() override;
-	virtual void Finalize() override;
+	void Initialize() override;
+	void Finalize() override;
 };
