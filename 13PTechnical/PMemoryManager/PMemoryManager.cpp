@@ -38,7 +38,7 @@ void PMemoryManager::Delocate() {
     delete[] s_pApplicationMemeoryAllocated;
 
     s_pMemoryStatic->Finalize();
-    MLOG_SHOW(s_pMemoryDynamic);
+ //   MLOG_SHOW(s_pMemoryDynamic);
     delete s_pMemoryStatic;
     delete[] s_pSystemMemeoryAllocated;
     MLOG_FOOTER("PMemoryManager::Delocate");
