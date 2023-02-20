@@ -49,6 +49,7 @@ public:
         serveraddr.sin_addr.s_addr = m_inAddressIP;
         serveraddr.sin_port = htons(m_nNumPort);
         int result = connect(server_sockfd, (struct sockaddr *)&serveraddr, sizeof(serveraddr));
+        bool isWaited = false;
         if (result < 0){
             throw Exception((int)(IStub::EException::eConnect), "eConnect", result);
         }

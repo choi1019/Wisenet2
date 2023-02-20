@@ -29,7 +29,11 @@ public:
 	MapIterator(MapPair<KEYTYPE, VALUETYPE>* pElement) : pElement(pElement) {}
 
 	inline MapIterator operator++() {
-		MapIterator current = *this; 
+		pElement++;
+		return pElement;
+	}
+	inline MapIterator operator++(int) {
+		MapIterator current = pElement; 
 		pElement++;
 		return current;
 	}
