@@ -337,7 +337,7 @@ void LifecycleManager::StartComponents(Event* pEvent) {
 	if (pEvent->IsReply()) {
 		if (pEvent->IsAllReplied()) {
 			LOG_FOOTER("LifecycleManager", __func__);
-			this->SendReplyEvent(this->GetUId(), (int)ILifecycleManager::EEventType::eFinalizeAsALifecycleManager);
+//			this->SendReplyEvent(this->GetUId(), (int)ILifecycleManager::EEventType::eFinalizeAsALifecycleManager);
 		}
 	}
 	else {
