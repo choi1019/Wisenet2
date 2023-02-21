@@ -74,9 +74,9 @@ void PageList::FreePages(unsigned indexFree) {
 }
 
 void PageList::Show(const char* pTitle) {
-    LOG_HEADER("PageList::Show(m_numPagesAvaiable)", m_numPagesAvaiable);
+    MLOG_HEADER("PageList::Show(m_numPagesAvaiable, m_numPagesMax)", m_numPagesAvaiable, m_numPagesMax);
     for (unsigned i=0; i< m_numPagesMax; i++) {
         m_apPageIndices[i]->Show("");
     }
-    LOG_FOOTER("PageList::Show");
+    MLOG_FOOTER("PageList::Show");
 }

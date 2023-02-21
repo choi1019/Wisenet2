@@ -47,7 +47,7 @@ public:
 	}
 
 	void Show(const char* pTitle) {
-		LOG_NEWLINE("PageIndex::show(index, pPage, numAllocated, bAllocated)"
+		MLOG_NEWLINE("PageIndex::show(index, pPage, numAllocated, bAllocated)"
 							, m_index, (size_t)m_pPage, m_numAllocated, m_bAllocated);
 	}
 };

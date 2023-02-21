@@ -151,8 +151,8 @@ public:
 	#define LOG_HEADER(CLASSNAME, ...)
 	#define LOG_FOOTER(...)
 	
-	#define LOG_HEADER()
-	#define LOG_FOOTER()
+	#define LOG_HEADER0()
+	#define LOG_FOOTER0()
 
 	#define LOG_NEWLINE(CLASSNAME, ...)
 	#define LOG(CLASSNAME, ...)
@@ -167,20 +167,44 @@ public:
 	#define MLOG_FOOTER0(...) Log(this->GetClassName(), __func__, ##__VA_ARGS__).PrintFooter()
 
 	#define MLOG_NEWLINE(...) Log(__VA_ARGS__).Println()
+	#define MLOG_NEWLINE0(...) Log(this->GetClassName(), __func__, ##__VA_ARGS__).Println()
 	#define MLOG(...) Log(__VA_ARGS__).Print()
 //	#define MLOG_TIME(...) Log(__VA_ARGS__).PrintTime()
-
- 	#define MLOG_SHOW(MEMORYNAME, ...) MEMORYNAME->Show(""#MEMORYNAME"")
+ 	#define MLOG_SHOW(TITLE, MEMORYNAME) MEMORYNAME->Show(""#TITLE"")
 #else
 	#define MLOG_HEADER(CLASSNAME, ...)
 	#define MLOG_FOOTER(...)
 	
-	#define MLOG_HEADER()
-	#define MLOG_FOOTER()
+	#define MLOG_HEADER0()
+	#define MLOG_FOOTER0()
 
 	#define MLOG_NEWLINE(CLASSNAME, ...)
+	#define MLOG_NEWLINE0(...)
 	#define MLOG(CLASSNAME, ...)
 //	#define MLOG_TIME(...) Log(__VA_ARGS__).PrintTime()
 
 	#define MLOG_SHOW(MEMORYNAME, ...) 
+#endif
+
+#if _DEBUG_MSTATIC
+	#define NEW_STATIC(MEMORYNAME, ADDRESS, ...) Log("-STATIC::NEW: ", MEMORYNAME, (size_t)ADDRESS, ##__VA_ARGS__).Println()
+	#define DELETE_STATIC(POBJECT, ...) Log("-Static::DELETE: ", (size_t)POBJECT, ##__VA_ARGS__).Println()
+	#define SHOW_STATIC(MESSAGE) BaseObject::s_pMemory->Show(MESSAGE)
+#else
+	#define NEW_STATIC(MEMORYNAME, ADDRESS, ...)
+	#define DELETE_STATIC(POBJECT, ...)
+	#define SHOW_STATIC(MESSAGE)
+#endif
+#if _DEBUG_MDYNAMIC
+	#define NEW_DYNAMIC(MEMORYNAME, ADDRESS, ...) Log("-DYNAMIC::NEW: ", MEMORYNAME, (size_t)ADDRESS, ##__VA_ARGS__).Println();
+//		this->m_mapLogs[(size_t)ADDRESS] = new("MemoryLog") MemoryLog(MEMORYNAME)
+
+	#define DELETE_DYNAMIC(POBJECT, IDXPAGE, ...) Log("-DYNAMIC:DELETE: ", (size_t)POBJECT, IDXPAGE, ##__VA_ARGS__).Println();
+//		this->m_mapLogs[(size_t)POBJECT]->SetBAllocated(false)
+
+	#define SHOW_DYNAMIC(MESSAGE) ValueObject::s_pMemory->Show(MESSAGE)
+#else
+	#define NEW_DYNAMIC(MEMORYNAME, ADDRESS, ...) 
+	#define DELETE_DYNAMIC(POBJECT, IDXPAGE, ...)
+	#define SHOW_DYNAMIC(MESSAGE)
 #endif

@@ -6,13 +6,15 @@
 
 #include <01Base/Memory/IMemory.h>
 #include <03Technical/MemoryManager/MemoryObject.h>
-
 #include <03Technical/MemoryManager/PageList.h>
 #include <03Technical/MemoryManager/SlotList.h>
+
+#include <01Base/Aspect/LogMemory.h>
 
 class MemoryDynamic :public MemoryObject, public IMemory
 {
 public:
+
 	// memory for dynamic malloc/free
 	static void* s_pAllocated;
 	static size_t s_szAllocated;
@@ -24,6 +26,8 @@ public:
 	void operator delete(void* pObject, void* pMemoryAllocated, size_t szMemoryllocated);
 
 private:
+	Map<size_t, MemoryLog*> m_mapLogs;
+
 	// attributes
 	unsigned m_szUnit;
 	unsigned m_szPage;

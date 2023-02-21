@@ -9,7 +9,7 @@
 
 class RootObject {
 public:
-		enum class EState {
+	enum class EState {
 		eCreated,
 		eInitialized,
 		eStarted,
@@ -20,6 +20,7 @@ public:
 	};
 
 	static unsigned s_uObjectCount;
+	
 private:
 	// attributes
 	int 	m_uObjectId;

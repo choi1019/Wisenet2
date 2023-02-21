@@ -50,11 +50,11 @@ void* MemoryStatic::Malloc(size_t szObject, const char* sMessage) {
     s_pCurrent = (void*)((size_t)s_pCurrent + szObject);
     s_szCurrent = s_szCurrent - szObject;
 
-    LOG_NEWLINE("MemoryStatic::Malloc(szObject, s_szCurrent, s_szAllocated)", sMessage, szObject, s_szCurrent, s_szAllocated);
+    NEW_STATIC(sMessage, pMemoryAllocated, "(szObject, s_szCurrent, s_szAllocated)", szObject, s_szCurrent, s_szAllocated);
     return pMemoryAllocated;
 }
 void MemoryStatic::Free(void* pObject) {
-   LOG_NEWLINE("==> Warning-MemoryStatic::Free(pObject)", (size_t)pObject);
+    DELETE_STATIC(pObject);
 }
 
 void* MemoryStatic::SafeMalloc(size_t szAllocate, const char* sMessage)

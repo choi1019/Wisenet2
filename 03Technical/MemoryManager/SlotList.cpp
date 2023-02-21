@@ -108,6 +108,8 @@ void SlotList::FreeSlot(Slot* pSlotFree) {
     pSlotFree->pNext = m_pSlotHead;
     m_pSlotHead = pSlotFree;
     this->m_numSlots++;
+
+    // check garbage
     if (m_numSlots == m_numMaxSlots) {
         // this is garbage
         this->m_bGarbage = true;			
@@ -118,11 +120,11 @@ void SlotList::FreeSlot(Slot* pSlotFree) {
 
 // maintenance
 void SlotList::Show(const char* pTitle) {
-    LOG_HEADER("SlotList::Show(m_szSlot,Index)", pTitle, m_szSlot, m_idxPage);
+    MLOG_HEADER("SlotList::Show(pTitle, m_szSlot, IndexPage)", pTitle, m_szSlot, m_idxPage);
     Slot* pSlot = this->m_pSlotHead;
-    while (pSlot != nullptr) {
-        LOG_NEWLINE("Slot-", (size_t)pSlot);
+    for (int i=0; i<m_numSlots; i++) {
+        MLOG_NEWLINE("Slot-", (size_t)pSlot);
         pSlot = pSlot->pNext;
     }
-    LOG_FOOTER("SlotList::Show(m_numMaxSlots, m_numSlots)", pTitle, m_numMaxSlots, m_numSlots);
+    MLOG_FOOTER("SlotList::Show(m_numSlots, m_numMaxSlots)", m_numSlots, m_numMaxSlots);
 };

@@ -21,19 +21,18 @@ public:
 	void operator delete(void* pObject, const char* sMessage);
 
 private:
-	int m_idxPage;
 	size_t m_szSlot;
+	PageList* m_pPageList;
+
+	int m_idxPage;
 	unsigned m_numSlots;
 	unsigned m_numMaxSlots;
 	Slot* m_pSlotHead;
-
 	bool m_bGarbage;
 
 	SlotList* m_pNext;
 	SlotList* m_pSibling;
-
 	PageIndex* m_pPageIndex;
-	PageList* m_pPageList;
 	
 public:
 	// getters and setters
@@ -50,7 +49,7 @@ public:
 
 public:
 	// for head SlotList
-	SlotList(size_t szSlot, 
+	SlotList(size_t szSlot = 0, 
 		int nClassId = _SlotList_Id,
 		const char* pClassName = _SlotList_Name);
 	// for normal SlotList
