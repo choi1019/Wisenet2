@@ -20,8 +20,8 @@ void BaseObject::operator delete[](void* pObject) {
 
 // dummy
 void BaseObject::operator delete(void* pObject, const char* sMessage) {
-     throw Exception((unsigned)IMemory::EException::_eNotSupport, "BaseObject::delete[]", (size_t)pObject);
+     throw EXCEPTION(IMemory::EException::_eNotSupport, (size_t)pObject);
 }
 void BaseObject::operator delete[](void* pObject, const char* sMessage) {
-     throw Exception((unsigned)IMemory::EException::_eNotSupport, "BaseObject::delete[]", (size_t)pObject);
+     throw EXCEPTION(IMemory::EException::_eNotSupport, (size_t)pObject);
 }

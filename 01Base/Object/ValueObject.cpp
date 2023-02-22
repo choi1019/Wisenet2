@@ -17,7 +17,6 @@ void ValueObject::operator delete(void* pObject) {
 void ValueObject::operator delete[](void* pObject) {
     ValueObject::s_pMemory->SafeFree(pObject);
 }
-
 // dummy
 void ValueObject::operator delete(void* pObject, const char* sMessage) {
      throw Exception((unsigned)IMemory::EException::_eNotSupport, "ValueObject::delete[]", (size_t)pObject);

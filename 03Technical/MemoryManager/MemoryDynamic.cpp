@@ -2,7 +2,7 @@
 #include <01Base/Object/ValueObject.h>
 #include <01Base/Aspect/Exception.h>
 #include <01Base/Aspect/Log.h>
-#include <01Base/Aspect/LogMemory.h>
+#include <02Platform/EventQueue/Event.h>
 
 #include <math.h>
 
@@ -29,7 +29,7 @@ MemoryDynamic::MemoryDynamic(unsigned szSlotUnit, int nClassId, const char* pCla
     // set memory manager of ValueObject as this
     ValueObject::s_pMemory = this;
     SlotList::s_pPageList = MemoryDynamic::s_pPageList;
-
+    
     this->m_pSlotListHead = new("MemoryDynamic::m_pSlotListHead") SlotList(0);
     this->m_szUnitExponentOf2 = (unsigned)(log2(static_cast<double>(this->m_szUnit))); 
 
@@ -80,7 +80,7 @@ void* MemoryDynamic::Malloc(size_t szObject, const char* sMessage) {
         }
         // found
         if (pTargetSlotList != nullptr) {
-            Slot *pTargetSlot = pTargetSlotList->AllocateASlot(sMessage);
+            Slot *pTargetSlot = (Slot *)pTargetSlotList->SafeMalloc(szSlot, sMessage);
             return pTargetSlot;
         }
         pPrevious = pCurrent;
@@ -89,22 +89,23 @@ void* MemoryDynamic::Malloc(size_t szObject, const char* sMessage) {
     throw Exception((unsigned)IMemory::EException::_eSlotlistAllocationFailed, " MemoryDynamic::Malloc", __LINE__);
 }
 
-void MemoryDynamic::Free(void* pObject) {
+bool MemoryDynamic::Free(void* pObject) {
     SlotList *pPrevious = m_pSlotListHead; 
     SlotList *pCurrent = pPrevious->GetPNext(); 
     while (pCurrent != nullptr) {
-        bool bFreed = pCurrent->FreeASlot((Slot *)pObject);
+        bool bFreed = pCurrent->SafeFree(pObject);
         if (bFreed) {
             // delete size head?
             if (pCurrent->GetCountSlotLists() == 0) {
                 pPrevious->SetPNext(pCurrent->GetPNext());
                 delete pCurrent;
             }
-            return;
+            return true;
         }
         pCurrent = pCurrent->GetPNext();
     }
     throw Exception((unsigned)IMemory::EException::_eSlotlistFreeFailed, "MemoryDynamic::Free", __LINE__);
+    return false;
 }
 
 void* MemoryDynamic::SafeMalloc(size_t szAllocate, const char* pcName)
@@ -114,10 +115,11 @@ void* MemoryDynamic::SafeMalloc(size_t szAllocate, const char* pcName)
     UnLock();
     return pMemoryAllocated;
 }
-void MemoryDynamic::SafeFree(void* pObject) {
+bool MemoryDynamic::SafeFree(void* pObject) {
     Lock();
-    this->Free(pObject);
+    bool result = this->Free(pObject);
     UnLock();
+    return result;
 }
 
 // maintenance
@@ -129,5 +131,6 @@ void MemoryDynamic::Show(const char* pTitle) {
         pSlotList->Show("Head");
         pSlotList = pSlotList->GetPNext();
     }
+    Event::s_pMemory->Show("Event");
     MLOG_FOOTER("MemoryDynamic::Show");
 };

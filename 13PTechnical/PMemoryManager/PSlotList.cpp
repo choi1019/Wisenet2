@@ -1,34 +1,30 @@
-#include <13PTechnical/PMemoryManager/PMemoryDynamic.h>
 #include <13PTechnical/PMemoryManager/PSlotList.h>
-#include <02Platform/EventQueue/Event.h>
 
-PMemoryDynamic::PMemoryDynamic(
+PSlotList::PSlotList(
 	size_t szSlotUnit,
 	unsigned nClassId,
 	const char* pcClassName)
 	: MemoryDynamic(szSlotUnit, nClassId, pcClassName)
 {
-//		InitializeCriticalSection(&CriticalSection);
-	Event::s_pMemory = new("Event::s_pMemory") SlotList(sizeof(Event));
 	pthread_mutex_init(&m_mutex, nullptr);
 }
-PMemoryDynamic::~PMemoryDynamic() {
+PSlotList::~PSlotList() {
 //		DeleteCriticalSection(&CriticalSection);
 	pthread_mutex_destroy(&m_mutex);
 }
 
-void PMemoryDynamic::Initialize() {
+void PSlotList::Initialize() {
 	MemoryDynamic::Initialize();
 }
-void PMemoryDynamic::Finalize() {
+void PSlotList::Finalize() {
 	MemoryDynamic::Finalize();
 }
 
-void PMemoryDynamic::Lock() {
+void PSlotList::Lock() {
 //		EnterCriticalSection(&CriticalSection);
 	pthread_mutex_lock(&m_mutex);
 }
-void PMemoryDynamic::UnLock() {
+void PSlotList::UnLock() {
 //		LeaveCriticalSection(&CriticalSection);
 	pthread_mutex_unlock(&m_mutex);
 }

@@ -4,7 +4,6 @@
 #define _BaseObject_Id _GET_CLASS_UID(_ELayer_Base::_eBaseObject)
 #define _BaseObject_Name "BaseObject"
 
-//#include "../../01Base/Aspect/Log.h"
 #include <01Base/Object/RootObject.h>
 #include <01Base/Memory/IMemory.h>
 

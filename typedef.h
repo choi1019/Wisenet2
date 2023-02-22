@@ -44,3 +44,6 @@ enum class _ELayer {
 #define _DEBUG_M 1
 #define _DEBUG_MSTATIC 0
 #define _DEBUG_MDYNAMIC 1
+
+#define _DEBUG_E 1
+#define _DEBUG_EXCEPTION 1

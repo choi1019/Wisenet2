@@ -5,14 +5,12 @@
 #define _RootObject_Id _GET_CLASS_UID(_ELayer_Base::_eRootObject)
 #define _RootObject_Name "RootObject"
 
-#include <01Base/Memory/IMemory.h>
-
 class RootObject {
 public:
 	enum class EState {
 		eCreated,
 		eInitialized,
-		eStarted,
+		eRunning,
 		eStopped,
 		eFinalized,
 		eDeleted,
@@ -46,4 +44,3 @@ public:
 	virtual void Initialize();
 	virtual void Finalize();
 };
-

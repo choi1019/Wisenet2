@@ -4,6 +4,7 @@
 #define _SlotList_Id _GET_CLASS_UID(_ELayer_Technical::_eSlotList)
 #define _SlotList_Name "SlotList"
 
+#include <01Base/Memory/IMemory.h>
 #include <03Technical/MemoryManager/MemoryObject.h>
 #include <03Technical/MemoryManager/PageList.h>
 
@@ -12,7 +13,7 @@ public:
 	Slot* pNext;
 };
 
-class SlotList : public MemoryObject {
+class SlotList : public MemoryObject, public IMemory {
 public:
 	enum class EException {
 		eBegin = _SlotList_Id,
@@ -44,9 +45,17 @@ private:
 	bool m_bGarbage;
 
 	int m_nCountSlotLists;
+	SlotList *m_pSlotListHead;
 	SlotList* m_pNext;
 	SlotList* m_pSibling;
-	
+	void* Malloc(size_t szSlot, const char* sMessage);
+	bool Free(void* pObject);
+
+protected:
+	// critical section
+	virtual void Lock() {};
+	virtual void UnLock() {};
+
 public:
 	// getters and setters
 	size_t GetSzSlot() { return this->m_szSlot; }
@@ -70,15 +79,19 @@ public:
 		int nClassId = _SlotList_Id,
 		const char* pClassName = _SlotList_Name);
 	// for normal SlotList
-	SlotList(size_t szSlot, int numMaxSlots, int szPage, int numPagesRequired,
+	SlotList(size_t szSlot, int numMaxSlots, int szPage, int numPagesRequired, SlotList *pSlotListHead,
 		int nClassId = _SlotList_Id,
 		const char* pClassName = _SlotList_Name);
 	virtual ~SlotList();
 	virtual void Initialize();
 	virtual void Finalize();
 
-	Slot* AllocateASlot(const char* sMessage);
-	bool FreeASlot(Slot* pSlotFree);	
+	// Slot* AllocateASlot(size_t szAllocate, const char* sMessage);
+	// bool FreeASlot(Slot* pSlotFree);
+	// methods
+	void* SafeMalloc(size_t szAllocate, const char* sMessage) override;
+	bool SafeFree(void* pObject) override;
+
 	// maintenance
 	virtual void Show(const char* pTitle);
 };

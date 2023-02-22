@@ -4,7 +4,6 @@
 #define _ValueObject_Id _GET_CLASS_UID(_ELayer_Base::_eValueObject)
 #define _ValueObject_Name "ValueObject"
 
-//#include "../../01Base/Aspect/Log.h"
 #include <01Base/Object/RootObject.h>
 #include <01Base/Memory/IMemory.h>
 
@@ -16,7 +15,6 @@ public:
 	void* operator new[] (size_t szThis, const char* sMessage);
 	void operator delete(void* pObject);
 	void operator delete[](void* pObject);
-
 	// dummy
 	void operator delete(void* pObject, const char* sMessage);
 	void operator delete[](void* pObject, const char* sMessage);

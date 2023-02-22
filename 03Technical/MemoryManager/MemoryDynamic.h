@@ -9,8 +9,6 @@
 #include <03Technical/MemoryManager/PageList.h>
 #include <03Technical/MemoryManager/SlotList.h>
 
-#include <01Base/Aspect/LogMemory.h>
-
 class MemoryDynamic :public MemoryObject, public IMemory
 {
 public:
@@ -21,7 +19,6 @@ public:
 	void operator delete(void* pObject, const char* sMessage);
 
 private:
-	Map<size_t, MemoryLog*> m_mapLogs;
 	// attributes
 	unsigned m_szUnit;
 	SlotList* m_pSlotListHead;
@@ -33,7 +30,7 @@ protected:
 	virtual void UnLock() = 0;
 
 	void* Malloc(size_t szObject, const char* sMessage);
-	void Free(void* pObject);
+	bool Free(void* pObject);
 
 public:
 	// constructors and destructors
@@ -48,7 +45,7 @@ public:
 
 	// methods
 	void* SafeMalloc(size_t szAllocate, const char* sMessage) override;
-	void SafeFree(void* pObject) override;
+	bool SafeFree(void* pObject) override;
 
 	// maintenance
 	void Show(const char* pTitle) override;

@@ -4,9 +4,9 @@
 unsigned RootObject::s_uObjectCount = 0;
 
 RootObject::RootObject(unsigned nClassId, const char* pcClassName)
-: m_uObjectId(RootObject::s_uObjectCount++)
-, m_nClassId(nClassId)
-, m_szThis(0)
+    : m_uObjectId(RootObject::s_uObjectCount++)
+    , m_nClassId(nClassId)
+    , m_szThis(0)
 {
     strcpy(m_pcClassName, pcClassName);
     this->m_eState = EState::eCreated;

@@ -11,6 +11,14 @@
 
 class Event: public ValueObject
 {
+public:
+	static IMemory* s_pMemory;
+
+	void* operator new(size_t szThis, const char* sMessage);
+	void operator delete(void* pObject);
+	// dummy
+	void operator delete(void* pObject, const char* sMessage);
+
 private:
 	static unsigned s_uCounter;
 
