@@ -14,13 +14,6 @@
 class MemoryDynamic :public MemoryObject, public IMemory
 {
 public:
-
-	// memory for dynamic malloc/free
-	// static void* s_pAllocated;
-	// static size_t s_szAllocated;
-	// static void* s_pCurrent;
-	// static size_t s_szCurrent;
-
 	static PageList* s_pPageList;
 
 	void* operator new(size_t szThis, const char* sMessage);

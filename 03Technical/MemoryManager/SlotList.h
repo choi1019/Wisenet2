@@ -24,6 +24,7 @@ public:
 	// for recycle
 	static SlotList* s_pSlotListRecycle;
 	static PageList* s_pPageList;
+	static SlotList** s_aPSlotList;
 
 	void* operator new(size_t szThis, const char* sMessage);
 	void operator delete(void* pObject);

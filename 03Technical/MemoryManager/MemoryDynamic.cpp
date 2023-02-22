@@ -6,11 +6,6 @@
 
 #include <math.h>
 
-// void* MemoryDynamic::s_pAllocated = nullptr;
-// size_t MemoryDynamic::s_szAllocated = 0;
-// void* MemoryDynamic::s_pCurrent = nullptr;
-// size_t MemoryDynamic::s_szCurrent = 0;
-
 PageList* MemoryDynamic::s_pPageList = nullptr;
 
 void* MemoryDynamic::operator new(size_t szThis, const char* sMessage) {
@@ -36,11 +31,11 @@ MemoryDynamic::MemoryDynamic(unsigned szSlotUnit, int nClassId, const char* pCla
     SlotList::s_pPageList = MemoryDynamic::s_pPageList;
 
     this->m_pSlotListHead = new("MemoryDynamic::m_pSlotListHead") SlotList(0);
-    this->m_szUnitExponentOf2 = (unsigned)(log2(static_cast<double>(this->m_szUnit)));
- 
-    // MLOG_NEWLINE("MemoryDynamic::new", (size_t)s_pAllocated, s_szAllocated, szPage, szSlotUnit);
-    MLOG_NEWLINE("MemoryDynamic::new", szSlotUnit);
+    this->m_szUnitExponentOf2 = (unsigned)(log2(static_cast<double>(this->m_szUnit))); 
+
+    SlotList::s_aPSlotList = (SlotList **) BaseObject::s_pMemory->SafeMalloc(sizeof(SlotList *) * MemoryDynamic::s_pPageList->GetNumPagesMax(), "pSlotList Array");
 }
+
 MemoryDynamic::~MemoryDynamic() {
 }
 
@@ -86,7 +81,6 @@ void* MemoryDynamic::Malloc(size_t szObject, const char* sMessage) {
         // found
         if (pTargetSlotList != nullptr) {
             Slot *pTargetSlot = pTargetSlotList->AllocateASlot(sMessage);
-            //NEW_DYNAMIC(sMessage, (size_t)pTargetSlot, "(szSlot)", szSlot);
             return pTargetSlot;
         }
         pPrevious = pCurrent;

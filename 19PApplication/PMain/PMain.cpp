@@ -25,8 +25,6 @@ void PMain::BootstrapSystem() {
 	PLifecycleManager *pPLifecycleManager = new("PLifecycleManager") PLifecycleManager();
 	this->SetPLifecycleManager(pPLifecycleManager);
 	this->AllocateAComponent(pPLifecycleManager);
-
-	SHOW_DYNAMIC("LifecycleManager::AssociateSourcesNTargets");
 	// root event
 	this->SendNoReplyEvent(this->GetUId(), (unsigned)IMain::EEventType::eInitializeAsAMain, 0, nullptr);
 

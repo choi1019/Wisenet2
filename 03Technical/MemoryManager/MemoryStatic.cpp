@@ -17,7 +17,7 @@ void* MemoryStatic::operator new(size_t szThis, void* pMemoryAllocated, size_t s
     s_pCurrent = (void*)((size_t)s_pAllocated + szThis);
     s_szCurrent = s_szAllocated - szThis;
 
-    LOG_NEWLINE("MemoryStatic::new", sMessage, szThis, s_szCurrent, s_szAllocated);
+    // MLOG_NEWLINE("MemoryStatic::new", sMessage, szThis, s_szCurrent, s_szAllocated);
     return s_pAllocated;
 }
 void MemoryStatic::operator delete(void* pObject) {
@@ -31,8 +31,10 @@ MemoryStatic::MemoryStatic(int nClassId, const char* pClassName)
 {
     // set memory manager of RootObject as this
     BaseObject::s_pMemory = this;
+    SHOW_STATIC("MemoryStatic::MemoryStatic");
 }
 MemoryStatic::~MemoryStatic() {
+    SHOW_STATIC("MemoryStatic::~MemoryStatic");
  }
 void MemoryStatic::Initialize() {
     MemoryObject::Initialize();
@@ -72,12 +74,12 @@ void MemoryStatic::SafeFree(void* pObject) {
 
 // maintenance
 void MemoryStatic::Show(const char* pTitle) {
-    LOG_HEADER("MemoryStatic::Show", pTitle);
-    LOG_NEWLINE("MemoryStatic(szAllocated,pAllocated,szCurrent,pCurrent)"
+    MLOG_HEADER("MemoryStatic::Show", pTitle);
+    MLOG_NEWLINE("MemoryStatic(szAllocated,pAllocated,szCurrent,pCurrent)"
     	, s_szAllocated
     	, (size_t)s_pAllocated
         , s_szCurrent
     	, (size_t)s_pCurrent
     );
-    LOG_FOOTER("MemoryStatic::Show", pTitle);
+    MLOG_FOOTER("MemoryStatic::Show", pTitle);
 }

@@ -3,6 +3,7 @@
 
 SlotList* SlotList::s_pSlotListRecycle = nullptr;
 PageList* SlotList::s_pPageList = nullptr;
+SlotList** SlotList::s_aPSlotList = nullptr;
 
 void* SlotList::operator new(size_t szThis, const char* sMessage) {
     void* pNewSlotList = nullptr;
@@ -78,9 +79,11 @@ SlotList::SlotList(size_t szSlot, int numMaxSlots, int szPage, int numPagesRequi
     , m_nCountSlotLists(0)
 
 {
+
     // allocate required number of pages
     this->m_pPageIndex = s_pPageList->AllocatePages(m_numPagesRequired);
     this->m_idxPage = this->m_pPageIndex->GetIndex();
+    SlotList::s_aPSlotList[m_idxPage] = this;
 
     // set the number of slots allocatable
     this->m_numSlots = this->m_numMaxSlots;
