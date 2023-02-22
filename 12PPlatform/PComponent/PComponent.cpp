@@ -3,7 +3,7 @@
 
 void* CallBackPComponent(void *pObject) {
 	PComponent *pPComponent = (PComponent *)pObject;
-	pPComponent->Run();
+	pPComponent->RunThread();
 	return nullptr;
 }
 
@@ -29,11 +29,16 @@ void PComponent::Finalize() {
 }
 
 void PComponent::Start() {
-	m_idThared = pthread_create((&m_thread), NULL, CallBackPComponent, (void*)this);
-	if(m_idThared < 0) {
-		throw Exception();
-	}
+	this->Fork();
 }
 void PComponent::Stop() {
-	pthread_join(m_thread, (void **)&m_stsThread);
+	this->Join();
+}
+
+void PComponent::Fork() {
+	PThread::Fork(CallBackPComponent, this);
+}
+
+void PComponent::Join() {
+	PThread::Join();
 }

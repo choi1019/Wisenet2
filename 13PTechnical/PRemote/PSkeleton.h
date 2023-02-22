@@ -16,7 +16,7 @@ class PSkeleton : public PScheduler, public ISkeleton
 private:
         int m_nSockfdServer;       
         struct sockaddr_in m_sockaddrServer;
-         in_addr_t m_inAddressIP;
+        in_addr_t m_inAddressIP;
         int m_nNumPort;
 public:
 	PSkeleton(int nNumPort, 

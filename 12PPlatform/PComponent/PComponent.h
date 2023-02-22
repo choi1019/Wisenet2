@@ -5,17 +5,11 @@
 #define _PCompnent_Name "PCompnent"
 
 #include <02Platform/Component/Component.h>
-#include <pthread.h>
-
+#include <13PTechnical/PThread/PThread.h>
 #define PRIORITY 100
 
-class PComponent : public Component
+class PComponent : public Component, public PThread
 {
-private:
-	pthread_t m_thread;
-	int m_idThared;
-	size_t m_stsThread;
-
 protected:
 	void RegisterEventTypes();
 	void RegisterExceptions();
@@ -29,5 +23,8 @@ public:
 
 	virtual void Start();
 	virtual void Stop();
-	virtual void Run() {}
+	
+	void Fork();
+	void Join();
+	virtual void RunThread() {}
 };

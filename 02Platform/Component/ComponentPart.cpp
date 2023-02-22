@@ -11,7 +11,6 @@ ComponentPart::ComponentPart(unsigned uClassId, const char* acClassName)
 	, m_pUId(nullptr)
 	, m_pmReceivers(nullptr)
 	, m_pmTargetsGroups(nullptr)
-//	, m_pSequenceHead(nullptr)
 	, m_pEventParent(nullptr) 
 {
 }

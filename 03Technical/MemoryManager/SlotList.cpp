@@ -3,7 +3,8 @@
 
 SlotList* SlotList::s_pSlotListRecycle = nullptr;
 PageList* SlotList::s_pPageList = nullptr;
-SlotList** SlotList::s_aPSlotList = nullptr;
+SlotList** SlotList::s_apSlotList = nullptr;
+SlotInfo** SlotList::s_apSlotInfo = nullptr;
 
 void* SlotList::operator new(size_t szThis, const char* sMessage) {
     void* pNewSlotList = nullptr;
@@ -85,7 +86,7 @@ SlotList::SlotList(size_t szSlot, int numMaxSlots, int szPage, int numPagesRequi
     // allocate required number of pages
     this->m_pPageIndex = s_pPageList->AllocatePages(m_numPagesRequired);
     this->m_idxPage = this->m_pPageIndex->GetIndex();
-    SlotList::s_aPSlotList[m_idxPage] = this;
+    SlotList::s_apSlotList[m_idxPage] = this;
 
     // set the number of slots allocatable
     this->m_numSlots = this->m_numMaxSlots;
@@ -200,7 +201,7 @@ void SlotList::Show(const char* pTitle) {
     MLOG_HEADER("SlotList-Head(", m_szSlot, ")::Show(numMaxSlots)", m_numMaxSlots, pTitle);
     SlotList *pSibling = this->GetPSibling();
     while (pSibling != nullptr) {
-        MLOG_HEADER("SlotList-Sibling(", pSibling->GetIdxPage(), ")::Show(m_numSlots)", pSibling->GetNumSlots());
+        MLOG_HEADER("SlotList-Sibling-", pSibling->GetIdxPage(), "::Show(m_numSlots)", pSibling->GetNumSlots());
         Slot* pSlot = pSibling->m_pSlotHead;
         for (int i=0; i<pSibling->GetNumSlots(); i++) {
             MLOG_NEWLINE("Slot-", (size_t)pSlot);

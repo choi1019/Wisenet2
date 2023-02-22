@@ -7,7 +7,7 @@
 #include <03Technical/MemoryManager/MemoryDynamic.h>
 #include <pthread.h>
 
-class PSlotList : public MemoryDynamic {
+class PSlotList : public SlotList {
 private:
 //	CRITICAL_SECTION CriticalSection;
 	pthread_mutex_t m_mutex;

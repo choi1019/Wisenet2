@@ -1,6 +1,7 @@
 #include <13PTechnical/PMemoryManager/PMemoryDynamic.h>
 #include <13PTechnical/PMemoryManager/PSlotList.h>
 #include <02Platform/EventQueue/Event.h>
+#include <03Technical/MemoryManager/SlotInfo.h>
 
 PMemoryDynamic::PMemoryDynamic(
 	size_t szSlotUnit,
@@ -8,12 +9,9 @@ PMemoryDynamic::PMemoryDynamic(
 	const char* pcClassName)
 	: MemoryDynamic(szSlotUnit, nClassId, pcClassName)
 {
-//		InitializeCriticalSection(&CriticalSection);
-	Event::s_pMemory = new("Event::s_pMemory") SlotList(sizeof(Event));
 	pthread_mutex_init(&m_mutex, nullptr);
 }
 PMemoryDynamic::~PMemoryDynamic() {
-//		DeleteCriticalSection(&CriticalSection);
 	pthread_mutex_destroy(&m_mutex);
 }
 
@@ -25,10 +23,8 @@ void PMemoryDynamic::Finalize() {
 }
 
 void PMemoryDynamic::Lock() {
-//		EnterCriticalSection(&CriticalSection);
 	pthread_mutex_lock(&m_mutex);
 }
 void PMemoryDynamic::UnLock() {
-//		LeaveCriticalSection(&CriticalSection);
 	pthread_mutex_unlock(&m_mutex);
 }

@@ -2,9 +2,10 @@
 #include <01Base/Object/ValueObject.h>
 #include <01Base/Aspect/Exception.h>
 #include <01Base/Aspect/Log.h>
-#include <02Platform/EventQueue/Event.h>
 
 #include <math.h>
+#include <02Platform/EventQueue/Event.h>
+#include <03Technical/MemoryManager/SlotInfo.h>
 
 PageList* MemoryDynamic::s_pPageList = nullptr;
 
@@ -26,14 +27,11 @@ MemoryDynamic::MemoryDynamic(unsigned szSlotUnit, int nClassId, const char* pCla
     : MemoryObject(nClassId, pClassName)
     , m_szUnit(szSlotUnit)
 {
-    // set memory manager of ValueObject as this
-    ValueObject::s_pMemory = this;
-    SlotList::s_pPageList = MemoryDynamic::s_pPageList;
-    
     this->m_pSlotListHead = new("MemoryDynamic::m_pSlotListHead") SlotList(0);
     this->m_szUnitExponentOf2 = (unsigned)(log2(static_cast<double>(this->m_szUnit))); 
 
-    SlotList::s_aPSlotList = (SlotList **) BaseObject::s_pMemory->SafeMalloc(sizeof(SlotList *) * MemoryDynamic::s_pPageList->GetNumPagesMax(), "pSlotList Array");
+    SlotList::s_apSlotList = (SlotList **) BaseObject::s_pMemory->SafeMalloc(sizeof(SlotList *) * MemoryDynamic::s_pPageList->GetNumPagesMax(), "pSlotList Array");
+    SlotList::s_apSlotInfo = (SlotInfo **) BaseObject::s_pMemory->SafeMalloc(sizeof(SlotInfo *) * MemoryDynamic::s_pPageList->GetNumPagesMax(), "pSlotInfo Array");
 }
 
 MemoryDynamic::~MemoryDynamic() {
@@ -41,11 +39,9 @@ MemoryDynamic::~MemoryDynamic() {
 
 void MemoryDynamic::Initialize() {
     MemoryObject::Initialize();
-    SHOW_DYNAMIC("MemoryDynamic::Initialize");
 }
 void MemoryDynamic::Finalize() {
     MemoryObject::Finalize();
-    SHOW_DYNAMIC("MemoryDynamic::~Finalize");
 }
 
 // methods
@@ -132,5 +128,6 @@ void MemoryDynamic::Show(const char* pTitle) {
         pSlotList = pSlotList->GetPNext();
     }
     Event::s_pMemory->Show("Event");
+    SlotInfo::s_pMemory->Show("SlotInfo");
     MLOG_FOOTER("MemoryDynamic::Show");
 };

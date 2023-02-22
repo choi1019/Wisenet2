@@ -13,7 +13,7 @@
 class PSkeletonWorker : public PComponentPart, public ISkeletonWorker
 {
 private:
-        int m_nSockfdClient;
+    int m_nSockfdClient;
 public:
 	PSkeletonWorker(int nSockfdClient, int nComponentId = _PSkeletonWorker_Id, const char* sComponentName = _PSkeletonWorker_Name)
     : PComponentPart(nComponentId, sComponentName)
@@ -23,11 +23,10 @@ public:
 	~PSkeletonWorker() override {
     }
 
-    void Start() override {
-        PComponentPart::Start();
-    }
-    
-    void Run() override {
+    void Start() override {}
+    void Stop() override {}
+
+    void RunThread() override {
         int result;
         char buf[MAXBUF];
 
@@ -50,9 +49,5 @@ public:
 
         }
         close(m_nSockfdClient);
-    }
-    
-    void Stop() override {
-        PComponentPart::Stop();
     }
 };

@@ -4,7 +4,7 @@ PSlotList::PSlotList(
 	size_t szSlotUnit,
 	unsigned nClassId,
 	const char* pcClassName)
-	: MemoryDynamic(szSlotUnit, nClassId, pcClassName)
+	: SlotList(szSlotUnit, nClassId, pcClassName)
 {
 	pthread_mutex_init(&m_mutex, nullptr);
 }
@@ -14,10 +14,10 @@ PSlotList::~PSlotList() {
 }
 
 void PSlotList::Initialize() {
-	MemoryDynamic::Initialize();
+	SlotList::Initialize();
 }
 void PSlotList::Finalize() {
-	MemoryDynamic::Finalize();
+	SlotList::Finalize();
 }
 
 void PSlotList::Lock() {

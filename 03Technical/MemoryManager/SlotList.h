@@ -7,6 +7,7 @@
 #include <01Base/Memory/IMemory.h>
 #include <03Technical/MemoryManager/MemoryObject.h>
 #include <03Technical/MemoryManager/PageList.h>
+#include <03Technical/MemoryManager/SlotInfo.h>
 
 class Slot {
 public:
@@ -25,7 +26,8 @@ public:
 	// for recycle
 	static SlotList* s_pSlotListRecycle;
 	static PageList* s_pPageList;
-	static SlotList** s_aPSlotList;
+	static SlotList** s_apSlotList;
+	static SlotInfo** s_apSlotInfo;
 
 	void* operator new(size_t szThis, const char* sMessage);
 	void operator delete(void* pObject);
@@ -48,6 +50,7 @@ private:
 	SlotList *m_pSlotListHead;
 	SlotList* m_pNext;
 	SlotList* m_pSibling;
+	
 	void* Malloc(size_t szSlot, const char* sMessage);
 	bool Free(void* pObject);
 
