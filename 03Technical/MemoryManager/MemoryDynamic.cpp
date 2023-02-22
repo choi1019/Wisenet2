@@ -6,18 +6,14 @@
 
 #include <math.h>
 
-void* MemoryDynamic::s_pAllocated = nullptr;
-size_t MemoryDynamic::s_szAllocated = 0;
-void* MemoryDynamic::s_pCurrent = nullptr;
-size_t MemoryDynamic::s_szCurrent = 0;
+// void* MemoryDynamic::s_pAllocated = nullptr;
+// size_t MemoryDynamic::s_szAllocated = 0;
+// void* MemoryDynamic::s_pCurrent = nullptr;
+// size_t MemoryDynamic::s_szCurrent = 0;
 
-void* MemoryDynamic::operator new(size_t szThis, void* pMemoryAllocated, size_t szMemoryllocated, const char* sMessage) {
-    if (szMemoryllocated < szThis) {
-        throw Exception((unsigned)IMemory::EException::_eNoMoreSystemMemory, "new MemoryDynamic", "_eNoMoreSystemMemory");
-    }
-    s_pAllocated = pMemoryAllocated;
-    s_szAllocated = szMemoryllocated;
+PageList* MemoryDynamic::s_pPageList = nullptr;
 
+void* MemoryDynamic::operator new(size_t szThis, const char* sMessage) {
     void* pMemoryDynamic = BaseObject::s_pMemory->SafeMalloc(szThis, sMessage);    
     SlotList::s_pSlotListRecycle = nullptr;
     return pMemoryDynamic;
@@ -25,29 +21,27 @@ void* MemoryDynamic::operator new(size_t szThis, void* pMemoryAllocated, size_t 
 void MemoryDynamic::operator delete(void* pObject) {
     MemoryObject::s_pMemory->SafeFree(pObject);
  }
-void MemoryDynamic::operator delete(void* pObject, void* pMemoryAllocated, size_t szMemoryllocated) {
+void MemoryDynamic::operator delete(void* pObject, const char* sMessage) {
     throw Exception((unsigned)IMemory::EException::_eNotSupport, "MemoryDynamic::delete", __LINE__);
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////
 // constructors and destructors
-MemoryDynamic::MemoryDynamic(unsigned szPage, unsigned szSlotUnit, int nClassId, const char* pClassName)
+MemoryDynamic::MemoryDynamic(unsigned szSlotUnit, int nClassId, const char* pClassName)
     : MemoryObject(nClassId, pClassName)
-    , m_szPage(szPage)
     , m_szUnit(szSlotUnit)
 {
-    this->m_pPageList = new("MemoryDynamic::m_pPageList") PageList((size_t)s_pAllocated, s_szAllocated, m_szPage);
+    // set memory manager of ValueObject as this
+    ValueObject::s_pMemory = this;
+    SlotList::s_pPageList = MemoryDynamic::s_pPageList;
+
     this->m_pSlotListHead = new("MemoryDynamic::m_pSlotListHead") SlotList(0);
     this->m_szUnitExponentOf2 = (unsigned)(log2(static_cast<double>(this->m_szUnit)));
  
     // MLOG_NEWLINE("MemoryDynamic::new", (size_t)s_pAllocated, s_szAllocated, szPage, szSlotUnit);
-    MLOG_NEWLINE("MemoryDynamic::new", (size_t)s_pAllocated, s_szAllocated, szPage, szSlotUnit);
-
-    // set memory manager of ValueObject as this
-    ValueObject::s_pMemory = this;
+    MLOG_NEWLINE("MemoryDynamic::new", szSlotUnit);
 }
 MemoryDynamic::~MemoryDynamic() {
-    delete this->m_pPageList;
 }
 
 void MemoryDynamic::Initialize() {
@@ -60,66 +54,40 @@ void MemoryDynamic::Finalize() {
 }
 
 // methods
-void* MemoryDynamic::Malloc(size_t szObject, const char* sMessage) { 
-//    MLOG_NEWLINE("MemoryDynamic::Malloc(szObject, sMessage)", szObject, sMessage);
-
-     // multiple of WORD
+void* MemoryDynamic::Malloc(size_t szObject, const char* sMessage) {
+     // compute slot size
     size_t szSlot = szObject;
     szSlot >>= m_szUnitExponentOf2;
     szSlot <<= m_szUnitExponentOf2;
     if (szSlot < szObject) {
         szSlot += m_szUnit;
     }
+    // find the slotList
+    SlotList *pTargetSlotList = nullptr;
     SlotList *pPrevious = nullptr;
     SlotList *pCurrent = m_pSlotListHead; 
     while (pCurrent != nullptr) {
-        // if the same size is found
         if (pCurrent->GetSzSlot() == szSlot) {
-            SlotList *pSibling = pCurrent->GetPSibling();
-            while (pSibling != nullptr) {
-                if (pSibling->GetNumSlots() > 0) {
-                    // found
-                    Slot* pSlot = pSibling->AllocateSlot();
-
-                    NEW_DYNAMIC(sMessage, pSlot, "1(szSlot, szObject)", szSlot, szObject);
-//                    this->m_mapLogs[(size_t)pSlot] = new("MemoryLog") MemoryLog(sMessage);
-                    
-                    return pSlot;   
-                }
-                pSibling = pSibling->GetPNext();
-            }
-            // if current SlotLists has no more slot
-            pSibling = new("SlotList2") SlotList(szSlot, m_pPageList);
-            Slot* pSlot = pSibling->AllocateSlot();
-            // insert a new sibling
-            pSibling->SetPSibling(pCurrent->GetPSibling());
-            pCurrent->SetPSibling(pSibling);
-            NEW_DYNAMIC(sMessage, pSlot, "2(szSlot, szObject)", szSlot, szObject);
-            return pSlot;  
+            // arleady exist
+            pTargetSlotList = pCurrent;
         } else if (pCurrent->GetSzSlot() < szSlot) {
             if (pCurrent->GetPNext() == nullptr) {
-                // if slotlist is null, add new SlotList to the end
-                SlotList *pNewSlotList = new("SlotList3") SlotList(szSlot, m_pPageList);
-                Slot* pSlot = pNewSlotList->AllocateSlot();
-                // insert a new SlotList
-                SlotList *pNext = new("SlotListHead3") SlotList(szSlot);
-                pNext->SetPSibling(pNewSlotList);
-                pCurrent->SetPNext(pNext);
-                pNext->SetPNext(nullptr);
-                NEW_DYNAMIC(sMessage, pSlot, "3(szSlot, szObject)", szSlot, szObject);
-                return pSlot;  
+                // add a new SlotList
+                pTargetSlotList = new("SlotListHead") SlotList(szSlot);
+                pCurrent->SetPNext(pTargetSlotList);
+                pTargetSlotList->SetPNext(nullptr);
             }
         } else if (pCurrent->GetSzSlot() > szSlot) {
-            // if no same size, insert new SlotList
-            SlotList *pNewSlotList = new("SlotList4") SlotList(szSlot, m_pPageList);
-            Slot* pSlot = pNewSlotList->AllocateSlot();
-            // insert a new next head
-            SlotList *pNext = new("SlotListHead4") SlotList(szSlot);
-            pNext->SetPSibling(pNewSlotList);
-            pPrevious->SetPNext(pNext);
-            pNext->SetPNext(pCurrent);
-            NEW_DYNAMIC(sMessage, pSlot, "4(szSlot, szObject)", szSlot, szObject);
-            return pSlot;  
+            // insert a new SlotList
+            pTargetSlotList = new("SlotListHead") SlotList(szSlot);
+            pPrevious->SetPNext(pTargetSlotList);
+            pTargetSlotList->SetPNext(pCurrent);
+        }
+        // found
+        if (pTargetSlotList != nullptr) {
+            Slot *pTargetSlot = pTargetSlotList->AllocateASlot(sMessage);
+            //NEW_DYNAMIC(sMessage, (size_t)pTargetSlot, "(szSlot)", szSlot);
+            return pTargetSlot;
         }
         pPrevious = pCurrent;
         pCurrent = pCurrent->GetPNext();
@@ -128,29 +96,17 @@ void* MemoryDynamic::Malloc(size_t szObject, const char* sMessage) {
 }
 
 void MemoryDynamic::Free(void* pObject) {
-//    LOG_NEWLINE("MemoryDynamic::Free(pObject)", (size_t)pObject);
-    size_t idxPage = ((size_t)pObject - (size_t)s_pAllocated) / m_szPage;
-
-    DELETE_DYNAMIC(pObject, idxPage);
-    this->m_mapLogs[(size_t)pObject]->SetBAllocated(false);
-
-    SlotList *pCurrent = m_pSlotListHead->GetPNext(); 
+    SlotList *pPrevious = m_pSlotListHead; 
+    SlotList *pCurrent = pPrevious->GetPNext(); 
     while (pCurrent != nullptr) {
-        SlotList *pSiblingPrevious = pCurrent;
-        SlotList *pSiblingCurrent = pSiblingPrevious->GetPSibling();
-        while(pSiblingCurrent != nullptr) {
-            if (pSiblingCurrent->GetIdxPage() == idxPage) {
-                // found
-                pSiblingCurrent->FreeSlot((Slot *)pObject);
-                if (pSiblingCurrent->IsGarbage()) {
-                    pSiblingPrevious->SetPSibling(pSiblingCurrent->GetPSibling());
-                    MLOG_NEWLINE("MemoryDynamic::Free", "IsGarbage", (size_t)pSiblingCurrent);
-                    delete pSiblingCurrent;
-                }
-                return;
+        bool bFreed = pCurrent->FreeASlot((Slot *)pObject);
+        if (bFreed) {
+            // delete size head?
+            if (pCurrent->GetCountSlotLists() == 0) {
+                pPrevious->SetPNext(pCurrent->GetPNext());
+                delete pCurrent;
             }
-            pSiblingPrevious = pSiblingCurrent;
-            pSiblingCurrent = pSiblingCurrent->GetPSibling();
+            return;
         }
         pCurrent = pCurrent->GetPNext();
     }
@@ -173,15 +129,10 @@ void MemoryDynamic::SafeFree(void* pObject) {
 // maintenance
 void MemoryDynamic::Show(const char* pTitle) {
     MLOG_HEADER("MemoryDynamic::Show(pTitle)", pTitle);
-    m_pPageList->Show("MemoryDynamic::Show");
+    s_pPageList->Show("MemoryDynamic::Show");
     SlotList* pSlotList = this->m_pSlotListHead;
     while (pSlotList != nullptr) {
         pSlotList->Show("Head");
-        SlotList* pSibling = pSlotList->GetPSibling();
-        while (pSibling != nullptr) {
-            pSibling->Show("Sibling");
-            pSibling = pSibling->GetPSibling();
-        }
         pSlotList = pSlotList->GetPNext();
     }
     MLOG_FOOTER("MemoryDynamic::Show");

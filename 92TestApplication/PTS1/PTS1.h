@@ -51,7 +51,8 @@ public:
 			// aplication memorty allocation
 			m_szUserMemory = SIZE_USER_MEMORY;
 			m_pUserMemeoryAllocated = new char[m_szUserMemory];
-			m_pMemoryDynamic = new(m_pUserMemeoryAllocated, m_szUserMemory, "PTS1") PMemoryDynamic(SIZE_PAGE, SIZE_SLOT_UNIT);
+			PMemoryDynamic::s_pPageList = new("PageList") PageList((size_t)m_pUserMemeoryAllocated, m_szUserMemory, SIZE_PAGE);
+			m_pMemoryDynamic = new("PTS1") PMemoryDynamic(SIZE_SLOT_UNIT);
 			m_pMemoryDynamic->Initialize();
 			m_pMemoryDynamic->Show("m_pMemoryDynamic::Initialize()");
 

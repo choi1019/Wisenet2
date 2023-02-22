@@ -1,6 +1,8 @@
 #include <03Technical/MemoryManager/SlotList.h>
+#include <01Base/Aspect/Log.h>
 
 SlotList* SlotList::s_pSlotListRecycle = nullptr;
+PageList* SlotList::s_pPageList = nullptr;
 
 void* SlotList::operator new(size_t szThis, const char* sMessage) {
     void* pNewSlotList = nullptr;
@@ -26,61 +28,68 @@ void SlotList::operator delete(void* pObject, const char* sMessage) {
     throw Exception((unsigned)IMemory::EException::_eNotSupport, "SlotList::delete", "_eNotSupport");
 }
 
+
 SlotList::SlotList(size_t szSlot, int nClassId,const char* pClassName)
     : MemoryObject(nClassId, pClassName)
     
     , m_szSlot(szSlot)
-    , m_pPageList(nullptr)
+    , m_numMaxSlots(0)
+    , m_szPage(0)
+    , m_numPagesRequired(0)
 
+    , m_pPageIndex(nullptr)
     , m_idxPage(-1)
     , m_numSlots(0)
-    , m_numMaxSlots(0)
     , m_pSlotHead(nullptr)
     , m_bGarbage(false)
 
     , m_pNext(nullptr)
     , m_pSibling(nullptr)
-    , m_pPageIndex(nullptr)
-{
-}
-SlotList::SlotList(size_t szSlot, PageList* pPageList,int nClassId, const char* pClassName)
-    : MemoryObject(nClassId, pClassName)
-    
-    , m_szSlot(szSlot)
-    , m_pPageList(pPageList)
-
-    , m_idxPage(0)
-    , m_numSlots(0)
-    , m_numMaxSlots(0)
-    , m_pSlotHead(nullptr)
-    , m_bGarbage(false)
-
-    , m_pNext(nullptr)
-    , m_pSibling(nullptr)
-    , m_pPageIndex(nullptr)
+    , m_nCountSlotLists(0)
 {
     // compute the number of pages required
-    size_t szPage = m_pPageList->GetSzPage();
+    m_szPage = s_pPageList->GetSzPage();
     // oversized slot bigger than a page
-    unsigned numPagesRequired = m_szSlot / szPage;
-    if (m_szSlot > numPagesRequired * szPage) {
-        numPagesRequired++;
+    m_numPagesRequired = m_szSlot / m_szPage;
+    if (m_szSlot > m_numPagesRequired * m_szPage) {
+        m_numPagesRequired++;
     }
+    // compute the number of slots allocatable
+    if (m_szSlot > 0) {
+        this->m_numMaxSlots = m_numPagesRequired * m_szPage / m_szSlot;
+    }
+}
 
-    // get required number of pages
-    this->m_pPageIndex = m_pPageList->AllocatePages(numPagesRequired);
-    Page* pPage = this->m_pPageIndex->GetPPage();
+SlotList::SlotList(size_t szSlot, int numMaxSlots, int szPage, int numPagesRequired, int nClassId, const char* pClassName)
+    : MemoryObject(nClassId, pClassName)
+    , m_szSlot(szSlot)
+    , m_numMaxSlots(numMaxSlots)
+    , m_szPage(szPage)
+    , m_numPagesRequired(numPagesRequired)
+
+    , m_pPageIndex(nullptr)
+    , m_idxPage(0)
+    , m_numSlots(0)
+    , m_pSlotHead(nullptr)
+    , m_bGarbage(false)
+
+    , m_pNext(nullptr)
+    , m_pSibling(nullptr)
+    , m_nCountSlotLists(0)
+
+{
+    // allocate required number of pages
+    this->m_pPageIndex = s_pPageList->AllocatePages(m_numPagesRequired);
     this->m_idxPage = this->m_pPageIndex->GetIndex();
 
-    // compute the number of slots allocatable
-    this->m_numMaxSlots = numPagesRequired * szPage / m_szSlot;
+    // set the number of slots allocatable
     this->m_numSlots = this->m_numMaxSlots;
 
     // generate slots
-    this->m_pSlotHead = (Slot*)pPage;
+    this->m_pSlotHead = (Slot*)this->m_pPageIndex->GetPPage();
     Slot* pSlot = this->m_pSlotHead;
     Slot* pPreviousSlot = pSlot;
-    for (int i = 0; i < m_numSlots; i++) {
+    for (int i = 0; i < m_numMaxSlots; i++) {
         pSlot->pNext = (Slot*)((size_t)pSlot + m_szSlot);
         pPreviousSlot = pSlot;
         pSlot = pSlot->pNext;
@@ -88,7 +97,7 @@ SlotList::SlotList(size_t szSlot, PageList* pPageList,int nClassId, const char* 
     pPreviousSlot->pNext = nullptr;
 }
 SlotList::~SlotList() {
-    this->m_pPageList->FreePages(this->m_idxPage);
+    SlotList::s_pPageList->FreePages(this->m_idxPage);
 }
 void SlotList::Initialize() {
     MemoryObject::Initialize();
@@ -97,13 +106,38 @@ void SlotList::Finalize() {
     MemoryObject::Finalize();
 }
 
-Slot* SlotList::AllocateSlot() {
+Slot *SlotList::GetASlot() {
     Slot* pSlot = this->m_pSlotHead;
     this->m_pSlotHead = this->m_pSlotHead->pNext;
     this->m_numSlots--;
     return pSlot;
 }
-void SlotList::FreeSlot(Slot* pSlotFree) {
+
+Slot* SlotList::AllocateASlot(const char* sMessage) {
+    SlotList *pTargetSlotList = nullptr;
+
+    SlotList *pSibling = this;
+    while (pSibling != nullptr) {
+        if (pSibling->m_numSlots > 0) {
+            pTargetSlotList = pSibling;
+            break;
+        }
+        pSibling = pSibling->GetPSibling();
+    }
+    if (pTargetSlotList == nullptr) {
+        // add a new SlotList
+        pTargetSlotList = new("SlotList") SlotList(m_szSlot, m_numMaxSlots, m_szPage, m_numPagesRequired);
+        m_nCountSlotLists++;
+        // insert a new sibling
+        pTargetSlotList->SetPSibling(this->GetPSibling());
+        this->SetPSibling(pTargetSlotList);        
+    }
+    Slot *pTargetSlot = pTargetSlotList->GetASlot();
+    NEW_DYNAMIC(sMessage, pTargetSlot,  "(szSlot, numSlots)", m_szSlot, m_numSlots);
+    return pTargetSlot; 
+}
+
+void SlotList::PutASlot(Slot* pSlotFree) {
     // insert pSlotFree to Slot LIst
     pSlotFree->pNext = m_pSlotHead;
     m_pSlotHead = pSlotFree;
@@ -112,19 +146,46 @@ void SlotList::FreeSlot(Slot* pSlotFree) {
     // check garbage
     if (m_numSlots == m_numMaxSlots) {
         // this is garbage
-        this->m_bGarbage = true;			
+        this->m_bGarbage = true;
+        m_nCountSlotLists--;			
     } else {
         this->m_bGarbage = false;
     }
 }
+bool SlotList::FreeASlot(Slot* pSlotFree) {
+    size_t idxPage = s_pPageList->GetIdxPage(pSlotFree);
+    SlotList *pPrevious = this;
+    SlotList *pCurrent = pPrevious->GetPSibling();
+    while(pCurrent != nullptr) {
+        if (pCurrent->GetIdxPage() == idxPage) {
+            // found
+            pCurrent->PutASlot(pSlotFree);
+            if (pCurrent->IsGarbage()) {
+                pPrevious->SetPSibling(pCurrent->GetPSibling());
+                delete pCurrent;
+            }
+            return true;
+        }
+        pPrevious = pCurrent;
+        pCurrent = pCurrent->GetPSibling();
+    }
+    MLOG_NEWLINE("MemoryDynamic::Free", (size_t)pSlotFree);
+    return false;
+}
 
 // maintenance
 void SlotList::Show(const char* pTitle) {
-    MLOG_HEADER("SlotList::Show(pTitle, m_szSlot, IndexPage)", pTitle, m_szSlot, m_idxPage);
-    Slot* pSlot = this->m_pSlotHead;
-    for (int i=0; i<m_numSlots; i++) {
-        MLOG_NEWLINE("Slot-", (size_t)pSlot);
-        pSlot = pSlot->pNext;
+    MLOG_HEADER("SlotList-Head(", m_szSlot, ")::Show(numMaxSlots)", m_numMaxSlots);
+    SlotList *pSibling = this->GetPSibling();
+    while (pSibling != nullptr) {
+        MLOG_HEADER("SlotList-Sibling(", pSibling->GetIdxPage(), ")::Show(m_numSlots)", pSibling->GetNumSlots());
+        Slot* pSlot = pSibling->m_pSlotHead;
+        for (int i=0; i<pSibling->GetNumSlots(); i++) {
+            MLOG_NEWLINE("Slot-", (size_t)pSlot);
+            pSlot = pSlot->pNext;
+        }
+        MLOG_FOOTER("SlotList-Sibling)", pSibling->GetIdxPage(), "::Show()");
+        pSibling = pSibling->GetPSibling();
     }
-    MLOG_FOOTER("SlotList::Show(m_numSlots, m_numMaxSlots)", m_numSlots, m_numMaxSlots);
+    MLOG_FOOTER("SlotList-Head(", m_szSlot, ")::Show()");
 };

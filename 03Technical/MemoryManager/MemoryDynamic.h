@@ -16,25 +16,22 @@ class MemoryDynamic :public MemoryObject, public IMemory
 public:
 
 	// memory for dynamic malloc/free
-	static void* s_pAllocated;
-	static size_t s_szAllocated;
-	static void* s_pCurrent;
-	static size_t s_szCurrent;
+	// static void* s_pAllocated;
+	// static size_t s_szAllocated;
+	// static void* s_pCurrent;
+	// static size_t s_szCurrent;
 
-	void* operator new(size_t szThis, void* pMemoryAllocated, size_t szMemoryllocated, const char* sMessage);
+	static PageList* s_pPageList;
+
+	void* operator new(size_t szThis, const char* sMessage);
 	void operator delete(void* pObject);
-	void operator delete(void* pObject, void* pMemoryAllocated, size_t szMemoryllocated);
+	void operator delete(void* pObject, const char* sMessage);
 
 private:
 	Map<size_t, MemoryLog*> m_mapLogs;
-
 	// attributes
 	unsigned m_szUnit;
-	unsigned m_szPage;
-
 	SlotList* m_pSlotListHead;
-	PageList* m_pPageList;
-
 	unsigned m_szUnitExponentOf2;
 
 protected:
@@ -48,7 +45,6 @@ protected:
 public:
 	// constructors and destructors
 	MemoryDynamic(
-		unsigned szPage,
 		unsigned szSlotUnit,
 		int nClassId = _MemoryDynamic_Id,
 		const char* pClassName = _MemoryDynamic_Name);

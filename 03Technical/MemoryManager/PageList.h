@@ -21,7 +21,7 @@ public:
 	size_t GetSzPage() { return this->m_szPage; }
 	unsigned GetNumPagesAvailable() { return this->m_numPagesAvaiable; }
 	unsigned GetNumPagesMax() { return this->m_numPagesMax; }
-
+	int GetIdxPage(void *pObject) { return ((size_t)pObject - m_pMemeoryAllocated) / m_szPage; }
 public:
 	PageList(
 		size_t pMemeoryAllocated, 

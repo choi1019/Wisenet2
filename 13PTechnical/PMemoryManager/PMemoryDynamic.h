@@ -18,7 +18,6 @@ protected:
 
 public:
 	PMemoryDynamic(
-		size_t szPage,
 		size_t szSlotUnit,
 		unsigned nClassId = _PMemoryDynamic_Id,
 		const char* pcClassName = _PMemoryDynamic_Name);

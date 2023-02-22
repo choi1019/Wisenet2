@@ -1,11 +1,10 @@
 #include <13PTechnical/PMemoryManager/PMemoryDynamic.h>
 
 	PMemoryDynamic::PMemoryDynamic(
-		size_t szPage,
 		size_t szSlotUnit,
 		unsigned nClassId,
 		const char* pcClassName)
-		: MemoryDynamic(szPage, szSlotUnit, nClassId, pcClassName)
+		: MemoryDynamic(szSlotUnit, nClassId, pcClassName)
 	{
 //		InitializeCriticalSection(&CriticalSection);
         pthread_mutex_init(&m_mutex, nullptr);
