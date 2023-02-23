@@ -7,7 +7,7 @@
 #include <01Base/Memory/IMemory.h>
 #include <03Technical/MemoryManager/MemoryObject.h>
 #include <03Technical/MemoryManager/PageList.h>
-#include <03Technical/MemoryManager/SlotInfo.h>
+// #include <03Technical/MemoryManager/SlotInfo.h>
 
 class Slot {
 public:
@@ -26,15 +26,13 @@ public:
 	// for recycle
 	static SlotList* s_pSlotListRecycle;
 	static PageList* s_pPageList;
-	static SlotList** s_apSlotList;
-	static SlotInfo** s_apSlotInfo;
+	// static SlotInfo** s_apSlotInfo;
 
 	void* operator new(size_t szThis, const char* sMessage);
 	void operator delete(void* pObject);
 	void operator delete(void* pObject, const char* sMessage);
 
 private:
-	int m_szPage;
 	int m_numPagesRequired;
 	int m_idxPage;
 	PageIndex* m_pPageIndex;
@@ -82,7 +80,7 @@ public:
 		int nClassId = _SlotList_Id,
 		const char* pClassName = _SlotList_Name);
 	// for normal SlotList
-	SlotList(size_t szSlot, int numMaxSlots, int szPage, int numPagesRequired, SlotList *pSlotListHead,
+	SlotList(size_t szSlot, int numMaxSlots, int numPagesRequired, SlotList *pSlotListHead,
 		int nClassId = _SlotList_Id,
 		const char* pClassName = _SlotList_Name);
 	virtual ~SlotList();

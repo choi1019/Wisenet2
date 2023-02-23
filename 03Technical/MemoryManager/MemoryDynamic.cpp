@@ -29,9 +29,6 @@ MemoryDynamic::MemoryDynamic(unsigned szSlotUnit, int nClassId, const char* pCla
 {
     this->m_pSlotListHead = new("MemoryDynamic::m_pSlotListHead") SlotList(0);
     this->m_szUnitExponentOf2 = (unsigned)(log2(static_cast<double>(this->m_szUnit))); 
-
-    SlotList::s_apSlotList = (SlotList **) BaseObject::s_pMemory->SafeMalloc(sizeof(SlotList *) * MemoryDynamic::s_pPageList->GetNumPagesMax(), "pSlotList Array");
-    SlotList::s_apSlotInfo = (SlotInfo **) BaseObject::s_pMemory->SafeMalloc(sizeof(SlotInfo *) * MemoryDynamic::s_pPageList->GetNumPagesMax(), "pSlotInfo Array");
 }
 
 MemoryDynamic::~MemoryDynamic() {

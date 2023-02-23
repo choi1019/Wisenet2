@@ -3,8 +3,6 @@
 
 SlotList* SlotList::s_pSlotListRecycle = nullptr;
 PageList* SlotList::s_pPageList = nullptr;
-SlotList** SlotList::s_apSlotList = nullptr;
-SlotInfo** SlotList::s_apSlotInfo = nullptr;
 
 void* SlotList::operator new(size_t szThis, const char* sMessage) {
     void* pNewSlotList = nullptr;
@@ -35,7 +33,6 @@ SlotList::SlotList(size_t szSlot, int nClassId,const char* pClassName)
     : MemoryObject(nClassId, pClassName)    
     , m_szSlot(szSlot)
     , m_numMaxSlots(0)
-    , m_szPage(0)
     , m_numPagesRequired(0)
     , m_pSlotListHead(nullptr)
 
@@ -51,24 +48,23 @@ SlotList::SlotList(size_t szSlot, int nClassId,const char* pClassName)
 
 {
     // compute the number of pages required
-    m_szPage = s_pPageList->GetSzPage();
+    int szPage = s_pPageList->GetSzPage();
     // oversized slot bigger than a page
-    m_numPagesRequired = m_szSlot / m_szPage;
-    if (m_szSlot > m_numPagesRequired * m_szPage) {
+    m_numPagesRequired = m_szSlot / szPage;
+    if (m_szSlot > m_numPagesRequired * szPage) {
         m_numPagesRequired++;
     }
     // compute the number of slots allocatable
     if (m_szSlot > 0) {
-        this->m_numMaxSlots = m_numPagesRequired * m_szPage / m_szSlot;
+        this->m_numMaxSlots = m_numPagesRequired * szPage / m_szSlot;
     }
 }
 
-SlotList::SlotList(size_t szSlot, int numMaxSlots, int szPage, int numPagesRequired, SlotList *pSlotListHead, int nClassId, const char* pClassName)
+SlotList::SlotList(size_t szSlot, int numMaxSlots, int numPagesRequired, SlotList *pSlotListHead, int nClassId, const char* pClassName)
     : MemoryObject(nClassId, pClassName)
     , m_szSlot(szSlot)
     , m_numMaxSlots(numMaxSlots)
-    , m_szPage(szPage)
-    , m_numPagesRequired(numPagesRequired)
+     , m_numPagesRequired(numPagesRequired)
     , m_pSlotListHead(pSlotListHead)
 
     , m_pPageIndex(nullptr)
@@ -86,7 +82,6 @@ SlotList::SlotList(size_t szSlot, int numMaxSlots, int szPage, int numPagesRequi
     // allocate required number of pages
     this->m_pPageIndex = s_pPageList->AllocatePages(m_numPagesRequired);
     this->m_idxPage = this->m_pPageIndex->GetIndex();
-    SlotList::s_apSlotList[m_idxPage] = this;
 
     // set the number of slots allocatable
     this->m_numSlots = this->m_numMaxSlots;
@@ -132,7 +127,7 @@ void* SlotList::Malloc(size_t szSlot, const char* sMessage) {
     }
     if (pTargetSlotList == nullptr) {
         // add a new SlotList
-        pTargetSlotList = new("SlotList") SlotList(m_szSlot, m_numMaxSlots, m_szPage, m_numPagesRequired, this);
+        pTargetSlotList = new("SlotList") SlotList(m_szSlot, m_numMaxSlots, m_numPagesRequired, this);
         m_nCountSlotLists++;
         // insert a new sibling
         pTargetSlotList->SetPSibling(this->GetPSibling());
@@ -140,6 +135,7 @@ void* SlotList::Malloc(size_t szSlot, const char* sMessage) {
     }
     Slot *pTargetSlot = pTargetSlotList->GetASlot();
     NEW_DYNAMIC(sMessage, pTargetSlot,  "(szSlot, numSlots)", m_szSlot, m_numSlots);
+    // SlotInfo *pSlotInfo = new("SlotInfo") SlotInfo(pTargetSlot, sMessage, this);
     return pTargetSlot; 
 }
 
