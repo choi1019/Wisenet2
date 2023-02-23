@@ -2,7 +2,8 @@
   "files.associations": {
     "functional": "cpp",
     "cstdlib": "cpp",
-    "random": "cpp"
+    "random": "cpp",
+    "*.tcc": "cpp"
   },
   "C_Cpp_Runner.msvcBatchPath": "",
   "C_Cpp_Runner.cCompilerPath": "gcc",

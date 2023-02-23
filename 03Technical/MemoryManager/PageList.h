@@ -8,6 +8,7 @@
 #include <03Technical/MemoryManager/PageIndex.h>
 
 class SlotList;
+class Slot;
 
 class PageList : public MemoryObject {
 private:
@@ -24,6 +25,7 @@ public:
 	unsigned GetNumPagesAvailable() { return this->m_numPagesAvaiable; }
 	unsigned GetNumPagesMax() { return this->m_numPagesMax; }
 	int GetIdxPage(void *pObject) { return ((size_t)pObject - m_pMemeoryAllocated) / m_szPage; }
+
 public:
 	PageList(
 		size_t pMemeoryAllocated, 

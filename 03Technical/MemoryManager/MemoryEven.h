@@ -5,14 +5,17 @@
 #define _MemoryEven_Name "MemoryEven"
 
 #include <03Technical/MemoryManager/SlotList.h>
+#include <03Technical/MemoryManager/SlotInfo.h>
 
 class MemoryEven : public SlotList {
-	void* Malloc(size_t szSlot, const char* sMessage) override {
-		return SlotList::Malloc(szSlot, sMessage);
-	}
-	bool Free(void* pObject) override {
-		return SlotList::Free(pObject);
-	}
+private:
+	SlotInfo *m_pSlotInfoHead;
+
+	void AddSlotInfo(Slot *pSlot, const char *sMessage);
+	void DeleteSlotInfo(Slot *pSlot);
+	SlotInfo *GetPSlotInfo(Slot *pSlot);
+
+protected:
 	// critical section
 	virtual void Lock() {};
 	virtual void UnLock() {};
@@ -21,28 +24,19 @@ public:
 	// for head MemoryEven
 	MemoryEven(size_t szSlot, 
 		int nClassId = _MemoryEven_Id,
-		const char* pClassName = _MemoryEven_Name)
-		: SlotList(szSlot, nClassId, pClassName) 
-		{
-		}
+		const char* pClassName = _MemoryEven_Name);
 	// for normal MemoryEven
 	MemoryEven(size_t szSlot, int numMaxSlots, int numPagesRequired, SlotList *pSlotListHead,
 		int nClassId = _MemoryEven_Id,
-		const char* pClassName = _MemoryEven_Name)
-		: SlotList(szSlot, numMaxSlots, numPagesRequired, pSlotListHead, nClassId, pClassName) 
-		{
-		}
-	virtual ~MemoryEven(){}
-	virtual void Initialize() {
-		SlotList::Initialize();
-	}
-	virtual void Finalize() {
-		SlotList::Finalize();
-	}
+		const char* pClassName = _MemoryEven_Name);
+	virtual ~MemoryEven();
+	virtual void Initialize();
+	virtual void Finalize();
+	
+	void* SafeMalloc(size_t szAllocate, const char* pcName);
+	bool SafeFree(void* pObject);
 
 	// maintenance
-	virtual void Show(const char* pTitle) {
-		SlotList::Show(pTitle);
-	}
+	virtual void Show(const char* pTitle);
 };
 

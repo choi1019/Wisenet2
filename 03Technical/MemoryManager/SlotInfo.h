@@ -6,23 +6,26 @@
 
 #include <01Base/Object/RootObject.h>
 #include <01Base/Memory/IMemory.h>
-#include <03Technical/MemoryManager/SlotList.h>
 
+class SlotList;
+class Slot;
 class SlotInfo : public RootObject
 {
 public:
 	static IMemory *s_pMemory;
+
 	void* operator new(size_t szThis, const char* sMessage);
 	void operator delete(void* pObject);
 	void operator delete(void* pObject, const char* sMessage);
+	
 private:
 	Slot *m_pSlot;
-	const char *m_sMessage;
+	char m_sMessage[30];
 	SlotList *m_pSlotList;
 	SlotInfo *m_pNext;
 public:
 	Slot *GetPSlot() { return this->m_pSlot; }
-	const char* GetSMessage() { return this->m_sMessage; }
+	char* GetSMessage() { return this->m_sMessage; }
 	SlotList *GetPSlotList() { return this->m_pSlotList; }
 	SlotInfo *GetPNext() { return this->m_pNext; }
 	void SetPNext(SlotInfo *pNext) { this->m_pNext = pNext; }
@@ -30,18 +33,11 @@ public:
 public:
 	SlotInfo(Slot *pSlot, const char *sMessage, SlotList *pSlotList,
 			int nObjectId = _SlotInfo_Id, const char* sObjectName = _SlotInfo_Name
-	) 
-	: RootObject(nObjectId, sObjectName)
-	, m_pSlot(pSlot)
-	, m_sMessage(sMessage)
-	, m_pSlotList(pSlotList)
-	, m_pNext(nullptr)
-	{
-	}
-	virtual ~SlotInfo() {}
-	virtual void Initialize() {}
-	virtual void Finalize() {}
+	);
+	~SlotInfo() override;
+	void Initialize() override;
+	void Finalize() override;
 
 	// maintenance
-	virtual void Show(const char* pTitle);
+	void Show(const char* pTitle);
 };

@@ -1,11 +1,11 @@
 #include <03Technical/MemoryManager/MemoryDynamic.h>
+#include <03Technical/MemoryManager/SlotInfo.h>
+
 #include <01Base/Object/ValueObject.h>
 #include <01Base/Aspect/Exception.h>
 #include <01Base/Aspect/Log.h>
 
 #include <math.h>
-#include <02Platform/EventQueue/Event.h>
-#include <03Technical/MemoryManager/SlotInfo.h>
 
 PageList* MemoryDynamic::s_pPageList = nullptr;
 
@@ -22,13 +22,14 @@ void MemoryDynamic::operator delete(void* pObject, const char* sMessage) {
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////
-// constructors and destructors
 MemoryDynamic::MemoryDynamic(unsigned szSlotUnit, int nClassId, const char* pClassName)
     : MemoryObject(nClassId, pClassName)
     , m_szUnit(szSlotUnit)
 {
     this->m_pSlotListHead = new("MemoryDynamic::m_pSlotListHead") SlotList(0);
     this->m_szUnitExponentOf2 = (unsigned)(log2(static_cast<double>(this->m_szUnit)));
+
+    SlotInfo::s_pMemory = new("SlotInfo::s_pMemory") SlotList(sizeof(SlotInfo));
 }
 
 MemoryDynamic::~MemoryDynamic() {
@@ -53,7 +54,7 @@ void* MemoryDynamic::Malloc(size_t szObject, const char* sMessage) {
     // find the slotList
     SlotList *pTargetSlotList = nullptr;
     SlotList *pPrevious = nullptr;
-    SlotList *pCurrent = m_pSlotListHead; 
+    SlotList *pCurrent = m_pSlotListHead;
     while (pCurrent != nullptr) {
         if (pCurrent->GetSzSlot() == szSlot) {
             // arleady exist
@@ -124,7 +125,6 @@ void MemoryDynamic::Show(const char* pTitle) {
         pSlotList->Show("Head");
         pSlotList = pSlotList->GetPNext();
     }
-    Event::s_pMemory->Show("Event");
     SlotInfo::s_pMemory->Show("SlotInfo");
     MLOG_FOOTER("MemoryDynamic::Show");
 };

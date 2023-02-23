@@ -26,26 +26,21 @@ void PMemoryManager::Allocate() {
             // system memory
             s_pSystemMemeory = new char[s_szSystemMemory];
             s_pMemoryStatic = new(s_pSystemMemeory, s_szSystemMemory, "s_pMemoryStatic") PMemoryStatic();
-            s_pMemoryStatic->Initialize();
             BaseObject::s_pMemory = s_pMemoryStatic;        
             SHOW_STATIC("PMemoryManager::Allocate");
 
             // aplication memory
             s_pApplicationMemeory = new char[s_szApplicationMemory];
             PageList *pPageList = new("pPageList") PageList((size_t)s_pApplicationMemeory, s_szApplicationMemory, s_szPage);
-            
-                // memory even
-                SlotList::s_pPageList = pPageList;
-                Event::s_pMemory = new("Event::s_pMemory") PMemoryEven(sizeof(Event));
-                SlotInfo::s_pMemory = new("SlotInfo::s_pMemory") PMemoryEven(sizeof(SlotInfo));
+            // memory even 
+            SlotList::s_pPageList = pPageList;
+            Event::s_pMemory = new("Event::s_pMemory") PMemoryEven(sizeof(Event));
+            // memory dynamic
+            MemoryDynamic::s_pPageList = pPageList;
+            s_pMemoryDynamic = new("s_pMemoryDynamic") PMemoryDynamic(s_szSlotUnit);
+            ValueObject::s_pMemory = s_pMemoryDynamic;
+            SHOW_DYNAMIC("PMemoryDynamic::Allocate");
 
-                // memory dynamic
-                MemoryDynamic::s_pPageList = pPageList;
-                s_pMemoryDynamic = new("s_pMemoryDynamic") PMemoryDynamic(s_szSlotUnit);
-                s_pMemoryDynamic->Initialize();
-                ValueObject::s_pMemory = s_pMemoryDynamic;
-                SHOW_DYNAMIC("PMemoryDynamic::Allocate");
-                
         MLOG_FOOTER("PMemoryManager::Allocate");
     } catch (Exception& exception) {
         exception.Println();

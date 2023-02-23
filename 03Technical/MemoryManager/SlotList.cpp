@@ -34,7 +34,7 @@ SlotList::SlotList(size_t szSlot, int nClassId,const char* pClassName)
     , m_szSlot(szSlot)
     , m_numMaxSlots(0)
     , m_numPagesRequired(0)
-    , m_pSlotListHead(nullptr)
+    , m_pSlotListHead(this)
 
     , m_pPageIndex(nullptr)
     , m_idxPage(-1)
@@ -107,7 +107,7 @@ void SlotList::Finalize() {
     MemoryObject::Finalize();
 }
 
-Slot *SlotList::GetASlot() {
+Slot *SlotList::AllocateASlot() {
     Slot* pSlot = this->m_pSlotHead;
     this->m_pSlotHead = this->m_pSlotHead->pNext;
     this->m_numSlots--;
@@ -133,13 +133,13 @@ void* SlotList::Malloc(size_t szSlot, const char* sMessage) {
         pTargetSlotList->SetPSibling(this->GetPSibling());
         this->SetPSibling(pTargetSlotList);        
     }
-    Slot *pTargetSlot = pTargetSlotList->GetASlot();
+    Slot *pTargetSlot = pTargetSlotList->AllocateASlot();
     NEW_DYNAMIC(sMessage, pTargetSlot,  "(szSlot, numSlots)", m_szSlot, m_numSlots);
     // SlotInfo *pSlotInfo = new("SlotInfo") SlotInfo(pTargetSlot, sMessage, this);
     return pTargetSlot; 
 }
 
-void SlotList::PutASlot(Slot* pSlotFree) {
+void SlotList::DelocateASlot(Slot* pSlotFree) {
     // insert pSlotFree to Slot LIst
     pSlotFree->pNext = m_pSlotHead;
     m_pSlotHead = pSlotFree;
@@ -162,7 +162,7 @@ bool SlotList::Free(void* pSlotFree) {
     while(pCurrent != nullptr) {
         if (pCurrent->GetIdxPage() == idxPage) {
             // found
-            pCurrent->PutASlot((Slot *)pSlotFree);
+            pCurrent->DelocateASlot((Slot *)pSlotFree);
             if (pCurrent->IsGarbage()) {
                 pPrevious->SetPSibling(pCurrent->GetPSibling());
                 delete pCurrent;
@@ -176,21 +176,20 @@ bool SlotList::Free(void* pSlotFree) {
     return false;
 }
 
+	void* SlotList::SafeMalloc(size_t szAllocate, const char* pcName)
+	{
+		Lock();
+		void* pMemoryAllocated = this->Malloc(szAllocate, pcName);
+		UnLock();
+		return pMemoryAllocated;
+	}
 
-void* SlotList::SafeMalloc(size_t szAllocate, const char* pcName)
-{
-    Lock();
-    void* pMemoryAllocated = this->Malloc(szAllocate, pcName);
-    UnLock();
-    return pMemoryAllocated;
-}
-
-bool SlotList::SafeFree(void* pObject) {
-    Lock();
-    bool result = this->Free(pObject);
-    UnLock();
-    return result;
-}
+	bool SlotList::SafeFree(void* pObject) {
+		Lock();
+		bool result = this->Free(pObject);
+		UnLock();
+		return result;
+	}
 
 // maintenance
 void SlotList::Show(const char* pTitle) {

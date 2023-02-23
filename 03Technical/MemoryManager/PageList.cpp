@@ -30,6 +30,8 @@ PageList::~PageList() {
 }
 void PageList::Initialize() {
     MemoryObject::Initialize();
+    SlotList::s_pPageList = this;
+    
 }
 void PageList::Finalize() {
     MemoryObject::Finalize();

@@ -36,44 +36,43 @@ private:
 	int m_numPagesRequired;
 	int m_idxPage;
 	PageIndex* m_pPageIndex;
+	int m_nCountSlotLists;
 
 	size_t m_szSlot;
 	unsigned m_numMaxSlots;
 	unsigned m_numSlots;
-
-	Slot* m_pSlotHead;
 	bool m_bGarbage;
+	Slot* m_pSlotHead;
 
-	int m_nCountSlotLists;
+	// head SlotList of the same size
 	SlotList *m_pSlotListHead;
-	SlotList* m_pNext;
 	SlotList* m_pSibling;
-	
-
+	SlotList* m_pNext;
 
 protected:
 	virtual void* Malloc(size_t szSlot, const char* sMessage);
 	virtual bool Free(void* pObject);
-	// critical section
+
 	virtual void Lock() {};
 	virtual void UnLock() {};
-
 public:
-	// getters and setters
-	size_t GetSzSlot() { return this->m_szSlot; }
-	unsigned GetNumSlots() { return this->m_numSlots; }
-
 	int GetIdxPage() { return this->m_idxPage; }
-	bool IsGarbage() { return this->m_bGarbage; }
+	PageIndex *GetPPageIndex() { return this->m_pPageIndex; }
+	// as a head SlotList
 	int GetCountSlotLists() { return this->m_nCountSlotLists; }
 
+	size_t GetSzSlot() { return this->m_szSlot; }
+	unsigned GetNumSlots() { return this->m_numSlots; }
+	bool IsGarbage() { return this->m_bGarbage; }
+
+	SlotList* GetPSlotListHead() { return this->m_pSlotListHead;}
 	SlotList* GetPNext() { return this->m_pNext; }
 	void SetPNext(SlotList* pNext) { this->m_pNext = pNext; }
 	SlotList* GetPSibling() { return this->m_pSibling; }
 	void SetPSibling(SlotList* pSibling) { this->m_pSibling = pSibling; }
-//	PageIndex* GetPPageIndex() { return this->m_pPageIndex; }
-	Slot *GetASlot();
-	void PutASlot(Slot *pSlot);
+
+	Slot *AllocateASlot();
+	void DelocateASlot(Slot *pSlot);
 
 public:
 	// for head SlotList
@@ -88,11 +87,8 @@ public:
 	virtual void Initialize();
 	virtual void Finalize();
 
-	// Slot* AllocateASlot(size_t szAllocate, const char* sMessage);
-	// bool FreeASlot(Slot* pSlotFree);
-	// methods
-	void* SafeMalloc(size_t szAllocate, const char* sMessage) override;
-	bool SafeFree(void* pObject) override;
+	void* SafeMalloc(size_t szAllocate, const char* pcName);
+	bool SafeFree(void* pObject);
 
 	// maintenance
 	virtual void Show(const char* pTitle);
