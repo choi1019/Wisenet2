@@ -9,8 +9,6 @@
 
 class MemoryEven : public SlotList {
 private:
-	SlotInfo *m_pSlotInfoHead;
-
 	void AddSlotInfo(Slot *pSlot, const char *sMessage);
 	void DeleteSlotInfo(Slot *pSlot);
 	SlotInfo *GetPSlotInfo(Slot *pSlot);

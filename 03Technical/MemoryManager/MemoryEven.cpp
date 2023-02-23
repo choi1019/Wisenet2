@@ -47,7 +47,8 @@ void MemoryEven::DeleteSlotInfo(Slot *pSlot) {
         pPrevious = pCurrent;
         pCurrent = pCurrent->GetPNext();
     }
-    throw EXCEPTION(-1);
+    LOG_NEWLINE("Error-MemoryEvent::Delete", (size_t)pSlot);
+    //throw EXCEPTION(-1);
 }
 
 SlotInfo *MemoryEven::GetPSlotInfo(Slot *pSlot) {
@@ -65,14 +66,17 @@ void* MemoryEven::SafeMalloc(size_t szAllocate, const char* pcName)
     Lock();
     void* pMemoryAllocated = this->Malloc(szAllocate, pcName);
     this->AddSlotInfo((Slot *)pMemoryAllocated, pcName);
+    NEW_DYNAMIC(pcName, pMemoryAllocated,  "(szSlot, numSlots)", this->GetSzSlot(), this->GetNumSlots());
     UnLock();
     return pMemoryAllocated;
 }
 
 bool MemoryEven::SafeFree(void* pObject) {
     Lock();
-    bool result = this->Free(pObject);
+    DELETE_DYNAMIC((size_t)pObject, this->GetIdxPage());
     this->DeleteSlotInfo((Slot *)pObject);
+    bool result = this->Free(pObject);
+
     UnLock();
     return result;
 }

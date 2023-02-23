@@ -415,6 +415,7 @@ void LifecycleManager::FinalizeSchedulers(Event* pEvent) {
 	LOG_HEADER("LifecycleManager::FinalizeSchedulers");
 	for (auto itr : m_mapSchedulers) {
 		itr.second->FinalizeAsAScheduler();
+		delete itr.second;
 		LOG_NEWLINE("- StopSchedulers: ", 
 			Directory::s_dirComponents[itr.second->GetComponentId()]);
 	}

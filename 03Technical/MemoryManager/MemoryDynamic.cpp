@@ -26,7 +26,7 @@ MemoryDynamic::MemoryDynamic(unsigned szSlotUnit, int nClassId, const char* pCla
     : MemoryObject(nClassId, pClassName)
     , m_szUnit(szSlotUnit)
 {
-    this->m_pSlotListHead = new("MemoryDynamic::m_pSlotListHead") SlotList(0);
+    this->m_pMemoryEvenHead = new("MemoryDynamic::m_pMemoryEvenHead") MemoryEven(0);
     this->m_szUnitExponentOf2 = (unsigned)(log2(static_cast<double>(this->m_szUnit)));
 
     SlotInfo::s_pMemory = new("SlotInfo::s_pMemory") SlotList(sizeof(SlotInfo));
@@ -51,41 +51,41 @@ void* MemoryDynamic::Malloc(size_t szObject, const char* sMessage) {
     if (szSlot < szObject) {
         szSlot += m_szUnit;
     }
-    // find the slotList
-    SlotList *pTargetSlotList = nullptr;
-    SlotList *pPrevious = nullptr;
-    SlotList *pCurrent = m_pSlotListHead;
+    // find the MemoryEven
+    MemoryEven *pTargetMemoryEven = nullptr;
+    MemoryEven *pPrevious = nullptr;
+    MemoryEven *pCurrent = m_pMemoryEvenHead;
     while (pCurrent != nullptr) {
         if (pCurrent->GetSzSlot() == szSlot) {
             // arleady exist
-            pTargetSlotList = pCurrent;
+            pTargetMemoryEven = pCurrent;
         } else if (pCurrent->GetSzSlot() < szSlot) {
             if (pCurrent->GetPNext() == nullptr) {
-                // add a new SlotList
-                pTargetSlotList = new("SlotListHead") SlotList(szSlot);
-                pCurrent->SetPNext(pTargetSlotList);
-                pTargetSlotList->SetPNext(nullptr);
+                // add a new MemoryEven
+                pTargetMemoryEven = new("MemoryEvenHead") MemoryEven(szSlot);
+                pCurrent->SetPNext(pTargetMemoryEven);
+                pTargetMemoryEven->SetPNext(nullptr);
             }
         } else if (pCurrent->GetSzSlot() > szSlot) {
-            // insert a new SlotList
-            pTargetSlotList = new("SlotListHead") SlotList(szSlot);
-            pPrevious->SetPNext(pTargetSlotList);
-            pTargetSlotList->SetPNext(pCurrent);
+            // insert a new MemoryEven
+            pTargetMemoryEven = new("MemoryEvenHead") MemoryEven(szSlot);
+            pPrevious->SetPNext(pTargetMemoryEven);
+            pTargetMemoryEven->SetPNext(pCurrent);
         }
         // found
-        if (pTargetSlotList != nullptr) {
-            Slot *pTargetSlot = (Slot *)pTargetSlotList->SafeMalloc(szSlot, sMessage);
+        if (pTargetMemoryEven != nullptr) {
+            Slot *pTargetSlot = (Slot *)pTargetMemoryEven->SafeMalloc(szSlot, sMessage);
             return pTargetSlot;
         }
         pPrevious = pCurrent;
-        pCurrent = pCurrent->GetPNext();
+        pCurrent = (MemoryEven *)pCurrent->GetPNext();
     } 
     throw Exception((unsigned)IMemory::EException::_eSlotlistAllocationFailed, " MemoryDynamic::Malloc", __LINE__);
 }
 
 bool MemoryDynamic::Free(void* pObject) {
-    SlotList *pPrevious = m_pSlotListHead; 
-    SlotList *pCurrent = pPrevious->GetPNext(); 
+    MemoryEven *pPrevious = m_pMemoryEvenHead; 
+    MemoryEven *pCurrent = (MemoryEven *)pPrevious->GetPNext(); 
     while (pCurrent != nullptr) {
         bool bFreed = pCurrent->SafeFree(pObject);
         if (bFreed) {
@@ -96,7 +96,7 @@ bool MemoryDynamic::Free(void* pObject) {
             }
             return true;
         }
-        pCurrent = pCurrent->GetPNext();
+        pCurrent = (MemoryEven *)pCurrent->GetPNext();
     }
     throw Exception((unsigned)IMemory::EException::_eSlotlistFreeFailed, "MemoryDynamic::Free", __LINE__);
     return false;
@@ -120,10 +120,10 @@ bool MemoryDynamic::SafeFree(void* pObject) {
 void MemoryDynamic::Show(const char* pTitle) {
     MLOG_HEADER("MemoryDynamic::Show(pTitle)", pTitle);
     s_pPageList->Show("MemoryDynamic::Show");
-    SlotList* pSlotList = this->m_pSlotListHead;
-    while (pSlotList != nullptr) {
-        pSlotList->Show("Head");
-        pSlotList = pSlotList->GetPNext();
+    MemoryEven* pMemoryEven = this->m_pMemoryEvenHead;
+    while (pMemoryEven != nullptr) {
+        pMemoryEven->Show("Head");
+        pMemoryEven = (MemoryEven *)pMemoryEven->GetPNext();
     }
     SlotInfo::s_pMemory->Show("SlotInfo");
     MLOG_FOOTER("MemoryDynamic::Show");

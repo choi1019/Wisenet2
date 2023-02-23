@@ -7,7 +7,7 @@
 #include <01Base/Memory/IMemory.h>
 #include <03Technical/MemoryManager/MemoryObject.h>
 #include <03Technical/MemoryManager/PageList.h>
-// #include <03Technical/MemoryManager/SlotInfo.h>
+#include <03Technical/MemoryManager/SlotInfo.h>
 
 class Slot {
 public:
@@ -50,6 +50,8 @@ private:
 	SlotList* m_pNext;
 
 protected:
+	SlotInfo *m_pSlotInfoHead;
+
 	virtual void* Malloc(size_t szSlot, const char* sMessage);
 	virtual bool Free(void* pObject);
 
