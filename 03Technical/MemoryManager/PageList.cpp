@@ -1,4 +1,5 @@
 #include <03Technical/MemoryManager/PageList.h>
+#include <03Technical/MemoryManager/SlotList.h>
 
 PageList::PageList(
     size_t pMemeoryAllocated, 
@@ -34,23 +35,27 @@ void PageList::Finalize() {
     MemoryObject::Finalize();
 }
 
-PageIndex* PageList::AllocatePages(unsigned numPagesRequired) {
+PageIndex* PageList::AllocatePages(unsigned numPagesRequired, SlotList *pSlotList) {
     if (m_numPagesAvaiable < numPagesRequired) {
         throw Exception((unsigned)IMemory::EException::_eNoMorePage, "Memory", "Malloc", "_eNoMorePage");
     } else {
+        // if numPagesRequired > 1
         unsigned numPagesAllocated = numPagesRequired;
         unsigned indexFound = 0;
         for (unsigned index = 0; index < m_numPagesMax; index++) {
             if ((m_apPageIndices[index]->IsAllocated())) {
+                // if the page is discontinued, reset index
                 numPagesAllocated = numPagesRequired;
                 indexFound = index + 1;
             }
             else {
                 numPagesAllocated--;
                 if (numPagesAllocated == 0) {
-                    // found
+                    // found - page info is set in a head page
                     m_apPageIndices[indexFound]->SetNumAllocated(numPagesRequired);
+                    m_apPageIndices[indexFound]->SetPSlotList(pSlotList);
                     for (unsigned i = 0; i < numPagesRequired; i++) {
+                        // multiple pages needed
                         m_apPageIndices[indexFound + i]->SetIsAllocated(true);
                     }
                     m_numPagesAvaiable = m_numPagesAvaiable - numPagesRequired;

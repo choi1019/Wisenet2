@@ -7,6 +7,8 @@
 #include <03Technical/MemoryManager/MemoryObject.h>
 #include <03Technical/MemoryManager/PageIndex.h>
 
+class SlotList;
+
 class PageList : public MemoryObject {
 private:
 	size_t m_pMemeoryAllocated;
@@ -33,7 +35,7 @@ public:
 	virtual void Initialize();
 	virtual void Finalize();
 
-	PageIndex* AllocatePages(unsigned numPagesRequired);
+	PageIndex* AllocatePages(unsigned numPagesRequired, SlotList *pSlotList);
 	void FreePages(unsigned indexFree);
 	void Show(const char* pTitle);
 };

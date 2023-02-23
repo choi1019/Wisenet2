@@ -4,7 +4,7 @@
 #include <01Base/Aspect/Exception.h>
 #include <01Base/Aspect/Log.h>
 
-#include <13PTechnical/PMemoryManager/PSlotList.h>
+#include <13PTechnical/PMemoryManager/PMemoryEven.h>
 #include <02Platform/EventQueue/Event.h>
 #include <03Technical/MemoryManager/SlotInfo.h>
 
@@ -36,8 +36,8 @@ void PMemoryManager::Allocate() {
             
                 // memory even
                 SlotList::s_pPageList = pPageList;
-                Event::s_pMemory = new("Event::s_pMemory") PSlotList(sizeof(Event));
-                SlotInfo::s_pMemory = new("SlotInfo::s_pMemory") PSlotList(sizeof(SlotInfo));
+                Event::s_pMemory = new("Event::s_pMemory") PMemoryEven(sizeof(Event));
+                SlotInfo::s_pMemory = new("SlotInfo::s_pMemory") PMemoryEven(sizeof(SlotInfo));
 
                 // memory dynamic
                 MemoryDynamic::s_pPageList = pPageList;

@@ -1,30 +1,30 @@
-#include <13PTechnical/PMemoryManager/PSlotList.h>
+#include <13PTechnical/PMemoryManager/PMemoryEven.h>
 
-PSlotList::PSlotList(
+PMemoryEven::PMemoryEven(
 	size_t szSlotUnit,
 	unsigned nClassId,
 	const char* pcClassName)
-	: SlotList(szSlotUnit, nClassId, pcClassName)
+	: MemoryEven(szSlotUnit, nClassId, pcClassName)
 {
 	pthread_mutex_init(&m_mutex, nullptr);
 }
-PSlotList::~PSlotList() {
+PMemoryEven::~PMemoryEven() {
 //		DeleteCriticalSection(&CriticalSection);
 	pthread_mutex_destroy(&m_mutex);
 }
 
-void PSlotList::Initialize() {
-	SlotList::Initialize();
+void PMemoryEven::Initialize() {
+	MemoryEven::Initialize();
 }
-void PSlotList::Finalize() {
-	SlotList::Finalize();
+void PMemoryEven::Finalize() {
+	MemoryEven::Finalize();
 }
 
-void PSlotList::Lock() {
+void PMemoryEven::Lock() {
 //		EnterCriticalSection(&CriticalSection);
 	pthread_mutex_lock(&m_mutex);
 }
-void PSlotList::UnLock() {
+void PMemoryEven::UnLock() {
 //		LeaveCriticalSection(&CriticalSection);
 	pthread_mutex_unlock(&m_mutex);
 }

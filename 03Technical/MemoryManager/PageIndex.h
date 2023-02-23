@@ -4,7 +4,8 @@
 #define _PageIndex_Id _GET_CLASS_UID(_ELayer_Technical::_ePageIndex)
 #define _PageIndex_Name "PageIndex"
 
-#include <03Technical/MemoryManager/MemoryObject.h>
+class SlotList;
+
 
 class Page {
 public:
@@ -17,6 +18,7 @@ private:
 
 	bool m_bAllocated;
 	unsigned m_numAllocated;
+	SlotList *m_pSlotList;
 
 public:
 	unsigned GetIndex() { return this->m_index; }
@@ -25,6 +27,8 @@ public:
 	void SetIsAllocated(bool bAllocated) { this->m_bAllocated = bAllocated; }
 	unsigned GetNumAllocated() { return this->m_numAllocated; }
 	void SetNumAllocated(size_t numAllocated) { this->m_numAllocated = numAllocated; }
+	void SetPSlotList(SlotList *pSlotList) { m_pSlotList = pSlotList; }
+	SlotList *GetPSlotList() { return this->m_pSlotList; }
 
 public:
 	PageIndex(
@@ -37,6 +41,7 @@ public:
 		, m_pPage((Page*)pMemoryAllocated)	
 		, m_numAllocated(1)
 		, m_bAllocated(false)
+		, m_pSlotList(nullptr)
 	{
 	}
 	virtual ~PageIndex() {}

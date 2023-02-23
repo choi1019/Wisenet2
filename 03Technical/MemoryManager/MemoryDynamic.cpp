@@ -28,7 +28,7 @@ MemoryDynamic::MemoryDynamic(unsigned szSlotUnit, int nClassId, const char* pCla
     , m_szUnit(szSlotUnit)
 {
     this->m_pSlotListHead = new("MemoryDynamic::m_pSlotListHead") SlotList(0);
-    this->m_szUnitExponentOf2 = (unsigned)(log2(static_cast<double>(this->m_szUnit))); 
+    this->m_szUnitExponentOf2 = (unsigned)(log2(static_cast<double>(this->m_szUnit)));
 }
 
 MemoryDynamic::~MemoryDynamic() {

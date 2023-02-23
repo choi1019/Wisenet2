@@ -1,7 +1,4 @@
 #include <13PTechnical/PMemoryManager/PMemoryDynamic.h>
-#include <13PTechnical/PMemoryManager/PSlotList.h>
-#include <02Platform/EventQueue/Event.h>
-#include <03Technical/MemoryManager/SlotInfo.h>
 
 PMemoryDynamic::PMemoryDynamic(
 	size_t szSlotUnit,

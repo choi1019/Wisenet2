@@ -80,7 +80,7 @@ SlotList::SlotList(size_t szSlot, int numMaxSlots, int numPagesRequired, SlotLis
 {
 
     // allocate required number of pages
-    this->m_pPageIndex = s_pPageList->AllocatePages(m_numPagesRequired);
+    this->m_pPageIndex = s_pPageList->AllocatePages(m_numPagesRequired, this);
     this->m_idxPage = this->m_pPageIndex->GetIndex();
 
     // set the number of slots allocatable

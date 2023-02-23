@@ -49,10 +49,11 @@ private:
 	SlotList* m_pNext;
 	SlotList* m_pSibling;
 	
-	void* Malloc(size_t szSlot, const char* sMessage);
-	bool Free(void* pObject);
+
 
 protected:
+	virtual void* Malloc(size_t szSlot, const char* sMessage);
+	virtual bool Free(void* pObject);
 	// critical section
 	virtual void Lock() {};
 	virtual void UnLock() {};
