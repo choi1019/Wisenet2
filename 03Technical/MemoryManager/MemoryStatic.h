@@ -4,10 +4,9 @@
 #define _MemoryStatic_Id _GET_CLASS_UID(_ELayer_Technical::_eMemoryStatic)
 #define _MemoryStatic_Name "MemoryStatic"
 
-#include <01Base/Memory/IMemory.h>
 #include <03Technical/MemoryManager/MemoryObject.h>
 
-class MemoryStatic : public MemoryObject, public IMemory {
+class MemoryStatic : public MemoryObject {
 public:
 	// memory for static allocation - no delete
 	static void* s_pAllocated;
@@ -19,13 +18,6 @@ public:
 	void operator delete(void* pObject);
 	void operator delete(void* pObject, void* pMemoryAllocated, size_t szMemoryllocated);
 
-protected:
-	virtual void Lock() = 0;
-	virtual void UnLock() = 0;
-
-	void* Malloc(size_t szObject, const char* sMessage = "");
-	bool Free(void* pObject);
-
 public:
 	MemoryStatic(
 		int nClassId = _MemoryStatic_Id,
@@ -34,9 +26,9 @@ public:
 	virtual void Initialize();
 	virtual void Finalize();
 
-		// methods
-	void* SafeMalloc(size_t szAllocate, const char* sMessage = "") override;
-	bool SafeFree(void* pObject) override;
+	// methods
+	virtual void* Malloc(size_t szAllocate, const char* sMessage);
+	virtual bool Free(void* pObject);
 
 	// maintenance
 	void Show(const char* sMessage) override;

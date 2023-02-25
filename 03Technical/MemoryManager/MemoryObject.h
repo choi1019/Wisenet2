@@ -5,8 +5,9 @@
 #define _MemoryObject_Name "MemoryObject"
 
 #include <01Base/Object/BaseObject.h>
+#include <01Base/Memory/IMemory.h>
 
-class MemoryObject : public BaseObject { 
+class MemoryObject : public BaseObject, public IMemory { 
 public:
 	MemoryObject(
 		int nClassId = _MemoryObject_Id,

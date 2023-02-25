@@ -26,5 +26,20 @@ void PMemoryStatic::Initialize() {
 }
 void PMemoryStatic::Finalize() {
 	MemoryStatic::Finalize();
+}
 
+
+void* PMemoryStatic::Malloc(size_t szObject, const char* sMessage)
+{
+    Lock();
+    void* pObject = MemoryStatic::Malloc(szObject, sMessage);
+    UnLock();
+    return pObject;
+}
+
+bool PMemoryStatic::Free(void* pObject) {
+    Lock();
+    bool result = MemoryStatic::Free(pObject);
+    UnLock();
+    return result;
 }

@@ -7,8 +7,8 @@
 #include <03Technical/MemoryManager/MemoryObject.h>
 #include <03Technical/MemoryManager/PageIndex.h>
 
-class SlotList;
-class Slot;
+// class SlotList;
+// class Slot;
 
 class PageList : public MemoryObject {
 private:
@@ -38,7 +38,10 @@ public:
 	virtual void Finalize();
 
 	PageIndex* AllocatePages(unsigned numPagesRequired, SlotList *pSlotList);
-	void FreePages(unsigned indexFree);
+	void DelocatePages(unsigned indexFree);
 	void Show(const char* pTitle);
+
+	void* Malloc(size_t szObject, const char* sMessage) override { return nullptr; }
+	bool Free(void* pObject) override { return false; }
 };
 

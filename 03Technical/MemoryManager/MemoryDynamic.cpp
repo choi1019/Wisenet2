@@ -6,30 +6,41 @@
 #include <01Base/Aspect/Log.h>
 
 #include <math.h>
+#include <02Platform/EventQueue/Event.h>
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////
+// static
 
 PageList* MemoryDynamic::s_pPageList = nullptr;
 
 void* MemoryDynamic::operator new(size_t szThis, const char* sMessage) {
-    void* pMemoryDynamic = BaseObject::s_pMemory->SafeMalloc(szThis, sMessage);    
+    // generate this
+    void* pMemoryDynamic = BaseObject::s_pMemory->Malloc(szThis, sMessage);    
     SlotList::s_pSlotListRecycle = nullptr;
     return pMemoryDynamic;
 }
 void MemoryDynamic::operator delete(void* pObject) {
-    MemoryObject::s_pMemory->SafeFree(pObject);
+    // delete this
+    MemoryObject::s_pMemory->Free(pObject);
  }
 void MemoryDynamic::operator delete(void* pObject, const char* sMessage) {
     throw Exception((unsigned)IMemory::EException::_eNotSupport, "MemoryDynamic::delete", __LINE__);
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////
+
 MemoryDynamic::MemoryDynamic(unsigned szSlotUnit, int nClassId, const char* pClassName)
     : MemoryObject(nClassId, pClassName)
     , m_szUnit(szSlotUnit)
 {
-    this->m_pMemoryEvenHead = new("MemoryDynamic::m_pMemoryEvenHead") MemoryEven(0);
-    this->m_szUnitExponentOf2 = (unsigned)(log2(static_cast<double>(this->m_szUnit)));
+    // pages to share among SlotLists, MemoryEvents and PMemoryEvents
+    SlotList::s_pPageList = MemoryDynamic::s_pPageList;
+    // set the memory manager of a SlotInfo as a SlotList
+    SlotInfo::s_pMemory = new("SlotList-SlotInfo") SlotList(sizeof(SlotInfo));
 
-    SlotInfo::s_pMemory = new("SlotInfo::s_pMemory") SlotList(sizeof(SlotInfo));
+    // create a head SlotList
+    this->m_pMemoryEvenHead = new("MemoryEven-Head") MemoryEven(0);
+    this->m_szUnitExponentOf2 = (unsigned)(log2(static_cast<double>(this->m_szUnit)));
 }
 
 MemoryDynamic::~MemoryDynamic() {
@@ -74,7 +85,8 @@ void* MemoryDynamic::Malloc(size_t szObject, const char* sMessage) {
         }
         // found
         if (pTargetMemoryEven != nullptr) {
-            Slot *pTargetSlot = (Slot *)pTargetMemoryEven->SafeMalloc(szSlot, sMessage);
+            Slot *pTargetSlot = (Slot *)pTargetMemoryEven->Malloc(szSlot, sMessage);
+            // return generated memory
             return pTargetSlot;
         }
         pPrevious = pCurrent;
@@ -87,33 +99,21 @@ bool MemoryDynamic::Free(void* pObject) {
     MemoryEven *pPrevious = m_pMemoryEvenHead; 
     MemoryEven *pCurrent = (MemoryEven *)pPrevious->GetPNext(); 
     while (pCurrent != nullptr) {
-        bool bFreed = pCurrent->SafeFree(pObject);
+        bool bFreed = pCurrent->Free(pObject);
         if (bFreed) {
-            // delete size head?
-            if (pCurrent->GetCountSlotLists() == 0) {
-                pPrevious->SetPNext(pCurrent->GetPNext());
-                delete pCurrent;
-            }
+            // delete size head
+            /////// ????
+            // if (pCurrent->GetCountSlotLists() == 0) {
+            //     pPrevious->SetPNext(pCurrent->GetPNext());
+            //     delete pCurrent;
+            // }
+            // delete
             return true;
         }
         pCurrent = (MemoryEven *)pCurrent->GetPNext();
     }
     throw Exception((unsigned)IMemory::EException::_eSlotlistFreeFailed, "MemoryDynamic::Free", __LINE__);
     return false;
-}
-
-void* MemoryDynamic::SafeMalloc(size_t szAllocate, const char* pcName)
-{
-    Lock();
-    void* pMemoryAllocated = this->Malloc(szAllocate, pcName);
-    UnLock();
-    return pMemoryAllocated;
-}
-bool MemoryDynamic::SafeFree(void* pObject) {
-    Lock();
-    bool result = this->Free(pObject);
-    UnLock();
-    return result;
 }
 
 // maintenance
@@ -126,5 +126,6 @@ void MemoryDynamic::Show(const char* pTitle) {
         pMemoryEven = (MemoryEven *)pMemoryEven->GetPNext();
     }
     SlotInfo::s_pMemory->Show("SlotInfo");
+    Event::s_pMemory->Show("Event");
     MLOG_FOOTER("MemoryDynamic::Show");
 };

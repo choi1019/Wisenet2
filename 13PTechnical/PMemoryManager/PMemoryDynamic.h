@@ -13,8 +13,8 @@ private:
 	pthread_mutex_t m_mutex;
 
 protected:
-	void Lock() override;
-	void UnLock() override;
+	void Lock();
+	void UnLock();
 
 public:
 	PMemoryDynamic(
@@ -25,4 +25,7 @@ public:
 
 	void Initialize() override;
 	void Finalize() override;
+
+	void* Malloc(size_t szObject, const char* sMessage);
+	bool Free(void* pObject);
 };

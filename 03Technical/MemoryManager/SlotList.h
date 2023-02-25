@@ -4,17 +4,15 @@
 #define _SlotList_Id _GET_CLASS_UID(_ELayer_Technical::_eSlotList)
 #define _SlotList_Name "SlotList"
 
-#include <01Base/Memory/IMemory.h>
 #include <03Technical/MemoryManager/MemoryObject.h>
 #include <03Technical/MemoryManager/PageList.h>
-#include <03Technical/MemoryManager/SlotInfo.h>
 
 class Slot {
 public:
 	Slot* pNext;
 };
 
-class SlotList : public MemoryObject, public IMemory {
+class SlotList : public MemoryObject {
 public:
 	enum class EException {
 		eBegin = _SlotList_Id,
@@ -49,24 +47,20 @@ private:
 	SlotList* m_pSibling;
 	SlotList* m_pNext;
 
-protected:
-	SlotInfo *m_pSlotInfoHead;
-
-	virtual void* Malloc(size_t szSlot, const char* sMessage);
-	virtual bool Free(void* pObject);
-
-	virtual void Lock() {};
-	virtual void UnLock() {};
 public:
+	int GetNumPagesRequired() { return this->m_numPagesRequired; }
 	int GetIdxPage() { return this->m_idxPage; }
 	PageIndex *GetPPageIndex() { return this->m_pPageIndex; }
 	// as a head SlotList
 	int GetCountSlotLists() { return this->m_nCountSlotLists; }
+	void SetCountSlotLists(int nCountSlotLists) { this->m_nCountSlotLists = nCountSlotLists; }
 
 	size_t GetSzSlot() { return this->m_szSlot; }
+	unsigned GetNumMaxSlots() { return this->m_numMaxSlots; }
 	unsigned GetNumSlots() { return this->m_numSlots; }
-	bool IsGarbage() { return this->m_bGarbage; }
+	Slot* GetPSlotHead() { return this->m_pSlotHead; }
 
+	bool IsGarbage() { return this->m_bGarbage; }
 	SlotList* GetPSlotListHead() { return this->m_pSlotListHead;}
 	SlotList* GetPNext() { return this->m_pNext; }
 	void SetPNext(SlotList* pNext) { this->m_pNext = pNext; }
@@ -89,10 +83,10 @@ public:
 	virtual void Initialize();
 	virtual void Finalize();
 
-	void* SafeMalloc(size_t szAllocate, const char* pcName);
-	bool SafeFree(void* pObject);
+	virtual void* Malloc(size_t szObject, const char* sMessage);
+	virtual bool Free(void* pObject);
 
 	// maintenance
-	virtual void Show(const char* pTitle);
+	virtual void Show(const char* sMessage);
 };
 

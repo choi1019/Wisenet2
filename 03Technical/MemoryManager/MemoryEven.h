@@ -13,11 +13,7 @@ private:
 	void DeleteSlotInfo(Slot *pSlot);
 	SlotInfo *GetPSlotInfo(Slot *pSlot);
 
-protected:
-	// critical section
-	virtual void Lock() {};
-	virtual void UnLock() {};
-
+	SlotInfo *m_pSlotInfoHead;
 public:
 	// for head MemoryEven
 	MemoryEven(size_t szSlot, 
@@ -31,8 +27,10 @@ public:
 	virtual void Initialize();
 	virtual void Finalize();
 	
-	void* SafeMalloc(size_t szAllocate, const char* pcName);
-	bool SafeFree(void* pObject);
+	SlotInfo* GetPSlotInfoHead() { return this->m_pSlotInfoHead; }
+
+	void* Malloc(size_t szObject, const char* sMessage);
+	bool Free(void* pObject);
 
 	// maintenance
 	virtual void Show(const char* pTitle);

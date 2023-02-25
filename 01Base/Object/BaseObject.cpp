@@ -5,17 +5,17 @@
 IMemory* BaseObject::s_pMemory = nullptr;
 
 void* BaseObject::operator new (size_t szThis, const char* sMessage) {
-    void* pAllocated = BaseObject::s_pMemory->SafeMalloc(szThis, sMessage);
+    void* pAllocated = BaseObject::s_pMemory->Malloc(szThis, sMessage);
     return pAllocated;
 }
 void* BaseObject::operator new[] (size_t szThis, const char* sMessage) {
     return BaseObject::operator new(szThis, sMessage);
 }
 void BaseObject::operator delete(void* pObject) {
-    BaseObject::s_pMemory->SafeFree(pObject);
+    BaseObject::s_pMemory->Free(pObject);
 }
 void BaseObject::operator delete[](void* pObject) {
-    BaseObject::s_pMemory->SafeFree(pObject);
+    BaseObject::s_pMemory->Free(pObject);
 }
 
 // dummy

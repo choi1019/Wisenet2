@@ -25,3 +25,17 @@ void PMemoryDynamic::Lock() {
 void PMemoryDynamic::UnLock() {
 	pthread_mutex_unlock(&m_mutex);
 }
+
+void* PMemoryDynamic::Malloc(size_t szObject, const char* sMessage)
+{
+    Lock();
+    void* pObject = MemoryDynamic::Malloc(szObject, sMessage);
+    UnLock();
+    return pObject;
+}
+bool PMemoryDynamic::Free(void* pObject) {
+    Lock();
+    bool result = MemoryDynamic::Free(pObject);
+    UnLock();
+    return result;
+}

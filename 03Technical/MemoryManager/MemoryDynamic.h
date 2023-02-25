@@ -4,12 +4,11 @@
 #define _MemoryDynamic_Id _GET_CLASS_UID(_ELayer_Technical::_eMemoryDynamic)
 #define _MemoryDynamic_Name "MemoryDynamic"
 
-#include <01Base/Memory/IMemory.h>
 #include <03Technical/MemoryManager/MemoryObject.h>
 #include <03Technical/MemoryManager/PageList.h>
 #include <03Technical/MemoryManager/MemoryEven.h>
 
-class MemoryDynamic :public MemoryObject, public IMemory
+class MemoryDynamic :public MemoryObject
 {
 public:
 	static PageList* s_pPageList;
@@ -25,12 +24,8 @@ private:
 	unsigned m_szUnitExponentOf2;
 
 protected:
-	// critical section
-	virtual void Lock() = 0;
-	virtual void UnLock() = 0;
-
-	void* Malloc(size_t szObject, const char* sMessage);
-	bool Free(void* pObject);
+	virtual void* Malloc(size_t szObject, const char* sMessage);
+	virtual bool Free(void* pObject);
 
 public:
 	// constructors and destructors
@@ -42,10 +37,6 @@ public:
 
 	virtual void Initialize();
 	virtual void Finalize();
-
-	// methods
-	void* SafeMalloc(size_t szAllocate, const char* sMessage) override;
-	bool SafeFree(void* pObject) override;
 
 	// maintenance
 	void Show(const char* pTitle) override;

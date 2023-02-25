@@ -40,5 +40,8 @@ public:
 	virtual void Initialize();
 	virtual void Finalize();
 
+	void* Malloc(size_t szObject, const char* sMessage) override { return nullptr; }
+	bool Free(void* pObject) override { return false; }
+	
 	void Show(const char* pTitle);
 };

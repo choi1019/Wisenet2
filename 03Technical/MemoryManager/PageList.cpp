@@ -71,7 +71,7 @@ PageIndex* PageList::AllocatePages(unsigned numPagesRequired, SlotList *pSlotLis
     }
 }
 
-void PageList::FreePages(unsigned indexFree) {
+void PageList::DelocatePages(unsigned indexFree) {
     unsigned numPagesAllocated = m_apPageIndices[indexFree]->GetNumAllocated();
     for (unsigned i = 0; i < numPagesAllocated; i++) {
         m_apPageIndices[indexFree + i]->SetNumAllocated(1);

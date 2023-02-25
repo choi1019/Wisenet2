@@ -5,9 +5,7 @@
 #define _SlotInfo_Name "SlotInfo"
 
 #include <01Base/Object/RootObject.h>
-#include <01Base/Memory/IMemory.h>
-
-class SlotList;
+class MemoryEven;
 class Slot;
 class SlotInfo : public RootObject
 {
@@ -21,17 +19,17 @@ public:
 private:
 	Slot *m_pSlot;
 	char m_sMessage[30];
-	SlotList *m_pSlotList;
+	MemoryEven *m_pMemoryEven;
 	SlotInfo *m_pNext;
 public:
 	Slot *GetPSlot() { return this->m_pSlot; }
 	char* GetSMessage() { return this->m_sMessage; }
-	SlotList *GetPSlotList() { return this->m_pSlotList; }
+	MemoryEven *GetPMemoryEven() { return this->m_pMemoryEven; }
 	SlotInfo *GetPNext() { return this->m_pNext; }
 	void SetPNext(SlotInfo *pNext) { this->m_pNext = pNext; }
 
 public:
-	SlotInfo(Slot *pSlot, const char *sMessage, SlotList *pSlotList,
+	SlotInfo(Slot *pSlot, const char *sMessage, MemoryEven *pMemoryEven,
 			int nObjectId = _SlotInfo_Id, const char* sObjectName = _SlotInfo_Name
 	);
 	~SlotInfo() override;

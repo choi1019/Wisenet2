@@ -1,4 +1,5 @@
 #include <03Technical/MemoryManager/MemoryStatic.h>
+
 #include <01Base/Aspect/Exception.h>
 #include <01Base/Aspect/Log.h>
 #include <03Technical/MemoryManager/SlotList.h>
@@ -58,21 +59,6 @@ void* MemoryStatic::Malloc(size_t szObject, const char* sMessage) {
 bool MemoryStatic::Free(void* pObject) {
     DELETE_STATIC(pObject);
     return true;
-}
-
-void* MemoryStatic::SafeMalloc(size_t szAllocate, const char* sMessage)
-{
-    Lock();
-    void* pMemoryAllocated = this->Malloc(szAllocate, sMessage);
-    UnLock();
-    return pMemoryAllocated;
-}
-
-bool MemoryStatic::SafeFree(void* pObject) {
-    Lock();
-    bool result = this->Free(pObject);
-    UnLock();
-    return result;
 }
 
 // maintenance

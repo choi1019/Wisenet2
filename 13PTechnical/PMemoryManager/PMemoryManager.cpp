@@ -32,13 +32,15 @@ void PMemoryManager::Allocate() {
             // aplication memory
             s_pApplicationMemeory = new char[s_szApplicationMemory];
             PageList *pPageList = new("pPageList") PageList((size_t)s_pApplicationMemeory, s_szApplicationMemory, s_szPage);
-            // memory even 
-            SlotList::s_pPageList = pPageList;
-            Event::s_pMemory = new("Event::s_pMemory") PMemoryEven(sizeof(Event));
+
             // memory dynamic
             MemoryDynamic::s_pPageList = pPageList;
             s_pMemoryDynamic = new("s_pMemoryDynamic") PMemoryDynamic(s_szSlotUnit);
             ValueObject::s_pMemory = s_pMemoryDynamic;
+            
+            // memory even            
+            Event::s_pMemory = new("Event::s_pMemory") PMemoryEven(sizeof(Event));
+            
             SHOW_DYNAMIC("PMemoryDynamic::Allocate");
 
         MLOG_FOOTER("PMemoryManager::Allocate");

@@ -12,9 +12,9 @@ private:
 //	CRITICAL_SECTION CriticalSection;
 	pthread_mutex_t m_mutex;
 
-protected:
-	void Lock() override;
-	void UnLock() override;
+private:
+	void Lock();
+	void UnLock();
 
 public:
 	PMemoryStatic(
@@ -24,4 +24,7 @@ public:
 
 	void Initialize() override;
 	void Finalize() override;
+
+	void* Malloc(size_t szObject, const char* sMessage);
+	bool Free(void* pObject);
 };

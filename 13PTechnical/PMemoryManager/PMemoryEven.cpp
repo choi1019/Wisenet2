@@ -28,3 +28,18 @@ void PMemoryEven::UnLock() {
 //		LeaveCriticalSection(&CriticalSection);
 	pthread_mutex_unlock(&m_mutex);
 }
+
+void* PMemoryEven::Malloc(size_t szObject, const char* sMessage)
+{
+    Lock();
+    void* pObject = MemoryEven::Malloc(szObject, sMessage);
+    UnLock();
+    return pObject;
+}
+
+bool PMemoryEven::Free(void* pObject) {
+    Lock();
+    bool result = MemoryEven::Free(pObject);
+    UnLock();
+    return result;
+}

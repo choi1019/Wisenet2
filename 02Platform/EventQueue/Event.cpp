@@ -7,11 +7,11 @@ unsigned Event::s_uCounter = 0;
 IMemory* Event::s_pMemory = nullptr;
 
 void* Event::operator new (size_t szThis, const char* sMessage) {
-    void* pAllocated = Event::s_pMemory->SafeMalloc(szThis, sMessage);
+    void* pAllocated = Event::s_pMemory->Malloc(szThis, sMessage);
     return pAllocated;
 }
 void Event::operator delete(void* pObject) {
-    Event::s_pMemory->SafeFree(pObject);
+    Event::s_pMemory->Free(pObject);
 }
 // dummy
 void Event::operator delete(void* pObject, const char* sMessage) {
