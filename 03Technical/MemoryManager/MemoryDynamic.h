@@ -38,6 +38,7 @@ public:
 	virtual void Initialize();
 	virtual void Finalize();
 
+	SlotInfo *GetPSlotInfo(void *pObject);
 	// maintenance
 	void Show(const char* pTitle) override;
 };

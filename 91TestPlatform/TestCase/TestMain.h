@@ -8,9 +8,8 @@
 
 class TestMain: public TestSuite {
 public:
-	TestMain(unsigned nClassId = _TestMain_Id, const char* pClassName = _TestMain_Name);
-	virtual ~TestMain();
-	void InitializeMain();
-	void FinalizeMain();
-	void RunMain();
+	TestMain(unsigned nClassId = _TestMain_Id, const char* pClassName = _TestMain_Name)
+	: TestSuite(nClassId, pClassName)
+	 {}
+	virtual ~TestMain() {}
 };

@@ -84,7 +84,8 @@ private:
 	void StopComponents(Event* pEvent);
 	void FinalizeComponents(Event* pEvent);
 	void StopSchedulers(Event* pEvent);
-	void FinalizeSchedulers(Event* pEvent);	
+	void FinalizeSchedulers(Event* pEvent);
+	void DeregisterComponents(Event* pEvent);	
 
 protected:
 	virtual void ProcessAEvent(Event* pEvent);

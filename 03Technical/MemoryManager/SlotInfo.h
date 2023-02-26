@@ -18,7 +18,7 @@ public:
 	
 private:
 	Slot *m_pSlot;
-	char m_sMessage[30];
+	char m_sMessage[50];
 	MemoryEven *m_pMemoryEven;
 	SlotInfo *m_pNext;
 public:

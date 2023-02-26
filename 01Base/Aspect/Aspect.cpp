@@ -1,10 +1,10 @@
 #include "Aspect.h"
 
 #define COUNT_TAB 20
-#define SIZE_TAB 1
+#define SIZE_TAB 2
 #define SPACE ' '
 
-int Aspect::s_uCountTab = 5;
+int Aspect::s_uCountTab = 0;
 char Aspect::s_pcTab[COUNT_TAB * SIZE_TAB];
 
 char* Aspect::GetTab() {

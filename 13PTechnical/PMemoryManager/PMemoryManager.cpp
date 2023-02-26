@@ -1,6 +1,5 @@
 #include <13PTechnical/PMemoryManager/PMemoryManager.h>
 
-#include <13PTechnical/PMemoryManager/Config.h>
 #include <01Base/Aspect/Exception.h>
 #include <01Base/Aspect/Log.h>
 
@@ -8,19 +7,25 @@
 #include <02Platform/EventQueue/Event.h>
 #include <03Technical/MemoryManager/SlotInfo.h>
 
-size_t PMemoryManager::s_szSystemMemory = SIZE_MEMORY_SYSTEM;
+// sizes
+size_t PMemoryManager::s_szSystemMemory = 0;
+size_t PMemoryManager::s_szApplicationMemory = 0;
+size_t PMemoryManager::s_szPage = 0;
+size_t PMemoryManager::s_szSlotUnit = 0;
+// physical memory
 char* PMemoryManager::s_pSystemMemeory = nullptr;
-PMemoryStatic* PMemoryManager::s_pMemoryStatic = nullptr;
-
-size_t PMemoryManager::s_szApplicationMemory = SIZE_MEMORY_APPLICATION;
 char* PMemoryManager::s_pApplicationMemeory = nullptr;;
-size_t PMemoryManager::s_szPage = SIZE_PAGE;
+// memory manager
+PMemoryStatic* PMemoryManager::s_pMemoryStatic = nullptr;
 PageList *PMemoryManager::s_pPageList = nullptr;
+PMemoryDynamic* PMemoryManager::s_pMemoryDynamic = nullptr;
 
-size_t PMemoryManager::s_szSlotUnit = SIZE_SLOT_UNIT;
-PMemoryDynamic* PMemoryManager::s_pMemoryDynamic = nullptr;;
+void PMemoryManager::Allocate(size_t szSystemMemory, size_t szApplicationMemory,  size_t szPage, size_t szSlotUnit) {
+    PMemoryManager::s_szSystemMemory = szSystemMemory;
+    PMemoryManager::s_szApplicationMemory = szApplicationMemory;
+    PMemoryManager::s_szPage = szPage;
+    PMemoryManager::s_szSlotUnit = szSlotUnit;
 
-void PMemoryManager::Allocate() {
     try {
         MLOG_HEADER("PMemoryManager::Allocate");
             // system memory
@@ -53,16 +58,16 @@ void PMemoryManager::Delocate() {
     try {
         MLOG_HEADER("PMemoryManager::Delocate");
 
-        s_pMemoryDynamic->Finalize();
-        SHOW_DYNAMIC("PMemoryDynamic::Delocate");
-        delete s_pMemoryDynamic;
+            s_pMemoryDynamic->Finalize();
+            SHOW_DYNAMIC("PMemoryDynamic::Delocate");
+            delete s_pMemoryDynamic;
 
-        delete s_pPageList;
-        delete[] s_pApplicationMemeory;
+            delete s_pPageList;
+            delete[] s_pApplicationMemeory;
 
-        s_pMemoryStatic->Finalize();
-        delete s_pMemoryStatic;
-        delete[] s_pSystemMemeory;
+            s_pMemoryStatic->Finalize();
+            delete s_pMemoryStatic;
+            delete[] s_pSystemMemeory;
 
         MLOG_FOOTER("PMemoryManager::Delocate");
     } catch (Exception& exception) {

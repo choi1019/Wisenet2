@@ -4,19 +4,32 @@
 
 PTC11::PTC11(unsigned nClassId, const char* pcClassName)
     : TestCase(nClassId, pcClassName)
-    , m_pDomainObject(nullptr) {
+    , m_pDomainObject1(nullptr)
+    , m_pDomainObject2(nullptr) 
+{
 }
 PTC11::~PTC11() {
 }
 
 void PTC11::Initialize() {
-    this->m_pDomainObject = new("PTC11::DomainObject") DomainObject11();
+
 }
 void PTC11::Finalize() {
-    delete this->m_pDomainObject;
-    ValueObject::s_pMemory->Show("DomainObject11");
 }
 void PTC11::Run() {
-    // test case
-    this->m_pDomainObject->Run();
+    this->m_pDomainObject1 = new("PTC11::DomainObject1") DomainObject11();
+    this->m_pDomainObject2 = new("PTC11::DomainObject2") DomainObject11();
+    this->m_pDomainObject1->Run();
+    this->m_pDomainObject2->Run();
+        ValueObject::s_pMemory->Show("PTC11::DomainObject1/2");
+    delete this->m_pDomainObject1;
+    delete this->m_pDomainObject2;
+        ValueObject::s_pMemory->Show("PTC11::DomainObject1/2");
+
+    this->m_pDomainObject1 = new("PTC11::DomainObject1") DomainObject11();
+    this->m_pDomainObject2 = new("PTC11::DomainObject2") DomainObject11();
+    this->m_pDomainObject1->Run();
+    this->m_pDomainObject2->Run();
+    delete this->m_pDomainObject1;
+    delete this->m_pDomainObject2;
 }

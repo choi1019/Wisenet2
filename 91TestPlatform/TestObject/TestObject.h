@@ -7,41 +7,35 @@
 class TestObject
 {
 public:
-	// class variable
-	static unsigned s_uCounter;
-
 	// static members
-	void* operator new(size_t szThis, const char* sMessage);
-	void operator delete(void* pObject);
-	void operator delete(void* pObject, const char* sMessage);
+	void* operator new(size_t szThis, const char* sMessage) {
+		void* pObject = malloc(szThis);
+    	return pObject;
+	}
+	void operator delete(void* pObject) {
+	//   TESTLOG_NEWLINE("#TestObject::free (pObject)", (size_t)pObject);
+		free(pObject);
+	}
+	void operator delete(void* pObject, const char* sMessage) {
+//		throw TestException(1, "TestObject", "delete", "not support");
+	}
 
 private:
-	unsigned m_uObjectId;
 	unsigned m_nClassId;
 	const char* m_pcClassName;
-	size_t m_szThis;
-
+	
 public:
 	// getters and setters
-	inline unsigned GetObjectId() { return this->m_uObjectId; }
 	inline unsigned GetClassId() { return this->m_nClassId; }
 	inline const char* GetClassName() { return this->m_pcClassName; }
-
-	inline size_t GetSize() { return this->m_szThis; }
-	inline void SetSize(size_t szThis) { this->m_szThis = szThis; }
 
 public:
 	TestObject(
 		unsigned nClassId = _TestObject_Id,
-		const char *pcClassName = _TestObject_Name);
-	virtual ~TestObject();
-
-	void BeforeInitialize();
-	virtual void Initialize();
-	void BeforeRun();
-	virtual void Run();
-	void AfterRun();
-	virtual void Finalize();
-	void AfterFinalize();
+		const char *pcClassName = _TestObject_Name)
+		: m_nClassId(nClassId)
+		, m_pcClassName(pcClassName)
+		{}
+	virtual ~TestObject() {}
 };
 

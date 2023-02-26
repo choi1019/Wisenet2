@@ -29,7 +29,8 @@ public:
 		eFinalizeComponents,
 		eStopComponents,
 		eStopSchedulers,
-		eFinalizeSchedulers,		
+		eFinalizeSchedulers,
+		eDeregisterComponents,		
 		eEnd
 	};
 
@@ -49,6 +50,7 @@ public:
 		eSchedulerNotRegistered,
 		eComponentNotRegistered,
 		eInitializationReplyError,
+		eFinalizationReplyError,
 		eErrorCodeEnd
 	};
 

@@ -1,5 +1,6 @@
 #include <92TestApplication/PTS1/PTC12/PTC12.h>
 #include <92TestApplication/PTS1/PTC12/Config.h>
+#include <03Technical/MemoryManager/SlotInfo.h>
 
 PTC12::PTC12(unsigned nClassId, const char* pcClassName)
 	: TestCase(nClassId, pcClassName)

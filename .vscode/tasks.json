@@ -9,20 +9,20 @@
                 "-I/home/choisw/source/PlatformLinux/",
                 "-g",
                 "${workspaceFolder}/Main.cpp",
-                "${workspaceFolder}/92TestApplication/PTestMain/PTestMain.cpp",
 
-                "${workspaceFolder}/92TestApplication/PTS2/*.cpp",
-                "${workspaceFolder}/92TestApplication/PTS2/PTC21/*.cpp",
-                "${workspaceFolder}/92TestApplication/PTS2/PTC22/*.cpp",
+                // "${workspaceFolder}/92TestApplication/PTestMain/PTestMain.cpp",
+                // "${workspaceFolder}/92TestApplication/PTS2/*.cpp",
+                // "${workspaceFolder}/92TestApplication/PTS2/PTC21/*.cpp",
+                // "${workspaceFolder}/92TestApplication/PTS2/PTC22/*.cpp",
 
                 "${workspaceFolder}/92TestApplication/PTS1/PTC11/*.cpp",
                 "${workspaceFolder}/92TestApplication/PTS1/PTC12/*.cpp",
                 "${workspaceFolder}/92TestApplication/PTS1/PTC13/*.cpp",
                 "${workspaceFolder}/92TestApplication/PTS1/PTC14/*.cpp",
 
-                "${workspaceFolder}/91TestPlatform/TestCase/*.cpp",
-                "${workspaceFolder}/91TestPlatform/TestAspect/*.cpp",
-                "${workspaceFolder}/91TestPlatform/TestObject/*.cpp",
+                // "${workspaceFolder}/91TestPlatform/TestCase/*.cpp",
+                // "${workspaceFolder}/91TestPlatform/TestAspect/*.cpp",
+                // "${workspaceFolder}/91TestPlatform/TestObject/*.cpp",
 
                 "${workspaceFolder}/19PApplication/PMain/*.cpp",
                 "${workspaceFolder}/19PApplication/PLifecycleManager/*.cpp",

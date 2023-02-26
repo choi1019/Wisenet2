@@ -6,6 +6,7 @@
 
 #include <03Technical/MemoryManager/MemoryObject.h>
 #include <03Technical/MemoryManager/PageList.h>
+#include <03Technical/MemoryManager/SlotInfo.h>
 
 class Slot {
 public:
@@ -46,6 +47,9 @@ private:
 	SlotList *m_pSlotListHead;
 	SlotList* m_pSibling;
 	SlotList* m_pNext;
+protected:
+	// slot info for MemoryEvent
+	SlotInfo *m_pSlotInfoHead;
 
 public:
 	int GetNumPagesRequired() { return this->m_numPagesRequired; }

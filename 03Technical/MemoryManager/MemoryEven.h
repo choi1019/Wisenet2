@@ -5,15 +5,12 @@
 #define _MemoryEven_Name "MemoryEven"
 
 #include <03Technical/MemoryManager/SlotList.h>
-#include <03Technical/MemoryManager/SlotInfo.h>
 
 class MemoryEven : public SlotList {
 private:
 	void AddSlotInfo(Slot *pSlot, const char *sMessage);
 	void DeleteSlotInfo(Slot *pSlot);
-	SlotInfo *GetPSlotInfo(Slot *pSlot);
 
-	SlotInfo *m_pSlotInfoHead;
 public:
 	// for head MemoryEven
 	MemoryEven(size_t szSlot, 
@@ -28,6 +25,7 @@ public:
 	virtual void Finalize();
 	
 	SlotInfo* GetPSlotInfoHead() { return this->m_pSlotInfoHead; }
+	SlotInfo *GetPSlotInfo(void *pObject);
 
 	void* Malloc(size_t szObject, const char* sMessage);
 	bool Free(void* pObject);

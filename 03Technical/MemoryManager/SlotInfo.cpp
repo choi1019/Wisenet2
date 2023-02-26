@@ -35,5 +35,5 @@ void SlotInfo::Finalize() {
 }
 
 void SlotInfo::Show(const char* sMessage) {
-    MLOG_NEWLINE("SlotInfo::Show(", (size_t)this, ")", m_sMessage, (size_t)m_pSlot);
+    MLOG_NEWLINE(sMessage, ":", m_sMessage, "(pSlot=", (size_t)m_pSlot, ")-this=", (size_t)this);
 }

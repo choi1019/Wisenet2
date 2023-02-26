@@ -421,6 +421,15 @@ void LifecycleManager::FinalizeSchedulers(Event* pEvent) {
 	LOG_FOOTER("LifecycleManager::FinalizeSchedulers");
 }
 
+void LifecycleManager::DeregisterComponents(Event* pEvent) {
+	for (auto& itr : this->m_mapComponents) {
+		if (itr.second != this && itr.second != m_pMainScheduler) {
+			delete itr.second;
+		}
+	}
+}
+
+
 void LifecycleManager::FinalizeAsALifecycleManager(Event* pEvent) {
 	if (pEvent->IsReply()) {
 		switch (pEvent->GetReplyType()) {
@@ -434,6 +443,9 @@ void LifecycleManager::FinalizeAsALifecycleManager(Event* pEvent) {
 			this->SendReplyEvent(this->GetUId(), (int)ILifecycleManager::EEventType::eFinalizeSchedulers);
 			break;
 		case (int)ILifecycleManager::EEventType::eFinalizeSchedulers:
+			this->SendReplyEvent(this->GetUId(), (int)ILifecycleManager::EEventType::eDeregisterComponents);
+			break;
+		case (int)ILifecycleManager::EEventType::eDeregisterComponents:
 			LOG_FOOTER("LifecycleManager::FinalizeAsALifecycleManager");
 			break;
 		default:
@@ -484,6 +496,8 @@ void LifecycleManager::ProcessAEvent(Event* pEvent) {
 		this->StopSchedulers(pEvent); break;
 	case (int)ILifecycleManager::EEventType::eFinalizeSchedulers:
 		this->FinalizeSchedulers(pEvent); break;
+	case (int)ILifecycleManager::EEventType::eDeregisterComponents:
+		this->DeregisterComponents(pEvent); break;
 	default:
 		Component::ProcessAEvent(pEvent); break;
 	}

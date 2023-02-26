@@ -9,8 +9,8 @@
 
 class PTC11 : public TestCase {
 private:
-	DomainObject11* m_pDomainObject;
-
+	DomainObject11* m_pDomainObject1;
+	DomainObject11* m_pDomainObject2;
 public:
 	PTC11(
 		unsigned nClassId = _PTC11_Id, 

@@ -3,7 +3,7 @@
 #include <01Base/Object/ValueObject.h>
 #include <01Base/Aspect/Log.h>
 #include <01Base/StdLib/Vector.h>
-
+#include <03Technical/MemoryManager/SlotInfo.h>
 class DomainObject12 : public ValueObject {
 private:
 	Vector<int>* m_pVector;  // 248 Byte

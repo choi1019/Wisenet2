@@ -5,28 +5,51 @@
 #define _TestSuite_Name "TestSuite"
 
 #include <vector>
-#include <91TestPlatform/TestObject/TestObject.h>
+#include <91TestPlatform/TestCase/TestCase.h>
 
-class TestSuite : public TestObject
+class TestSuite : public TestCase
 {
-private:
-	unsigned m_uCurrentIndex;
-	unsigned m_uLength;
-
 protected:
-	vector<TestObject*> m_vPTestObjects;
+	vector<TestCase*> m_vPTestObjects;
 
-	void add(TestObject* pTestCase);
-	void DeleteTestCases();
+	void Add(TestCase* pTestCase) {
+		this->m_vPTestObjects.push_back(pTestCase);
+	}
+	void DeleteTestCases() {
+		for (TestCase* pTestCase : m_vPTestObjects) {
+        	delete pTestCase;
+    	}
+	}
 	
 public:
 	TestSuite(
 		unsigned nClassId = _TestSuite_Id, 
-		const char* pClassName = _TestSuite_Name);
-	virtual ~TestSuite();
+		const char* pClassName = _TestSuite_Name)
+		: TestCase(nClassId, pClassName)
+		, m_vPTestObjects()
+	{}
+	virtual ~TestSuite() {}
 
-	void InitializeSuite();
-	void FinalizeSuite();
-	void RunSuite();
+	virtual void Initialize() {
+	}
+	virtual void Finalize() {
+		DeleteTestCases();
+	}
+	virtual void Run() {
+		try {
+			for (TestCase* pTestCase: m_vPTestObjects) {
+				pTestCase->BeforeInitialize();
+				pTestCase->Initialize();
+				pTestCase->BeforeRun();
+				pTestCase->Run();
+				pTestCase->AfterRun();
+				pTestCase->Finalize();
+				pTestCase->AfterFinalize();
+			}
+		}
+		catch (TestException& exception) {
+			exception.Println();
+		}
+	}
 };
 

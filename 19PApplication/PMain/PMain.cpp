@@ -1,8 +1,10 @@
 #include <19PApplication/PMain/PMain.h>
 
+#include <19PApplication/PMain/Config.h>
 #include <13PTechnical/PMemoryManager/PMemoryManager.h>
 #include <19PApplication/PLifecycleManager/PLifecycleManager.h>
 #include <12PPlatform/PEventQueue/PEventQueue.h>
+
 #include <01Base/Aspect/Exception.h>
 #include <01Base/Aspect/Log.h>
 
@@ -43,15 +45,15 @@ void PMain::ShutdownSystem() {
 void PMain::Initialize() {}
 void PMain::Finalize() {}
 
-
 ///////////////////////////////////////////////
 int PMain::main_ex() {
-	PMemoryManager::Allocate();
+	PMemoryManager::Allocate(SIZE_MEMORY_SYSTEM, SIZE_MEMORY_APPLICATION, SIZE_PAGE, SIZE_SLOT_UNIT);
 
 	PMain* pPMain = new("PMain") PMain();
 	pPMain->BootstrapSystem();
 	pPMain->RunAsAMain();
 	pPMain->ShutdownSystem();
+	delete pPMain;
 
 	PMemoryManager::Delocate();
 	return 0;

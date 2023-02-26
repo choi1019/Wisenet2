@@ -4,6 +4,7 @@
 #include <02Platform/EventQueue/EventQueue.h>
 #include <01Base/Aspect/Exception.h>
 #include <01Base/Aspect/Log.h>
+#include <03Technical/MemoryManager/SlotInfo.h>
 
 //unsigned Component::s_uCounter = 0;
 
@@ -22,16 +23,19 @@ Component::Component(unsigned uClassId, const char* sClassName)
 	this->RegisterExceptions();
 }
 Component::~Component() {
+	MLOG_NEWLINE("======= Component::~Component", this->GetClassName(), this->GetObjectId());
 	for (MapPair<int, ComponentPart*> itrComponentPart: m_mComponentParts) {
 		delete itrComponentPart.second;
 	}
-	delete this->GetPUId();
-	delete this->GetPMReceivers();
+	delete this->m_pUId;
+	SlotInfo *pSlotInfo = ValueObject::s_pMemory->GetPSlotInfo(m_pmReceivers);
+	pSlotInfo->Show("m_pmReceivers");
+	delete this->m_pmReceivers;
 	// delete target group vectors
-	for (auto itr : *this->GetPMTargetsGroups()) {
+	for (auto itr : *this->m_pmTargetsGroups) {
 		delete itr.second;
 	}
-	delete this->GetPMTargetsGroups();
+	delete this->m_pmTargetsGroups;
 	// LOG
 }
 

@@ -5,11 +5,11 @@ int main() {
 	try {
 		PTestMain *pPTestMain = new("PTestMain") PTestMain();
 		pPTestMain->BeforeInitialize();
-		pPTestMain->InitializeMain();
+		pPTestMain->Initialize();
 		pPTestMain->BeforeRun();
-		pPTestMain->RunMain();
+		pPTestMain->Run();
 		pPTestMain->AfterRun();
-		pPTestMain->FinalizeMain();
+		pPTestMain->Finalize();
 		pPTestMain->AfterFinalize();
 		delete pPTestMain;
 	}

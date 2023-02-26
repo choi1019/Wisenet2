@@ -5,14 +5,12 @@
 // for head MemoryEven
 MemoryEven::MemoryEven(size_t szSlot, int nClassId, const char* pClassName)
     : SlotList(szSlot, nClassId, pClassName)
-    , m_pSlotInfoHead(nullptr)
     {
     }
 // for normal MemoryEven
 MemoryEven::MemoryEven(size_t szSlot, int numMaxSlots, int numPagesRequired, SlotList *pSlotListHead,
             int nClassId,     const char* pClassName)
     : SlotList(szSlot, numMaxSlots, numPagesRequired, pSlotListHead, nClassId, pClassName)
-    , m_pSlotInfoHead(nullptr)
     {
     }
 MemoryEven::~MemoryEven(){}
@@ -28,7 +26,7 @@ void MemoryEven::AddSlotInfo(Slot *pSlot, const char *sMessage) {
     SlotInfo *pSlotInfo = new("SlotInfo") SlotInfo(pSlot, sMessage, this);
     pSlotInfo->SetPNext(m_pSlotInfoHead);
     m_pSlotInfoHead = pSlotInfo;
-    MLOG_NEWLINE("AddSlotInfo", (size_t)pSlot, sMessage);
+    //MLOG_NEWLINE("AddSlotInfo", (size_t)pSlot, sMessage);
 }
 
 void MemoryEven::DeleteSlotInfo(Slot *pSlot) {
@@ -41,23 +39,29 @@ void MemoryEven::DeleteSlotInfo(Slot *pSlot) {
             } else {
                 pPrevious->SetPNext(pCurrent->GetPNext());
             }
-            MLOG_NEWLINE("DeleteSlotInfo", (size_t)pSlot, pCurrent->GetSMessage());
+
+            // MLOG_NEWLINE("DeleteSlotInfo", (size_t)pSlot, pCurrent->GetSMessage());
             delete pCurrent;
             return;
         }
         pPrevious = pCurrent;
         pCurrent = pCurrent->GetPNext();
     }
-    LOG_NEWLINE("Error-MemoryEvent::Delete", (size_t)pSlot);
+    //LOG_NEWLINE("Error-MemoryEvent::Delete", (size_t)pSlot);
     throw EXCEPTION(-1);
 }
 
-SlotInfo *MemoryEven::GetPSlotInfo(Slot *pSlot) {
-    SlotInfo *pSlotInfo = m_pSlotInfoHead;
-    while (pSlotInfo != nullptr) {
-        if (pSlotInfo->GetPSlot() == pSlot) {
-            return pSlotInfo;
+SlotInfo *MemoryEven::GetPSlotInfo(void *pObject) {
+    MemoryEven *pSibling = this;
+    while (pSibling != nullptr) {
+        SlotInfo *pSlotInfo = pSibling->GetPSlotInfoHead();
+        while (pSlotInfo != nullptr) {
+            if (pSlotInfo->GetPSlot() == (Slot *)pObject) {
+                return pSlotInfo;
+            }
+            pSlotInfo = pSlotInfo->GetPNext();
         }
+        pSibling = (MemoryEven *)(pSibling->GetPSibling());
     }
     return nullptr;
 }
@@ -82,10 +86,11 @@ void* MemoryEven::Malloc(size_t szObject, const char* sMessage)
         pTargetSlotList->SetPSibling(this->GetPSibling());
         this->SetPSibling(pTargetSlotList);        
     }
+
     Slot *pTargetSlot = pTargetSlotList->AllocateASlot();
     pTargetSlotList->AddSlotInfo((Slot *)pTargetSlot, sMessage);
-
-    NEW_DYNAMIC(sMessage, pTargetSlot,  "(szSlot, numSlots)", this->GetSzSlot(), this->GetNumSlots());
+    NEW_DYNAMIC(sMessage, pTargetSlot, "MemoryEven::Malloc(szSlot, numSlots)"
+                        , pTargetSlotList->GetSzSlot(), pTargetSlotList->GetNumSlots());
     return pTargetSlot;
 }
 
@@ -97,13 +102,13 @@ bool MemoryEven::Free(void* pObject) {
     while(pCurrent != nullptr) {
         if (pCurrent->GetIdxPage() == idxPage) {
             // found
+            DELETE_DYNAMIC((size_t)pObject, pCurrent->GetIdxPage());
             pCurrent->DelocateASlot((Slot *)pObject);
             if (pCurrent->IsGarbage()) {
                 pPrevious->SetPSibling(pCurrent->GetPSibling());
                 SetCountSlotLists(GetCountSlotLists() - 1);
                 delete pCurrent;
             }
-            DELETE_DYNAMIC((size_t)pObject, this->GetIdxPage());
             pCurrent->DeleteSlotInfo((Slot *)pObject);
             return true;
         }
@@ -115,18 +120,23 @@ bool MemoryEven::Free(void* pObject) {
 
 // maintenance
 void MemoryEven::Show(const char* sMessage) {
-    SlotList::Show(sMessage);
+    MLOG_HEADER("MemoryEven::Show", "(szSlot, numMaxSlots, sMessage)"
+                    , GetSzSlot(), GetNumMaxSlots(), sMessage);
     SlotList *pSibling = this->GetPSibling();
     while (pSibling != nullptr) {
-        MLOG_HEADER("MemoryEven::Show-Sibling", "SlotInfo(idxPage, numSlots)"
+        MLOG_HEADER("Sibling-SlotInfo("
             , ((MemoryEven *)pSibling)->GetPSlotInfoHead()->GetPMemoryEven()->GetIdxPage()
-            , ((MemoryEven *)pSibling)->GetPSlotInfoHead()->GetPMemoryEven()->GetNumSlots());
+            , ") - numSlots = "
+            , ((MemoryEven *)pSibling)->GetPSlotInfoHead()->GetPMemoryEven()->GetNumSlots()
+            , ((MemoryEven *)pSibling)->GetPSlotInfoHead()->GetPMemoryEven()->GetNumMaxSlots());
+
             SlotInfo* pSlotInfo = ((MemoryEven *)pSibling)->GetPSlotInfoHead();
             while (pSlotInfo!= nullptr) {
                 pSlotInfo->Show(sMessage);
                 pSlotInfo = pSlotInfo->GetPNext();
             }
-        MLOG_FOOTER("SlotList::Show()-Sibling)");
+        MLOG_FOOTER("Sibling-SlotInfo");
+        SlotList::Show(sMessage);
         pSibling = pSibling->GetPSibling();
     }
     MLOG_FOOTER("MemoryEven-Show");
