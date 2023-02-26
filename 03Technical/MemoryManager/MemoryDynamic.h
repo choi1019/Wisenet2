@@ -6,7 +6,7 @@
 
 #include <03Technical/MemoryManager/MemoryObject.h>
 #include <03Technical/MemoryManager/PageList.h>
-#include <03Technical/MemoryManager/MemoryEven.h>
+//#include <03Technical/MemoryManager/SlotList.h>
 
 class MemoryDynamic :public MemoryObject
 {
@@ -20,7 +20,7 @@ public:
 private:
 	// attributes
 	unsigned m_szUnit;
-	MemoryEven* m_pMemoryEvenHead;
+	SlotList* m_pSlotListHead;
 	unsigned m_szUnitExponentOf2;
 
 protected:

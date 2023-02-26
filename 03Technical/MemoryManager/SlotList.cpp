@@ -5,6 +5,7 @@ SlotList* SlotList::s_pSlotListRecycle = nullptr;
 PageList* SlotList::s_pPageList = nullptr;
 
 void* SlotList::operator new(size_t szThis, const char* sMessage) {
+    //szThis = 200;
     void* pNewSlotList = nullptr;
     if (SlotList::s_pSlotListRecycle == nullptr) {
         pNewSlotList = MemoryObject::s_pMemory->Malloc(szThis, sMessage);
@@ -171,7 +172,7 @@ bool SlotList::Free(void* pObject) {
             if (pCurrent->IsGarbage()) {
                 pPrevious->SetPSibling(pCurrent->GetPSibling());
                 SetCountSlotLists(GetCountSlotLists() - 1);
-                delete pCurrent;
+ //               delete pCurrent;
             }
             return true;
         }
@@ -191,7 +192,7 @@ void SlotList::Show(const char* sMessage) {
             //     // MLOG_NEWLINE("Slot-", (size_t)pSlot);
             //     pSlot = pSlot->pNext;
             // }
-            MLOG_NEWLINE("Slot(", pSibling->GetIdxPage(), ")- numSlots = "
+            MLOG_NEWLINE("SlotList(", pSibling->GetIdxPage(), ")- numSlots = "
                         , pSibling->GetNumSlots(), pSibling->GetNumMaxSlots());
         pSibling = pSibling->GetPSibling();
     }

@@ -5,7 +5,9 @@
 #define _PTestMain_NAME "PTestMain"
 
 #include <91TestPlatform/TestCase/TestMain.h>
+#include <92TestApplication/PTestMain/Config.h>
 #include <92TestApplication/PTS1/PTS1.h>
+#include <92TestApplication/PTS2/PTS2.h>
 
 class PTestMain : public TestMain {
 public:
@@ -16,7 +18,8 @@ public:
 	}
 	void Initialize() override {
 		TestMain::Initialize();
-		this->Add(new("PTS1") PTS1());
+	//	this->Add(new("PTS1") PTS1());
+		this->Add(new("PTS2") PTS2());
 	}
 
 	void Finalize() override {

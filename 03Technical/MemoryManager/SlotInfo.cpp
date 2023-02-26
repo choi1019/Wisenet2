@@ -1,5 +1,5 @@
 #include <03Technical/MemoryManager/SlotInfo.h>
-#include <03Technical/MemoryManager/MemoryEven.h>
+#include <03Technical/MemoryManager/SlotList.h>
 #include <01Base/Aspect/Log.h>
 #include <01Base/Aspect/Exception.h>
 
@@ -17,11 +17,11 @@ void SlotInfo::operator delete(void* pObject, const char* sMessage) {
      throw Exception((unsigned)IMemory::EException::_eNotSupport, "SlotInfo::delete", (size_t)pObject);
 }
 
-SlotInfo::SlotInfo(Slot *pSlot, const char *sMessage, MemoryEven *pMemoryEven,
+SlotInfo::SlotInfo(Slot *pSlot, const char *sMessage, SlotList *pSlotList,
         int nObjectId, const char* sObjectName) 
     : RootObject(nObjectId, sObjectName)
     , m_pSlot(pSlot)
-    , m_pMemoryEven(pMemoryEven)
+    , m_pSlotList(pSlotList)
     , m_pNext(nullptr)
 {
     strcpy(m_sMessage, sMessage);

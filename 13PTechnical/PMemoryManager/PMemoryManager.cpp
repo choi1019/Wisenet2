@@ -3,7 +3,7 @@
 #include <01Base/Aspect/Exception.h>
 #include <01Base/Aspect/Log.h>
 
-#include <13PTechnical/PMemoryManager/PMemoryEven.h>
+// #include <13PTechnical/PMemoryManager/PMemoryEven.h>
 #include <02Platform/EventQueue/Event.h>
 #include <03Technical/MemoryManager/SlotInfo.h>
 
@@ -31,7 +31,7 @@ void PMemoryManager::Allocate(size_t szSystemMemory, size_t szApplicationMemory,
             // system memory
             s_pSystemMemeory = new char[s_szSystemMemory];
             s_pMemoryStatic = new(s_pSystemMemeory, s_szSystemMemory, "s_pMemoryStatic") PMemoryStatic();
-            BaseObject::s_pMemory = s_pMemoryStatic;        
+            BaseObject::s_pMemory = s_pMemoryStatic;
             SHOW_STATIC("PMemoryManager::Allocate");
 
             // aplication memory
@@ -44,7 +44,7 @@ void PMemoryManager::Allocate(size_t szSystemMemory, size_t szApplicationMemory,
             ValueObject::s_pMemory = s_pMemoryDynamic;
             
             // memory even            
-            Event::s_pMemory = new("Event::s_pMemory") PMemoryEven(sizeof(Event));
+            // Event::s_pMemory = new("Event::s_pMemory") PMemoryEven(sizeof(Event));
             
             SHOW_DYNAMIC("PMemoryDynamic::Allocate");
 

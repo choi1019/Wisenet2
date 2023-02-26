@@ -28,8 +28,6 @@ Component::~Component() {
 		delete itrComponentPart.second;
 	}
 	delete this->m_pUId;
-	SlotInfo *pSlotInfo = ValueObject::s_pMemory->GetPSlotInfo(m_pmReceivers);
-	pSlotInfo->Show("m_pmReceivers");
 	delete this->m_pmReceivers;
 	// delete target group vectors
 	for (auto itr : *this->m_pmTargetsGroups) {
