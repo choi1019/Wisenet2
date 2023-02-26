@@ -60,6 +60,7 @@ void PMemoryManager::Delocate() {
 
             s_pMemoryDynamic->Finalize();
             SHOW_DYNAMIC("PMemoryDynamic::Delocate");
+            SHOW_STATIC("PMemoryManager::Delocate");
             delete s_pMemoryDynamic;
 
             delete s_pPageList;

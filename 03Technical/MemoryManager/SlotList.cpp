@@ -5,7 +5,6 @@ SlotList* SlotList::s_pSlotListRecycle = nullptr;
 PageList* SlotList::s_pPageList = nullptr;
 
 void* SlotList::operator new(size_t szThis, const char* sMessage) {
-    szThis = 200;
     void* pNewSlotList = nullptr;
     if (SlotList::s_pSlotListRecycle == nullptr) {
         pNewSlotList = MemoryObject::s_pMemory->Malloc(szThis, sMessage);
