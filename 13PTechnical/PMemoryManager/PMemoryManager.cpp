@@ -6,6 +6,7 @@
 // #include <13PTechnical/PMemoryManager/PMemoryEven.h>
 #include <02Platform/EventQueue/Event.h>
 #include <03Technical/MemoryManager/SlotInfo.h>
+#include <01Base/Object/BaseObject.h>
 
 // sizes
 size_t PMemoryManager::s_szSystemMemory = 0;
@@ -29,18 +30,14 @@ void PMemoryManager::Allocate(size_t szSystemMemory, size_t szApplicationMemory,
     try {
         MLOG_HEADER("PMemoryManager::Allocate");
             // system memory
-            s_pSystemMemeory = new char[s_szSystemMemory];
-            s_pMemoryStatic = new(s_pSystemMemeory, s_szSystemMemory, "s_pMemoryStatic") PMemoryStatic();
+            PMemoryManager::s_pSystemMemeory = new char[s_szSystemMemory];
+            PMemoryManager::s_pMemoryStatic = new(s_pSystemMemeory, s_szSystemMemory, "PMemoryStatic") PMemoryStatic();
             BaseObject::s_pMemory = s_pMemoryStatic;
             SHOW_STATIC("PMemoryManager::Allocate");
 
             // aplication memory
-            s_pApplicationMemeory = new char[s_szApplicationMemory];
-            PageList *pPageList = new("pPageList") PageList((size_t)s_pApplicationMemeory, s_szApplicationMemory, s_szPage);
-
-            // memory dynamic
-            MemoryDynamic::s_pPageList = pPageList;
-            s_pMemoryDynamic = new("s_pMemoryDynamic") PMemoryDynamic(s_szSlotUnit);
+            PMemoryManager::s_pApplicationMemeory = new char[s_szApplicationMemory];
+            PMemoryManager::s_pMemoryDynamic = new(s_pApplicationMemeory, s_szApplicationMemory, s_szPage, "PMemoryDynamic") PMemoryDynamic(s_szSlotUnit);
             ValueObject::s_pMemory = s_pMemoryDynamic;
             
             // memory even            

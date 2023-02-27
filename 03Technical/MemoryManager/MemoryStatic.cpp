@@ -3,6 +3,7 @@
 #include <01Base/Aspect/Exception.h>
 #include <01Base/Aspect/Log.h>
 #include <03Technical/MemoryManager/SlotList.h>
+#include <01Base/Object/BaseObject.h>
 
 void* MemoryStatic::s_pAllocated = nullptr;
 size_t MemoryStatic::s_szAllocated = 0;
@@ -53,7 +54,7 @@ void* MemoryStatic::Malloc(size_t szObject, const char* sMessage) {
     s_pCurrent = (void*)((size_t)s_pCurrent + szObject);
     s_szCurrent = s_szCurrent - szObject;
 
-    NEW_STATIC(sMessage, pMemoryAllocated, "(szObject, s_szCurrent, s_szAllocated)", szObject, s_szCurrent, s_szAllocated);
+    MLOG_NEWLINE(sMessage, (size_t)pMemoryAllocated, "(szObject, s_szCurrent, s_szAllocated)", szObject, s_szCurrent, s_szAllocated);
     return pMemoryAllocated;
 }
 bool MemoryStatic::Free(void* pObject) {

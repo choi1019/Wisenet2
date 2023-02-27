@@ -12,6 +12,11 @@ public:
 };
 
 class PageIndex : public MemoryObject {
+public:
+	void* operator new(size_t szThis, void *s_pMemeoryAllocated, const char* sMessage);
+	void operator delete(void* pObject);
+	void operator delete(void* pObject, void *s_pMemeoryAllocated, const char* sMessage);
+	
 private:
 	unsigned m_index;
 	Page* m_pPage;
@@ -33,7 +38,7 @@ public:
 public:
 	PageIndex(
 		unsigned index,
-		size_t pMemoryAllocated,
+		void* pMemoryAllocated,
 	 	int nClassId = _PageIndex_Id,
 		const char* pClassName = _PageIndex_Name);
 	virtual ~PageIndex();

@@ -11,25 +11,30 @@
 // class Slot;
 
 class PageList : public MemoryObject {
-private:
-	size_t m_pMemeoryAllocated;
-	size_t m_szPage;
-	unsigned m_numPagesMax;
-	unsigned m_numPagesAvaiable;
+public:
+	static void* 	s_pMemeoryAllocated;
+	static size_t 	s_szMemoryAllocated;
+	static void* 	s_pMemeoryCurrent;
+	static size_t 	s_szMemoryCurrent;
 
-	// pageIndex
+	void* operator new(size_t szThis, void *s_pMemeoryAllocated, size_t s_szMemoryAllocated, const char* sMessage);
+	void operator delete(void* pObject);
+	void operator delete(void* pObject, void *s_pMemeoryAllocated, size_t s_szMemoryAllocated, const char* sMessage);
+
+private:
+	size_t m_szPage;
+	unsigned m_numPagesAllocated;
+	unsigned m_numPagesCurrent;
 	PageIndex** m_apPageIndices;
 	
 public:
 	size_t GetSzPage() { return this->m_szPage; }
-	unsigned GetNumPagesAvailable() { return this->m_numPagesAvaiable; }
-	unsigned GetNumPagesMax() { return this->m_numPagesMax; }
-	int GetIdxPage(void *pObject) { return ((size_t)pObject - m_pMemeoryAllocated) / m_szPage; }
+	unsigned GetNumPagesCurrent() { return this->m_numPagesCurrent; }
+	unsigned GetNumPagesAllocated() { return this->m_numPagesAllocated; }
+	int GetIdxPage(void *pObject) { return ((size_t)pObject - s_szMemoryCurrent) / m_szPage; }
 
 public:
 	PageList(
-		size_t pMemeoryAllocated, 
-		size_t szMemoryAllocated, 
 		size_t szPage,
 		int nClassId = _PageList_Id,
 		const char* pClassName = _PageList_Name);

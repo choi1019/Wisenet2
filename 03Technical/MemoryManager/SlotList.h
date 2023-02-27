@@ -23,13 +23,20 @@ public:
 	};
 
 	// for recycle
-	static SlotList* s_pSlotListRecycle;
 	static PageList* s_pPageList;
+	static IMemory* s_pMemory;
+
+	static SlotList** s_apSlotList;
+	static SlotList* s_pSlotListRecycle;
+
+
 	// static SlotInfo** s_apSlotInfo;
 
 	void* operator new(size_t szThis, const char* sMessage);
+	void* operator new(size_t szThis, void *pMemoryCurrent, const char* sMessage);
 	void operator delete(void* pObject);
 	void operator delete(void* pObject, const char* sMessage);
+	void operator delete(void* pObject, void *pMemoryCurrent, const char* sMessage);
 
 private:
 	int m_numPagesRequired;
@@ -75,12 +82,7 @@ public:
 	void DelocateASlot(Slot *pSlot);
 
 public:
-	// for head SlotList
-	SlotList(size_t szSlot, 
-		int nClassId = _SlotList_Id,
-		const char* pClassName = _SlotList_Name);
-	// for normal SlotList
-	SlotList(size_t szSlot, int numMaxSlots, int numPagesRequired, SlotList *pSlotListHead,
+	SlotList(size_t szSlot, SlotList *pSlotListHead,
 		int nClassId = _SlotList_Id,
 		const char* pClassName = _SlotList_Name);
 	virtual ~SlotList();

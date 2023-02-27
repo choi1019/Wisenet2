@@ -4,9 +4,19 @@
 #include <01Base/Aspect/Log.h>
 #include <01Base/Aspect/Exception.h>
 
+void* PageIndex::operator new(size_t szThis, void *pApplicationMemeory, const char* sMessage) {
+    return pApplicationMemeory;
+}
+void PageIndex::operator delete(void* pObject) {
+    // delete this
+ }
+void PageIndex::operator delete(void* pObject, void *pApplicationMemeory, const char* sMessage) {
+    throw Exception((unsigned)IMemory::EException::_eNotSupport, "PageList::delete", __LINE__);
+}
+
 PageIndex::PageIndex(
     unsigned index,
-    size_t pMemoryAllocated,
+    void* pMemoryAllocated,
     int nClassId,
     const char* pClassName)
     : MemoryObject(nClassId, pClassName)		

@@ -1,31 +1,60 @@
 #include <03Technical/MemoryManager/PageList.h>
 #include <03Technical/MemoryManager/SlotList.h>
+	
+void* PageList::s_pMemeoryAllocated = nullptr;
+size_t PageList::s_szMemoryAllocated = 0;
+void* PageList::s_pMemeoryCurrent = nullptr;
+size_t PageList::s_szMemoryCurrent = 0;
+
+void* PageList::operator new(size_t szThis, void *pApplicationMemeory, size_t szApplicationMemory, const char* sMessage) {
+    // allocate this
+    s_pMemeoryAllocated = pApplicationMemeory;
+    s_szMemoryAllocated = szApplicationMemory;
+    s_pMemeoryCurrent = (void*)((size_t)s_pMemeoryAllocated + szThis);
+    s_szMemoryCurrent = s_szMemoryAllocated - szThis;
+
+    return s_pMemeoryAllocated;
+}
+void PageList::operator delete(void* pObject) {
+    // delete this
+ }
+void PageList::operator delete(void* pObject, void *pApplicationMemeory, size_t szApplicationMemory, const char* sMessage) {
+    throw Exception((unsigned)IMemory::EException::_eNotSupport, "PageList::delete", __LINE__);
+}
+
 
 PageList::PageList(
-    size_t pMemeoryAllocated, 
-    size_t szMemoryAllocated, 
     size_t szPage,
     int nClassId,
     const char* pClassName)
     : MemoryObject(nClassId, pClassName)
-    , m_pMemeoryAllocated(pMemeoryAllocated)
     , m_szPage(szPage)
 {
-    if (szMemoryAllocated < m_szPage) {
+    if (s_szMemoryCurrent < (sizeof(PageIndex*) + sizeof(PageIndex) + m_szPage)) {
         throw Exception((unsigned)(IMemory::EException::_eMemoryAllocatedIsSmallerThanAPage)
                             , "PageList", "PageList", "MemoryTooSmall");
     }
-    this->m_numPagesMax = szMemoryAllocated / m_szPage;
-    this->m_numPagesAvaiable = this->m_numPagesMax;
+    // compute number of pages, szTotalMemory = (szP-PageIndex + szPageIndex + szPage) * numPages
+    m_numPagesAllocated = s_szMemoryCurrent / (sizeof(PageIndex*) + sizeof(PageIndex) + m_szPage);
+    m_numPagesCurrent = m_numPagesAllocated;
 
-    // operator new[] for pointer array
-    // this->m_apPageIndices = new("") PageIndex*[m_numPagesMax];
-    this->m_apPageIndices = (PageIndex**)(MemoryObject::operator new(sizeof(PageIndex*)*m_numPagesMax, "m_apPageIndices**"));
-    for (unsigned index = 0; index < this->m_numPagesMax; index++) {
-        m_apPageIndices[index] = new((String("m_apPageIndices-")+index).c_str()) PageIndex(index, pMemeoryAllocated);
-        pMemeoryAllocated = pMemeoryAllocated + m_szPage;
+    // allocate PageIndex Pointer Array
+    m_apPageIndices = (PageIndex**)s_pMemeoryCurrent;
+    s_pMemeoryCurrent = (void*)((size_t)s_pMemeoryCurrent + (sizeof(PageIndex*) * m_numPagesAllocated));
+
+    // compute start address of real pages
+    void *pPage = (void*)((size_t)s_pMemeoryCurrent + sizeof(PageIndex) * m_numPagesAllocated);
+    // alllocate PageIndex Array and allocate a real page
+    for (unsigned index = 0; index < m_numPagesAllocated; index++) {
+        m_apPageIndices[index] = new(s_pMemeoryCurrent, "PageIndex") PageIndex(GetIdxPage(pPage), pPage);
+        s_pMemeoryCurrent = (void *)((size_t)s_pMemeoryCurrent + sizeof(PageIndex));
+        pPage = (Page*)((size_t)pPage + m_szPage);
     }
+    // compute the size allocated
+    size_t szTotalAllocated = m_numPagesAllocated * (sizeof(PageIndex*) + sizeof(PageIndex) + m_szPage);
+    s_szMemoryCurrent = s_szMemoryCurrent - szTotalAllocated;
 }
+
 PageList::~PageList() {
 }
 void PageList::Initialize() {
@@ -38,13 +67,13 @@ void PageList::Finalize() {
 }
 
 PageIndex* PageList::AllocatePages(unsigned numPagesRequired, SlotList *pSlotList) {
-    if (m_numPagesAvaiable < numPagesRequired) {
+    if (m_numPagesCurrent < numPagesRequired) {
         throw Exception((unsigned)IMemory::EException::_eNoMorePage, "Memory", "Malloc", "_eNoMorePage");
     } else {
         // if numPagesRequired > 1
         unsigned numPagesAllocated = numPagesRequired;
         unsigned indexFound = 0;
-        for (unsigned index = 0; index < m_numPagesMax; index++) {
+        for (unsigned index = 0; index < m_numPagesAllocated; index++) {
             if ((m_apPageIndices[index]->IsAllocated())) {
                 // if the page is discontinued, reset index
                 numPagesAllocated = numPagesRequired;
@@ -60,7 +89,7 @@ PageIndex* PageList::AllocatePages(unsigned numPagesRequired, SlotList *pSlotLis
                         // multiple pages needed
                         m_apPageIndices[indexFound + i]->SetIsAllocated(true);
                     }
-                    m_numPagesAvaiable = m_numPagesAvaiable - numPagesRequired;
+                    m_numPagesCurrent = m_numPagesCurrent - numPagesRequired;
                     return m_apPageIndices[indexFound];
                 }
             }
@@ -77,12 +106,12 @@ void PageList::DelocatePages(unsigned indexFree) {
         m_apPageIndices[indexFree + i]->SetNumAllocated(1);
         m_apPageIndices[indexFree + i]->SetIsAllocated(false);
     }
-    m_numPagesAvaiable = m_numPagesAvaiable + numPagesAllocated;
+    m_numPagesCurrent = m_numPagesCurrent + numPagesAllocated;
 }
 
 void PageList::Show(const char* pTitle) {
-    MLOG_HEADER("PageList::Show(szPage,numPagesAvaiable,numPagesMax)", m_szPage, m_numPagesAvaiable, m_numPagesMax);
-    for (unsigned i=0; i< m_numPagesMax; i++) {
+    MLOG_HEADER("PageList::Show(szPage,numPagesAvaiable,numPagesMax)", m_szPage, m_numPagesCurrent, m_numPagesAllocated);
+    for (unsigned i=0; i< m_numPagesAllocated; i++) {
         m_apPageIndices[i]->Show("Page");
     }
     MLOG_FOOTER("PageList::Show");
