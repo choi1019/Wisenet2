@@ -11,6 +11,7 @@ enum class _ELayer_Technical {
 	_eMemoryEven,
 	_ePageIndex,
 	_ePageList,
+	_eSlotListGenerator,
 	_eSlotList,
 	_eSlotInfo,
 	_eSlotInfoList,

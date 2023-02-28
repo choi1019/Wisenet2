@@ -6,9 +6,6 @@
 PageList* SlotList::s_pPageList = nullptr;
 IMemory* SlotList::s_pMemory = nullptr;
 
-SlotList** SlotList::s_apSlotList = nullptr;
-SlotList* SlotList::s_pSlotListRecycle = nullptr;
-
 void* SlotList::operator new(size_t szThis, void *pMemoryCurrent, const char* sMessage) {
     return pMemoryCurrent;
 }
@@ -45,15 +42,15 @@ SlotList::SlotList(size_t szSlot, SlotList *pSlotListHead, int nClassId, const c
     , m_bGarbage(false)
     , m_pNext(nullptr)
     , m_pSibling(nullptr)
-    , m_nCountSlotLists(1)
+    , m_nCountSlotLists(0)
     , m_pSlotInfoHead(nullptr)
 {
     // not head node
-    if (m_szSlot != 0) {
+    if (m_pSlotListHead != nullptr) {
         int szPage = s_pPageList->GetSzPage();
-        if (m_szSlot > szPage) {
-            throw EXCEPTION(-1);
-        }
+        // if (m_szSlot > szPage) {
+        //     throw EXCEPTION(-1);
+        // }
         // compute the number of pages required
         m_numPagesRequired = m_szSlot / szPage;
         if (m_szSlot > m_numPagesRequired * szPage) {
@@ -82,7 +79,7 @@ SlotList::SlotList(size_t szSlot, SlotList *pSlotListHead, int nClassId, const c
     }
 }
 SlotList::~SlotList() {
-    if (m_szSlot != 0) {
+    if (m_pSlotListHead != nullptr) {
         SlotList::s_pPageList->DelocatePages(this->m_idxPage);
     }
 }
@@ -165,17 +162,17 @@ bool SlotList::Free(void* pObject) {
 
 // maintenance
 void SlotList::Show(const char* sMessage) { 
-    // MLOG_HEADER("SlotList::Show", "(szSlot, numMaxSlots, sMessage)", GetSzSlot(), GetNumMaxSlots(), sMessage);
-    // SlotList *pSibling = this->GetPSibling();
-    // while (pSibling != nullptr) {
-    //         // Slot* pSlot = pSibling->m_pSlotHead;
-    //         // while (pSlot != nullptr) {
-    //         //     // MLOG_NEWLINE("Slot-", (size_t)pSlot);
-    //         //     pSlot = pSlot->pNext;
-    //         // }
-    //         MLOG_NEWLINE("SlotList(", pSibling->GetIdxPage(), ")- numSlots = "
-    //                     , pSibling->GetNumSlots(), pSibling->GetNumMaxSlots());
-    //     pSibling = pSibling->GetPSibling();
-    // }
-    // MLOG_FOOTER("SlotList::Show");
+    MLOG_HEADER("SlotList::Show", "(szSlot, numMaxSlots, sMessage)", GetSzSlot(), GetNumMaxSlots(), sMessage);
+    SlotList *pSibling = this->GetPSibling();
+    while (pSibling != nullptr) {
+            // Slot* pSlot = pSibling->m_pSlotHead;
+            // while (pSlot != nullptr) {
+            //     // MLOG_NEWLINE("Slot-", (size_t)pSlot);
+            //     pSlot = pSlot->pNext;
+            // }
+            MLOG_NEWLINE("SlotList(", pSibling->GetIdxPage(), ")- numSlots = "
+                        , pSibling->GetNumSlots(), pSibling->GetNumMaxSlots());
+        pSibling = pSibling->GetPSibling();
+    }
+    MLOG_FOOTER("SlotList::Show");
 };

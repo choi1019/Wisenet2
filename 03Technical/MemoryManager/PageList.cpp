@@ -29,6 +29,7 @@ PageList::PageList(
     const char* pClassName)
     : MemoryObject(nClassId, pClassName)
     , m_szPage(szPage)
+    , m_pStartPage(nullptr)
 {
     if (s_szMemoryCurrent < (sizeof(PageIndex*) + sizeof(PageIndex) + m_szPage)) {
         throw Exception((unsigned)(IMemory::EException::_eMemoryAllocatedIsSmallerThanAPage)
@@ -43,8 +44,9 @@ PageList::PageList(
     s_pMemeoryCurrent = (void*)((size_t)s_pMemeoryCurrent + (sizeof(PageIndex*) * m_numPagesAllocated));
 
     // compute start address of real pages
-    void *pPage = (void*)((size_t)s_pMemeoryCurrent + sizeof(PageIndex) * m_numPagesAllocated);
+    m_pStartPage =  (void*)((size_t)s_pMemeoryCurrent + sizeof(PageIndex) * m_numPagesAllocated);
     // alllocate PageIndex Array and allocate a real page
+    void *pPage = m_pStartPage;
     for (unsigned index = 0; index < m_numPagesAllocated; index++) {
         m_apPageIndices[index] = new(s_pMemeoryCurrent, "PageIndex") PageIndex(GetIdxPage(pPage), pPage);
         s_pMemeoryCurrent = (void *)((size_t)s_pMemeoryCurrent + sizeof(PageIndex));

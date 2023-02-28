@@ -64,12 +64,12 @@ bool MemoryStatic::Free(void* pObject) {
 
 // maintenance
 void MemoryStatic::Show(const char* pTitle) {
-    MLOG_HEADER("MemoryStatic::Show", pTitle);
-    MLOG_NEWLINE("MemoryStatic(szAllocated,pAllocated,szCurrent,pCurrent)"
-    	, s_szAllocated
-    	, (size_t)s_pAllocated
-        , s_szCurrent
-    	, (size_t)s_pCurrent
-    );
-    MLOG_FOOTER("MemoryStatic::Show", pTitle);
+    // MLOG_HEADER("MemoryStatic::Show", pTitle);
+    // MLOG_NEWLINE("MemoryStatic(szAllocated,pAllocated,szCurrent,pCurrent)"
+    // 	, s_szAllocated
+    // 	, (size_t)s_pAllocated
+    //     , s_szCurrent
+    // 	, (size_t)s_pCurrent
+    // );
+    // MLOG_FOOTER("MemoryStatic::Show", pTitle);
 }

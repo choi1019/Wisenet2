@@ -1,6 +1,7 @@
 #include <03Technical/MemoryManager/MemoryDynamic.h>
 #include <03Technical/MemoryManager/SlotInfo.h>
 #include <03Technical/MemoryManager/SlotList.h>
+#include <03Technical/MemoryManager/SlotListGenerator.h>
 #include <01Base/Object/ValueObject.h>
 #include <01Base/Aspect/Exception.h>
 #include <01Base/Aspect/Log.h>
@@ -24,17 +25,12 @@ void* MemoryDynamic::operator new(size_t szThis, void* pMemoryAllocated, size_t 
     // allocate this
     MemoryDynamic::s_pMemoryCurrent = (void*)((size_t)MemoryDynamic::s_pMemoryAllocated + szThis);
     MemoryDynamic::s_szMemoryCurrent = MemoryDynamic::s_szMemoryAllocated - szThis;
-    // reserve space for slot list head
-    void *pSlotListHead =  MemoryDynamic::s_pMemoryCurrent;
-    MemoryDynamic::s_pMemoryCurrent = (void*)((size_t)MemoryDynamic::s_pMemoryCurrent + sizeof(SlotList));
-    MemoryDynamic::s_szMemoryCurrent = MemoryDynamic::s_szMemoryAllocated - sizeof(SlotList);
 
     // create a PageList
     MemoryDynamic::s_pPageList = new(s_pMemoryCurrent, s_szMemoryCurrent, "PageList") PageList(szPage);
     // slot list
     SlotList::s_pPageList = MemoryDynamic::s_pPageList;
-    //create a Slotlist head at the reseved space
-    SlotList::s_pMemory = new(pSlotListHead, "SlotList") SlotList(sizeof(SlotList), nullptr);
+    SlotList::s_pMemory = new("SlotListGenerator") SlotListGenerator();
 
     return s_pMemoryAllocated;
 }
@@ -49,9 +45,9 @@ void MemoryDynamic::operator delete(void* pObject, void *pApplicationMemeory, si
 
 MemoryDynamic::MemoryDynamic(unsigned szSlotUnit, int nClassId, const char* pClassName)
     : MemoryObject(nClassId, pClassName)
-    , m_szUnit(szSlotUnit)
 {
-    m_szPage = s_pPageList->GetSzPage();
+    m_szPage = MemoryDynamic::s_pPageList->GetSzPage();
+    m_szUnit = szSlotUnit;
 
     // create a head SlotList
     this->m_pSlotListHead = new("SlotList-Head") SlotList(0, nullptr);
@@ -136,30 +132,25 @@ bool MemoryDynamic::Free(void* pObject) {
             return true;
         }
         pPrevious = pCurrent;
-        pCurrent = (SlotList *)pCurrent->GetPNext();
+        pCurrent = pCurrent->GetPNext();
     }
+    ValueObject::s_pMemory->Show("MemoryDynamic::Free");
     throw Exception((unsigned)IMemory::EException::_eSlotlistFreeFailed, "MemoryDynamic::Free", __LINE__);
 }
 
 // maintenance
 void MemoryDynamic::Show(const char* pTitle) {
-    // MLOG_HEADER("MemoryDynamic::Show(pTitle)", pTitle);
-    //     s_pPageList->Show("MemoryDynamic::Show");
+    MLOG_HEADER("MemoryDynamic::Show(pTitle)", pTitle);
+        s_pPageList->Show("MemoryDynamic::Show");
 
-    //     SlotList* pSlotList = this->m_pSlotListHead;
-    //     while (pSlotList != nullptr) {
-    //         pSlotList->Show("Head");
-    //         pSlotList = (SlotList *)pSlotList->GetPNext();
-    //     }
+        SlotList* pSlotList = this->m_pSlotListHead;
+        while (pSlotList != nullptr) {
+            pSlotList->Show("Head");
+            pSlotList = (SlotList *)pSlotList->GetPNext();
+        }
 
-    // //    SlotInfo::s_pMemory->Show("SlotInfo");
-    // //    Event::s_pMemory->Show("Event");
+    //    SlotInfo::s_pMemory->Show("SlotInfo");
+    //    Event::s_pMemory->Show("Event");
 
-    //     // SlotListRecycle
-    //     SlotList *pSlotListRecycle = SlotList::s_pSlotListRecycle;
-    //     while (pSlotListRecycle != nullptr) {
-    //         MLOG_NEWLINE("SlotListRecycle-", (size_t)pSlotListRecycle);
-    //         pSlotListRecycle = pSlotListRecycle->GetPNext();
-    //     }
-    // MLOG_FOOTER("MemoryDynamic::Show");
+    MLOG_FOOTER("MemoryDynamic::Show");
 };

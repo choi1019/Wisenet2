@@ -26,12 +26,6 @@ public:
 	static PageList* s_pPageList;
 	static IMemory* s_pMemory;
 
-	static SlotList** s_apSlotList;
-	static SlotList* s_pSlotListRecycle;
-
-
-	// static SlotInfo** s_apSlotInfo;
-
 	void* operator new(size_t szThis, const char* sMessage);
 	void* operator new(size_t szThis, void *pMemoryCurrent, const char* sMessage);
 	void operator delete(void* pObject);
@@ -43,11 +37,11 @@ private:
 	int m_idxPage;
 	PageIndex* m_pPageIndex;
 	int m_nCountSlotLists;
+	bool m_bGarbage;
 
 	size_t m_szSlot;
 	unsigned m_numMaxSlots;
 	unsigned m_numSlots;
-	bool m_bGarbage;
 	Slot* m_pSlotHead;
 
 	// head SlotList of the same size

@@ -26,12 +26,15 @@ private:
 	unsigned m_numPagesAllocated;
 	unsigned m_numPagesCurrent;
 	PageIndex** m_apPageIndices;
+	void *m_pStartPage;
 	
 public:
 	size_t GetSzPage() { return this->m_szPage; }
 	unsigned GetNumPagesCurrent() { return this->m_numPagesCurrent; }
 	unsigned GetNumPagesAllocated() { return this->m_numPagesAllocated; }
-	int GetIdxPage(void *pObject) { return ((size_t)pObject - s_szMemoryCurrent) / m_szPage; }
+	int GetIdxPage(void *pObject) { 
+			return ((size_t)pObject - (size_t)m_pStartPage) / m_szPage; 
+	}
 
 public:
 	PageList(
