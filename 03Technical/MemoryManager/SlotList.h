@@ -72,8 +72,18 @@ public:
 	SlotList* GetPSibling() { return this->m_pSibling; }
 	void SetPSibling(SlotList* pSibling) { this->m_pSibling = pSibling; }
 
-	Slot *AllocateASlot();
+	SlotInfo *GetPSlotInfoHead() { return m_pSlotInfoHead; }
+	void SetPSlotInfoHead(SlotInfo *pSlotInfo) { m_pSlotInfoHead = pSlotInfo; }
+
+	SlotInfo* FindSlotInfo(Slot* pSlot);
+	void AllocateASlotInfo(Slot *pSlot, const char* sMessage);
+	void DelocateASlotInfo(Slot *pSlot);
+
+	Slot *AllocateASlot(const char* sMessage);
 	void DelocateASlot(Slot *pSlot);
+
+
+
 
 public:
 	SlotList(size_t szSlot, SlotList *pSlotListHead,

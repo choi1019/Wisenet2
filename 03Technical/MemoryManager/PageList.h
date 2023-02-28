@@ -35,6 +35,7 @@ public:
 	int GetIdxPage(void *pObject) { 
 			return ((size_t)pObject - (size_t)m_pStartPage) / m_szPage; 
 	}
+	PageIndex *GetPPageIndex(void *pObject) { return m_apPageIndices[GetIdxPage(pObject)]; }
 
 public:
 	PageList(

@@ -13,6 +13,7 @@ enum class _ELayer_Technical {
 	_ePageList,
 	_eSlotListGenerator,
 	_eSlotList,
+	_eSlotInfoGenerator,
 	_eSlotInfo,
 	_eSlotInfoList,
 

@@ -22,7 +22,6 @@ void PageList::operator delete(void* pObject, void *pApplicationMemeory, size_t 
     throw Exception((unsigned)IMemory::EException::_eNotSupport, "PageList::delete", __LINE__);
 }
 
-
 PageList::PageList(
     size_t szPage,
     int nClassId,

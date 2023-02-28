@@ -1,7 +1,11 @@
 #include <03Technical/MemoryManager/MemoryDynamic.h>
+
+#include <03Technical/MemoryManager/SlotInfoGenerator.h>
 #include <03Technical/MemoryManager/SlotInfo.h>
+
 #include <03Technical/MemoryManager/SlotList.h>
 #include <03Technical/MemoryManager/SlotListGenerator.h>
+
 #include <01Base/Object/ValueObject.h>
 #include <01Base/Aspect/Exception.h>
 #include <01Base/Aspect/Log.h>
@@ -28,9 +32,12 @@ void* MemoryDynamic::operator new(size_t szThis, void* pMemoryAllocated, size_t 
 
     // create a PageList
     MemoryDynamic::s_pPageList = new(s_pMemoryCurrent, s_szMemoryCurrent, "PageList") PageList(szPage);
-    // slot list
+    // SlotList
     SlotList::s_pPageList = MemoryDynamic::s_pPageList;
     SlotList::s_pMemory = new("SlotListGenerator") SlotListGenerator();
+    // SlotInfo
+    SlotInfo::s_pPageList = MemoryDynamic::s_pPageList;
+    SlotInfo::s_pMemory = new("SlotInfoGenerator") SlotInfoGenerator();
 
     return s_pMemoryAllocated;
 }
@@ -149,7 +156,6 @@ void MemoryDynamic::Show(const char* pTitle) {
             pSlotList = (SlotList *)pSlotList->GetPNext();
         }
 
-    //    SlotInfo::s_pMemory->Show("SlotInfo");
     //    Event::s_pMemory->Show("Event");
 
     MLOG_FOOTER("MemoryDynamic::Show");
