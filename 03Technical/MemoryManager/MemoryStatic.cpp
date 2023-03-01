@@ -36,7 +36,7 @@ MemoryStatic::MemoryStatic(int nClassId, const char* pClassName)
     SHOW_STATIC("MemoryStatic::MemoryStatic");
 }
 MemoryStatic::~MemoryStatic() {
-    SHOW_STATIC("MemoryStatic::~MemoryStatic");
+//    SHOW_STATIC("MemoryStatic::~MemoryStatic");
  }
 void MemoryStatic::Initialize() {
     MemoryObject::Initialize();

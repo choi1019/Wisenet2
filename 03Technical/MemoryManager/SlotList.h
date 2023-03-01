@@ -27,10 +27,8 @@ public:
 	static IMemory* s_pMemory;
 
 	void* operator new(size_t szThis, const char* sMessage);
-	void* operator new(size_t szThis, void *pMemoryCurrent, const char* sMessage);
 	void operator delete(void* pObject);
 	void operator delete(void* pObject, const char* sMessage);
-	void operator delete(void* pObject, void *pMemoryCurrent, const char* sMessage);
 
 private:
 	int m_numPagesRequired;

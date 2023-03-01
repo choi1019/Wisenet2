@@ -6,9 +6,6 @@
 PageList* SlotList::s_pPageList = nullptr;
 IMemory* SlotList::s_pMemory = nullptr;
 
-void* SlotList::operator new(size_t szThis, void *pMemoryCurrent, const char* sMessage) {
-    return pMemoryCurrent;
-}
 void* SlotList::operator new(size_t szThis, const char* sMessage) {
     void* pNewSlotList = SlotList::s_pMemory->Malloc(szThis, sMessage);
     return pNewSlotList;
@@ -21,10 +18,6 @@ void SlotList::operator delete(void* pObject) {
 void SlotList::operator delete(void* pObject, const char* sMessage) {
     throw Exception((unsigned)IMemory::EException::_eNotSupport, "SlotList::delete", "_eNotSupport");
 }
-void SlotList::operator delete(void* pObject, void *pMemoryCurrent, const char* sMessage) {
-    throw Exception((unsigned)IMemory::EException::_eNotSupport, "SlotList::delete", "_eNotSupport");
-}
-
 // for head
 SlotList::SlotList(size_t szSlot, SlotList *pSlotListHead, int nClassId, const char* pClassName)
     : MemoryObject(nClassId, pClassName)
@@ -39,10 +32,11 @@ SlotList::SlotList(size_t szSlot, SlotList *pSlotListHead, int nClassId, const c
     , m_numSlots(0)
     , m_pSlotHead(nullptr)
     
+    , m_nCountSlotLists(0)
     , m_bGarbage(false)
     , m_pNext(nullptr)
     , m_pSibling(nullptr)
-    , m_nCountSlotLists(0)
+
     , m_pSlotInfoHead(nullptr)
 {
     // not head node

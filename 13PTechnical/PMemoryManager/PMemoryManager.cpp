@@ -30,21 +30,19 @@ void PMemoryManager::Allocate(size_t szSystemMemory, size_t szApplicationMemory,
     try {
         MLOG_HEADER("PMemoryManager::Allocate");
             // system memory
-            // PMemoryManager::s_pSystemMemeory = new char[s_szSystemMemory];
-            // PMemoryManager::s_pMemoryStatic = new(s_pSystemMemeory, s_szSystemMemory, "PMemoryStatic") PMemoryStatic();
-            // PMemoryManager::s_pMemoryStatic->Initialize();
-            // BaseObject::s_pMemory = s_pMemoryStatic;
-            // SHOW_STATIC("PMemoryManager::Allocate");
+            PMemoryManager::s_pSystemMemeory = new char[s_szSystemMemory];
+            PMemoryManager::s_pMemoryStatic = new(s_pSystemMemeory, s_szSystemMemory, "PMemoryStatic") PMemoryStatic();
+            PMemoryManager::s_pMemoryStatic->Initialize();
+            BaseObject::s_pMemory = s_pMemoryStatic;
+            SHOW_STATIC("PMemoryManager::Allocate");
 
             // aplication memory
             PMemoryManager::s_pApplicationMemeory = new char[s_szApplicationMemory];
             PMemoryManager::s_pMemoryDynamic = new(s_pApplicationMemeory, s_szApplicationMemory, s_szPage, "PMemoryDynamic") PMemoryDynamic(s_szSlotUnit);
             PMemoryManager::s_pMemoryDynamic->Initialize();
             ValueObject::s_pMemory = s_pMemoryDynamic;
-
+            /////////////////////////////////////////
             BaseObject::s_pMemory = s_pMemoryDynamic;
-
-
 
             // memory even            
             // Event::s_pMemory = new("Event::s_pMemory") PMemoryEven(sizeof(Event));
@@ -69,9 +67,9 @@ void PMemoryManager::Delocate() {
             delete s_pPageList;
             delete[] s_pApplicationMemeory;
 
-            //s_pMemoryStatic->Finalize();
-            //delete s_pMemoryStatic;
-            //delete[] s_pSystemMemeory;
+            s_pMemoryStatic->Finalize();
+            delete s_pMemoryStatic;
+            delete[] s_pSystemMemeory;
 
         MLOG_FOOTER("PMemoryManager::Delocate");
     } catch (Exception& exception) {
