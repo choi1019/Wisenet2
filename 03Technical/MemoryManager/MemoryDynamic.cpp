@@ -33,9 +33,11 @@ void* MemoryDynamic::operator new(size_t szThis, void* pMemoryAllocated, size_t 
     // create a PageList
     MemoryDynamic::s_pPageList = new(s_pMemoryCurrent, s_szMemoryCurrent, "PageList") PageList(szPage);
     // SlotList
+    SlotListGenerator::s_pSlotLisChunktHead = nullptr;
     SlotList::s_pPageList = MemoryDynamic::s_pPageList;
     SlotList::s_pMemory = new("SlotListGenerator") SlotListGenerator();
     // SlotInfo
+    SlotInfoGenerator::s_pSlotInfoChunktHead = nullptr;
     SlotInfo::s_pPageList = MemoryDynamic::s_pPageList;
     SlotInfo::s_pMemory = new("SlotInfoGenerator") SlotInfoGenerator();
 

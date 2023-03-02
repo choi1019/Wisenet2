@@ -9,6 +9,8 @@ class LifecycleManager : public ILifecycleManager, public Component{
 private:
 	// <schedulerName, schedulerPtr>
 	typedef Map<int, Scheduler*> MapSchedulers;
+	typedef MapPair<int, Scheduler*> PairMapScheduler;
+	typedef MapIterator<int, Scheduler*> IteratorMapScheduler;
 	// <componentName, ComponentPtr>
 	typedef Map<int, Component*> MapComponents;
 	// <componentName, schedulerName>

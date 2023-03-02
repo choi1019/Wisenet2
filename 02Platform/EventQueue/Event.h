@@ -39,6 +39,8 @@ private:
 	unsigned m_countChildren;
 	// event queue
 	Event *m_pQueueNext;
+	// sequential iteartion
+	void *m_pIterator;
 
 public:
 	Event(
@@ -47,6 +49,7 @@ public:
 		int nType,
 		long long lArg,
 		ValueObject* pArg = nullptr,
+		void *pIterator = nullptr,
 
 		unsigned uClassId = _Event_Id,
 		const char* pcClassName = _Event_Name
@@ -57,6 +60,7 @@ public:
 		, m_nType(nType)
 		, m_lArg(lArg)
 		, m_pPArg(pArg)
+		, m_pIterator(pIterator)
 
 		, m_bReply(false)
 		, m_nReplyType(UNDEFINED)
@@ -65,6 +69,8 @@ public:
 		, m_pParent(nullptr)
 		, m_countChildren(0)
 		, m_pQueueNext(nullptr)
+
+
 	{
 	}
 	// copy constructor
@@ -88,6 +94,8 @@ public:
 		, m_pParent(event.m_pParent)
 		, m_countChildren(event.m_countChildren)
 		, m_pQueueNext(event.m_pQueueNext)
+
+		, m_pIterator(event.m_pIterator)
 	{
 	}
 	virtual ~Event() {
@@ -134,6 +142,7 @@ public:
 	// event queue
 	Event *GetPQueueNext() { return m_pQueueNext; }
 	void SetPQueueNext(Event *pQueueNext) { m_pQueueNext = pQueueNext; }
+	void *GetPIterator() { return m_pIterator; }
 
 	bool IsAllReplied() {
 		if (this->m_pParent!=nullptr) {

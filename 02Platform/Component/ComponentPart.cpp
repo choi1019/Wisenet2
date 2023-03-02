@@ -106,9 +106,9 @@ void ComponentPart::ReplyEvent(Event* pEvent) {
 ///////////////////////////////////////
 // send a synchronous event
 ///////////////////////////////////////
-void ComponentPart::SendReplyEvent(UId uIdTarget, int nEventType, long long lArg, ValueObject* pArg, int ReplyType)
+void ComponentPart::SendReplyEvent(UId uIdTarget, int nEventType, long long lArg, ValueObject* pArg, ValueObject *pIterator)
 {
-	Event* pEvent = new("Event") Event(*m_pUId, uIdTarget, nEventType, lArg, pArg, ReplyType);
+	Event* pEvent = new("Event") Event(*m_pUId, uIdTarget, nEventType, lArg, pArg, pIterator);
 	// event is synchronous
 	pEvent->SetBSynchronous(true);
 	if (m_pEventParent != nullptr) {
@@ -118,10 +118,18 @@ void ComponentPart::SendReplyEvent(UId uIdTarget, int nEventType, long long lArg
 	}
 	this->SendAEvent(pEvent);
 }
-void ComponentPart::SendReplyEvent(int nReceiverName, int nEventType, long long lArg, ValueObject* pArg, int ReplyType)
+void ComponentPart::SendReplyEvent(int nReceiverName, int nEventType, long long lArg, ValueObject* pArg)
 {
 	UId uIdTarget = this->FindUid(nReceiverName);
-	this->SendReplyEvent(uIdTarget, nEventType, lArg, pArg, ReplyType);
+	this->SendReplyEvent(uIdTarget, nEventType, lArg, pArg);
+}
+
+void ComponentPart::SendReplyEventIteration(UId uIdTarget, int nEventType, long long lArg, ValueObject* pArg, ValueObject *pIterator) {
+	this->SendReplyEvent(uIdTarget, nEventType, lArg, pArg, pIterator);
+}
+void ComponentPart::SendReplyEventIteration(int nReceiverName, int nEventType, long long lArg, ValueObject* pArg, ValueObject *pIterator) {
+	UId uIdTarget = this->FindUid(nReceiverName);
+	this->SendReplyEvent(uIdTarget, nEventType, lArg, pArg, pIterator);
 }
 
 ///////////////////////////////////////

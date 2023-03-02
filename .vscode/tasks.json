@@ -52,6 +52,7 @@
                 "${workspaceFolder}/02Platform/Scheduler/*.cpp",
                 "${workspaceFolder}/02Platform/Component/*.cpp",
 
+                "${workspaceFolder}/01Base/StdLib/*.cpp",
                 "${workspaceFolder}/01Base/Aspect/*.cpp",
                 "${workspaceFolder}/01Base/Object/*.cpp",
                 "-o",

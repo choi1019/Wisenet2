@@ -3,7 +3,14 @@
     "functional": "cpp",
     "cstdlib": "cpp",
     "random": "cpp",
-    "*.tcc": "cpp"
+    "*.tcc": "cpp",
+    "array": "cpp",
+    "deque": "cpp",
+    "string": "cpp",
+    "unordered_map": "cpp",
+    "vector": "cpp",
+    "string_view": "cpp",
+    "initializer_list": "cpp"
   },
   "C_Cpp_Runner.msvcBatchPath": "",
   "C_Cpp_Runner.cCompilerPath": "gcc",

@@ -97,18 +97,48 @@ void LifecycleManager::InitializeSchedulers(Event* pEvent) {
 // Start Schedulers
 void LifecycleManager::StartSchedulers(Event* pEvent) {
 	if (pEvent->IsReply()) {
-		LOG_NEWLINE("- StartSchedulers -", Directory::s_dirComponents[pEvent->GetUIdSource().GetComponentId()]);
-		if (pEvent->IsAllReplied()) {
+		IteratorMapScheduler *pIteratorMapScheduler = (IteratorMapScheduler*)(pEvent->GetPIterator());
+		if (++(*pIteratorMapScheduler) == m_mapSchedulers.end()) {
+			delete pIteratorMapScheduler;
 			LOG_FOOTER("LifecycleManager::StartSchedulers");
 		}
+		else {
+			LOG_NEWLINE("- StartSchedulers -", Directory::s_dirComponents[pEvent->GetUIdSource().GetComponentId()]);
+			(*pIteratorMapScheduler)->second->Fork();
+			this->SendReplyEventIteration(
+				(*pIteratorMapScheduler)->second->GetUId(),
+				(int)IScheduler::EEventType::eStart, 0, nullptr, (ValueObject*)(pIteratorMapScheduler));
+		}
+		// if (pEvent->IsAllReplied()) {
+		// 	LOG_FOOTER("LifecycleManager::StartSchedulers");
+		// }
 	}
 	else {
-		LOG_HEADER("LifecycleManager::StartSchedulers");
-		for (auto itr : m_mapSchedulers) {
-			itr.second->Fork();
-			this->SendReplyEvent(itr.second->GetUId(), (int)IScheduler::EEventType::eStart);
-		}
+		LOG_HEADER("LifecycleManager::StartSchedulers");		
+		IteratorMapScheduler *pIteratorMapScheduler = new IteratorMapScheduler(m_mapSchedulers.begin());
+		(*pIteratorMapScheduler)->second->Fork();
+		this->SendReplyEventIteration(
+			(*pIteratorMapScheduler)->second->GetUId(),
+			(int)IScheduler::EEventType::eStart, 0, nullptr, (ValueObject *)(pIteratorMapScheduler));
 	}
+	// for (auto itr : m_mapSchedulers) {
+	// 	itr.second->Fork();
+	// 	this->SendReplyEvent(itr.second->GetUId(), (int)IScheduler::EEventType::eStart);
+	// }
+
+	// if (pEvent->IsReply()) {
+	// 	LOG_NEWLINE("- StartSchedulers -", Directory::s_dirComponents[pEvent->GetUIdSource().GetComponentId()]);
+	// 	if (pEvent->IsAllReplied()) {
+	// 		LOG_FOOTER("LifecycleManager::StartSchedulers");
+	// 	}
+	// }
+	// else {
+	// 	LOG_HEADER("LifecycleManager::StartSchedulers");
+	// 	for (auto itr : m_mapSchedulers) {
+	// 		itr.second->Fork();
+	// 		this->SendReplyEvent(itr.second->GetUId(), (int)IScheduler::EEventType::eStart);
+	// 	}
+	// }
 }
 /////////////////////////////////////////////////////////////////////////
 void LifecycleManager::RegisterAComponent(int name, Component* pComponent) {

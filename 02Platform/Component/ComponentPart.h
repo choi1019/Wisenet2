@@ -64,8 +64,11 @@ protected:
 	void SendAEvent(Event* pEvent);
 	void ReplyEvent(Event* pEvent);
 
-	void SendReplyEvent(UId uIdTarget, int nEventType, long long lArg = 0, ValueObject* pArg = nullptr, int ReplyType = UNDEFINED);
-	void SendReplyEvent(int nReceiverName, int nEventType, long long lArg = 0, ValueObject* pArg = nullptr, int ReplyType = UNDEFINED);
+	void SendReplyEvent(UId uIdTarget, int nEventType, long long lArg = 0, ValueObject* pArg = nullptr, ValueObject *pIterator = nullptr);
+	void SendReplyEvent(int nReceiverName, int nEventType, long long lArg = 0, ValueObject* pArg = nullptr);
+	void SendReplyEventIteration(UId uIdTarget, int nEventType, long long lArg = 0, ValueObject* pArg = nullptr, ValueObject *pIterator = nullptr);
+	void SendReplyEventIteration(int nReceiverName, int nEventType, long long lArg = 0, ValueObject* pArg = nullptr, ValueObject *pIterator = nullptr);
+
 	void SendNoReplyEvent(UId uIdTarget, int nEventType, long long lArg = 0, ValueObject* pArg = nullptr);
 	void SendNoReplyEvent(int nReceiverName, int nEventType, long long lArg = 0, ValueObject* pArg = nullptr);
 	void SendTargetEvents(unsigned groupName, unsigned eventType, long long lArg = 0, ValueObject* pArg = nullptr);

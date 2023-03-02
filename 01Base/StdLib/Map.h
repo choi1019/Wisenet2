@@ -27,6 +27,7 @@ private:
 	MapPair<KEYTYPE, VALUETYPE>* pElement;
 public:
 	MapIterator(MapPair<KEYTYPE, VALUETYPE>* pElement) : pElement(pElement) {}
+	MapIterator() : pElement(nullptr) {}
 
 	inline MapIterator operator++() {
 		pElement++;
@@ -43,6 +44,8 @@ public:
 	inline MapPair<KEYTYPE, VALUETYPE>* operator->() { return pElement; }
 	inline bool operator==(const MapIterator& rhs) { return pElement == rhs.pElement; }
 	inline bool operator!=(const MapIterator& rhs) { return pElement != rhs.pElement; }
+	inline bool operator=(const MapIterator& rhs) { return pElement = rhs.pElement; }
+	inline MapPair<KEYTYPE, VALUETYPE>* next() { return ++pElement; }
 };
 
 template <class KEYTYPE, class VALUETYPE, int MAXLENGTH = 100>
@@ -73,7 +76,8 @@ public:
 	}
 	inline Iterator First() { return Iterator(this->elements); }
 
-	inline Iterator Find(KEYTYPE key) {
+	inline Iterator Find(KEYTYPE key) 
+	{
 		Iterator itr = begin();
 		for ( ; itr != end(); ++itr) {
 			if (itr->first == key) {
