@@ -9,18 +9,21 @@ class LifecycleManager : public ILifecycleManager, public Component{
 private:
 	// <schedulerName, schedulerPtr>
 	typedef Map<int, Scheduler*> MapSchedulers;
-	typedef MapPair<int, Scheduler*> PairMapScheduler;
 	typedef MapIterator<int, Scheduler*> IteratorMapScheduler;
 	// <componentName, ComponentPtr>
 	typedef Map<int, Component*> MapComponents;
 	// <componentName, schedulerName>
 	typedef Map<int, int> MapAllocations;
+	typedef MapIterator<int, int> IteratorMapAllocations;
 	// <senderName, local name in sender>, ReceiverName
 	typedef MapPair<int, unsigned> MapPairSender;
+	typedef MapIterator<MapPairSender, int> IteratorMapSendersNReceivers;
 	typedef Map<MapPairSender, int> MapSendersNReceivers;
+
 	// <sourceName, groupName>, vector<tarGetName>*> SourcesNTargetsMap
 	typedef MapPair<int, unsigned> MapPairSource;
 	typedef Vector<int> VectorTargetNames;
+	typedef MapIterator<MapPairSource, VectorTargetNames*> IteratorMapSourcesNTargets;
 	typedef Map<MapPairSource, VectorTargetNames*> MapSourcesNTargets;
 
 	MapSchedulers m_mapSchedulers;

@@ -10,7 +10,7 @@ RootObject::RootObject(unsigned nClassId, const char* pcClassName)
 {
     strcpy(m_pcClassName, pcClassName);
     this->m_eState = EState::eCreated;
-    Directory::s_dirClasses[m_nClassId] = m_pcClassName;
+//    Directory::s_dirClasses[m_nClassId] = m_pcClassName;
 }
 RootObject::~RootObject() 
 {

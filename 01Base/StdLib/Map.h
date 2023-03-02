@@ -22,7 +22,7 @@ public:
 };
 
 template <class KEYTYPE, class VALUETYPE>
-class MapIterator {
+class MapIterator : public ValueObject {
 private:
 	MapPair<KEYTYPE, VALUETYPE>* pElement;
 public:
@@ -134,7 +134,12 @@ public:
 
 	VALUETYPE& operator[](const KEYTYPE& key)
 	{
-		Iterator itr = this->Find(key);
+		Iterator itr = begin();
+		for ( ; itr != end(); ++itr) {
+			if (itr->first == key) {
+				return itr->second;
+			}
+		}
 		if(itr != this->end()) {
 			return itr->second;
 		}
