@@ -107,16 +107,18 @@ void LifecycleManager::StartSchedulers(Event* pEvent) {
 			(*pIteratorMapScheduler)->second->Fork();
 			this->SendReplyEventIteration(
 				(*pIteratorMapScheduler)->second->GetUId(),
-				(int)IScheduler::EEventType::eStart, 0, nullptr, (ValueObject*)(pIteratorMapScheduler));
+				(int)IScheduler::EEventType::eStart, 0, nullptr, pIteratorMapScheduler);
 		}
 	}
 	else {
-		LOG_HEADER("LifecycleManager::StartSchedulers");		
-		IteratorMapScheduler *pIteratorMapScheduler = new("IteratorMapScheduler") IteratorMapScheduler(m_mapSchedulers.begin());
-		(*pIteratorMapScheduler)->second->Fork();
-		this->SendReplyEventIteration(
-			(*pIteratorMapScheduler)->second->GetUId(),
-			(int)IScheduler::EEventType::eStart, 0, nullptr, (ValueObject *)(pIteratorMapScheduler));
+		if (!m_mapSchedulers.Empty()) {
+			LOG_HEADER("LifecycleManager::StartSchedulers");		
+			IteratorMapScheduler *pIteratorMapScheduler = new("IteratorMapScheduler") IteratorMapScheduler(m_mapSchedulers.begin());
+			(*pIteratorMapScheduler)->second->Fork();
+			this->SendReplyEventIteration(
+				(*pIteratorMapScheduler)->second->GetUId(),
+				(int)IScheduler::EEventType::eStart, 0, nullptr, pIteratorMapScheduler);
+		}
 	}
 }
 /////////////////////////////////////////////////////////////////////////
@@ -172,7 +174,7 @@ void LifecycleManager::AllocateComponents(Event* pEvent) {
 				, (int)IScheduler::EEventType::eAllocateAComponent
 				, UNDEFINED
 				, pParamAllocateAComponent
-				, (ValueObject *)(pIteratorMapAllocations)
+				, pIteratorMapAllocations
 			);
 		}
 	}
@@ -181,27 +183,29 @@ void LifecycleManager::AllocateComponents(Event* pEvent) {
 		this->AllocateSystemComponents();
 		this->AllocateUserComponents();
 
-		IteratorMapAllocations *pIteratorMapAllocations = new("IteratorMapAllocations") IteratorMapAllocations(m_mapAllocations.begin());
-		// find target scheduler
-		Component* pTargetScheduler = this->m_mapSchedulers[(*pIteratorMapAllocations)->second];
-		if (pTargetScheduler == nullptr) {
-			throw Exception((int)ILifecycleManager::EException::eSchedulerNotRegistered, this->GetClassName(), __func__, "eSchedulerNotRegistered");
+		if (!m_mapAllocations.Empty()) {
+			IteratorMapAllocations *pIteratorMapAllocations = new("IteratorMapAllocations") IteratorMapAllocations(m_mapAllocations.begin());
+			// find target scheduler
+			Component* pTargetScheduler = this->m_mapSchedulers[(*pIteratorMapAllocations)->second];
+			if (pTargetScheduler == nullptr) {
+				throw Exception((int)ILifecycleManager::EException::eSchedulerNotRegistered, this->GetClassName(), __func__, "eSchedulerNotRegistered");
+			}
+			// find component to be allocated
+			Component* pComponent = this->m_mapComponents[(*pIteratorMapAllocations)->first];
+			if (pComponent == nullptr) {
+				throw Exception((int)ILifecycleManager::EException::eComponentNotRegistered, this->GetClassName(), __func__, "eComponentNotRegistered");
+			}
+			UId uIdTargetScheduler = pTargetScheduler->GetUId();
+			Scheduler::ParamAllocateAComponent* pParamAllocateAComponent =
+				new("ParamAllocateAComponent") Scheduler::ParamAllocateAComponent(pComponent);
+			this->SendReplyEvent(
+				uIdTargetScheduler
+				, (int)IScheduler::EEventType::eAllocateAComponent
+				, UNDEFINED
+				, pParamAllocateAComponent
+				, pIteratorMapAllocations
+			);
 		}
-		// find component to be allocated
-		Component* pComponent = this->m_mapComponents[(*pIteratorMapAllocations)->first];
-		if (pComponent == nullptr) {
-			throw Exception((int)ILifecycleManager::EException::eComponentNotRegistered, this->GetClassName(), __func__, "eComponentNotRegistered");
-		}
-		UId uIdTargetScheduler = pTargetScheduler->GetUId();
-		Scheduler::ParamAllocateAComponent* pParamAllocateAComponent =
-			new("ParamAllocateAComponent") Scheduler::ParamAllocateAComponent(pComponent);
-		this->SendReplyEvent(
-			uIdTargetScheduler
-			, (int)IScheduler::EEventType::eAllocateAComponent
-			, UNDEFINED
-			, pParamAllocateAComponent
-			, (ValueObject *)(pIteratorMapAllocations)
-		);
 	}
 }
 
@@ -253,21 +257,23 @@ void LifecycleManager::AssociateSendersNReceivers(Event* pEvent) {
 		LOG_HEADER("LifecycleManager::AssociateSendersNReceivers");
 		this->AssociateSystemSendersNReceivers();
 		this->AssociateUserSendersNReceivers();
+		
+		if (!m_mapSendersNReceivers.Empty()) {
+			// <<senderName, sender.receiverName>, receiverName>
+			IteratorMapSendersNReceivers *pIteratorMapSendersNReceivers = 
+							new("IteratorMapSendersNReceivers") IteratorMapSendersNReceivers(m_mapSendersNReceivers.begin());
+			Component* pSender = this->m_mapComponents[(*pIteratorMapSendersNReceivers)->first.first];
+			Component* pReceiver = this->m_mapComponents[(*pIteratorMapSendersNReceivers)->second];
 
-		// <<senderName, sender.receiverName>, receiverName>
-		IteratorMapSendersNReceivers *pIteratorMapSendersNReceivers = 
-						new("IteratorMapSendersNReceivers") IteratorMapSendersNReceivers(m_mapSendersNReceivers.begin());
-		Component* pSender = this->m_mapComponents[(*pIteratorMapSendersNReceivers)->first.first];
-		Component* pReceiver = this->m_mapComponents[(*pIteratorMapSendersNReceivers)->second];
-
-		Component::ParamAssociateAReceiver* pParamAssociateAReceiver
-			= new("ParamAssociateAReceiver") Component::ParamAssociateAReceiver((*pIteratorMapSendersNReceivers)->first.second, pReceiver->GetUId());
-		this->SendReplyEvent(
-			pSender->GetUId(),
-			(int)Component::EEventType::eAssociateAReceiver,
-			0,
-			pParamAssociateAReceiver,
-			pIteratorMapSendersNReceivers);
+			Component::ParamAssociateAReceiver* pParamAssociateAReceiver
+				= new("ParamAssociateAReceiver") Component::ParamAssociateAReceiver((*pIteratorMapSendersNReceivers)->first.second, pReceiver->GetUId());
+			this->SendReplyEvent(
+				pSender->GetUId(),
+				(int)Component::EEventType::eAssociateAReceiver,
+				0,
+				pParamAssociateAReceiver,
+				pIteratorMapSendersNReceivers);
+		}
 	}
 }
 /////////////////////////////////////////////////////////////////////////
@@ -309,14 +315,16 @@ void LifecycleManager::AssociateSourcesNTargets(Event* pEvent) {
 				pSourceComponent->GetUId(),
 				(int)Component::EEventType::eAssociateATarget,
 				(*pIteratorMapSourcesNTargets)->first.second,
-				pParamAssociateATarget);
+				pParamAssociateATarget,
+				pIteratorMapSourcesNTargets
+				);
 		}
 	} else {
 		LOG_HEADER("LifecycleManager::AssociateSourcesNTargets");
 		this->AssociateSystemSourcesNTargets();
 		this->AssociateUserSourcesNTargets();
 
-		if (m_mapSourcesNTargets.begin() != m_mapSourcesNTargets.end()) {
+		if (!m_mapSourcesNTargets.Empty()) {
 			// sourceName, source.groupName + vector<tarGetName>*
 			IteratorMapSourcesNTargets *pIteratorMapSourcesNTargets 
 								= new("IteratorMapSourcesNTargets") IteratorMapSourcesNTargets(m_mapSourcesNTargets.begin());
@@ -331,7 +339,9 @@ void LifecycleManager::AssociateSourcesNTargets(Event* pEvent) {
 				pSourceComponent->GetUId(),
 				(int)Component::EEventType::eAssociateATarget,
 				(*pIteratorMapSourcesNTargets)->first.second,
-				pParamAssociateATarget);
+				pParamAssociateATarget,
+				pIteratorMapSourcesNTargets
+				);
 		}
 	
 	}

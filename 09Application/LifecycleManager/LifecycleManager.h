@@ -12,6 +12,7 @@ private:
 	typedef MapIterator<int, Scheduler*> IteratorMapScheduler;
 	// <componentName, ComponentPtr>
 	typedef Map<int, Component*> MapComponents;
+	typedef MapIterator<int, Component*> IteratorMapComponents;
 	// <componentName, schedulerName>
 	typedef Map<int, int> MapAllocations;
 	typedef MapIterator<int, int> IteratorMapAllocations;
@@ -19,7 +20,6 @@ private:
 	typedef MapPair<int, unsigned> MapPairSender;
 	typedef MapIterator<MapPairSender, int> IteratorMapSendersNReceivers;
 	typedef Map<MapPairSender, int> MapSendersNReceivers;
-
 	// <sourceName, groupName>, vector<tarGetName>*> SourcesNTargetsMap
 	typedef MapPair<int, unsigned> MapPairSource;
 	typedef Vector<int> VectorTargetNames;
