@@ -184,7 +184,8 @@ void LifecycleManager::AllocateComponents(Event* pEvent) {
 		this->AllocateUserComponents();
 
 		if (!m_mapAllocations.Empty()) {
-			IteratorMapAllocations *pIteratorMapAllocations = new("IteratorMapAllocations") IteratorMapAllocations(m_mapAllocations.begin());
+			IteratorMapAllocations *pIteratorMapAllocations 
+						= new("IteratorMapAllocations") IteratorMapAllocations(m_mapAllocations.begin());
 			// find target scheduler
 			Component* pTargetScheduler = this->m_mapSchedulers[(*pIteratorMapAllocations)->second];
 			if (pTargetScheduler == nullptr) {

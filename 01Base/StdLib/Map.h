@@ -45,7 +45,6 @@ public:
 	inline bool operator==(const MapIterator& rhs) { return pElement == rhs.pElement; }
 	inline bool operator!=(const MapIterator& rhs) { return pElement != rhs.pElement; }
 	inline bool operator=(const MapIterator& rhs) { return pElement = rhs.pElement; }
-	inline MapPair<KEYTYPE, VALUETYPE>* next() { return ++pElement; }
 };
 
 template <class KEYTYPE, class VALUETYPE, int MAXLENGTH = 100>
