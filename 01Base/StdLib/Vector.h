@@ -7,7 +7,7 @@
 #include <01Base/StdLib/Collection.h>
 
 template <class ELEMENTTYPE>
-class VectorIterator {
+class VectorIterator: public ValueObject {
 private:
 	ELEMENTTYPE* pElement;
 public:

@@ -29,6 +29,7 @@ void PLifecycleManager::Finalize() {
 
 void PLifecycleManager::RegisterUserShedulers() {
 	this->RegisterAScheduler((int)EComponents::eScheduler1, new("eScheduler1") PScheduler());
+	ValueObject::s_pMemory->Show("PLifecycleManager::RegisterUserShedulers");
 	this->RegisterAScheduler((int)EComponents::eScheduler2, new("eScheduler2") PScheduler());
 	//this->RegisterAScheduler((int)EComponents::eSkeleton, new("eSkeleton") PSkeleton(10000));
 }
