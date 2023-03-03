@@ -350,16 +350,28 @@ void LifecycleManager::AssociateSourcesNTargets(Event* pEvent) {
 // Initialize Components
 void LifecycleManager::InitializeComponents(Event* pEvent) {
 	if (pEvent->IsReply()) {
-		LOG_NEWLINE("- InitializeComponents: ", 
-			Directory::s_dirComponents[pEvent->GetUIdSource().GetComponentId()]);
-		if (pEvent->IsAllReplied()) {
+		IteratorMapComponents *pIteratorMapComponents 
+							= (IteratorMapComponents*)(pEvent->GetPIterator());
+		if (++(*pIteratorMapComponents) == m_mapComponents.end()) {
+			delete pIteratorMapComponents;
 			LOG_FOOTER("LifecycleManager::InitializeComponents");
+		} else {
+			//Directory::s_dirComponents[pEvent->GetUIdSource().GetComponentId()];			
+			this->SendReplyEvent(
+				(*pIteratorMapComponents)->second->GetUId(), 
+				(int)Component::EEventType::eInitialize,
+					0, nullptr, pIteratorMapComponents);
 		}
-	}
-	else {
+	} else {
 		LOG_HEADER("LifecycleManager::InitializeComponents");
-		for (auto& itrMapComponents : this->m_mapComponents) {
-			this->SendReplyEvent(itrMapComponents.second->GetUId(), (int)Component::EEventType::eInitialize);
+		if (!m_mapComponents.Empty()) {
+			// sourceName, source.groupName + vector<tarGetName>*
+			IteratorMapComponents *pIteratorMapComponents 
+								= new("IteratorMapSourcesNTargets") IteratorMapComponents(m_mapComponents.begin());
+			this->SendReplyEvent(
+				(*pIteratorMapComponents)->second->GetUId(), 
+				(int)Component::EEventType::eInitialize,
+					0, nullptr, pIteratorMapComponents);
 		}
 	}
 }
@@ -425,9 +437,9 @@ void LifecycleManager::StartSystem(Event* pEvent) {
 // Stop System
 void LifecycleManager::StopSystem(Event* pEvent) {
 	LOG_HEADER("LifecycleManager::StopSystem");
-	this->SendNoReplyEvent(
-		(int)ILifecycleManager::EReceivers::eMainScheduler,
-		(int)IMain::EEventType::eFinalizeAsAMain);
+	// this->SendNoReplyEvent(
+	// 	(int)ILifecycleManager::EReceivers::eMainScheduler,
+	// 	(int)IMain::EEventType::eFinalizeAsAMain);
 	LOG_FOOTER("LifecycleManager::StopSystem");
 }
 
@@ -435,51 +447,85 @@ void LifecycleManager::StopSystem(Event* pEvent) {
 // FinalizeAsALifecycleManager
 void LifecycleManager::StopComponents(Event* pEvent) {
 	if (pEvent->IsReply()) {
-		LOG_NEWLINE("- StopComponents: ", 
-			Directory::s_dirComponents[pEvent->GetUIdSource().GetComponentId()]);
-		if (pEvent->IsAllReplied()) {
+		IteratorMapComponents *pIteratorMapComponents 
+							= (IteratorMapComponents*)(pEvent->GetPIterator());
+		if (++(*pIteratorMapComponents) == m_mapComponents.end()) {
+			delete pIteratorMapComponents;
 			LOG_FOOTER("LifecycleManager::StopComponents");
+		} else {
+			//Directory::s_dirComponents[pEvent->GetUIdSource().GetComponentId()];			
+			this->SendReplyEvent(
+				(*pIteratorMapComponents)->second->GetUId(), 
+				(int)Component::EEventType::eStop,
+					0, nullptr, pIteratorMapComponents);
 		}
-	}
-	else {
+	} else {
 		LOG_HEADER("LifecycleManager::StopComponents");
-		for (auto& itr : this->m_mapComponents) {
-			this->SendReplyEvent(itr.second->GetUId(), (int)Component::EEventType::eStop);
+		if (!m_mapComponents.Empty()) {
+			// sourceName, source.groupName + vector<tarGetName>*
+			IteratorMapComponents *pIteratorMapComponents 
+								= new("IteratorMapSourcesNTargets") IteratorMapComponents(m_mapComponents.begin());
+			this->SendReplyEvent(
+				(*pIteratorMapComponents)->second->GetUId(), 
+				(int)Component::EEventType::eStop,
+					0, nullptr, pIteratorMapComponents);
 		}
 	}
 }
 
 void LifecycleManager::FinalizeComponents(Event* pEvent) {
 	if (pEvent->IsReply()) {
-		LOG_NEWLINE("- FinalizeComponents: ", 
-			Directory::s_dirComponents[pEvent->GetUIdSource().GetComponentId()]);
-		if (pEvent->IsAllReplied()) {
+		IteratorMapComponents *pIteratorMapComponents 
+							= (IteratorMapComponents*)(pEvent->GetPIterator());
+		if (++(*pIteratorMapComponents) == m_mapComponents.end()) {
+			delete pIteratorMapComponents;
 			LOG_FOOTER("LifecycleManager::FinalizeComponents");
+		} else {
+			//Directory::s_dirComponents[pEvent->GetUIdSource().GetComponentId()];			
+			this->SendReplyEvent(
+				(*pIteratorMapComponents)->second->GetUId(), 
+				(int)Component::EEventType::eFinalize,
+					0, nullptr, pIteratorMapComponents);
 		}
-	}
-	else {
+	} else {
 		LOG_HEADER("LifecycleManager::FinalizeComponents");
-		for (auto& itr : this->m_mapComponents) {
-			this->SendReplyEvent(itr.second->GetUId(), (int)Component::EEventType::eFinalize);
+		if (!m_mapComponents.Empty()) {
+			// sourceName, source.groupName + vector<tarGetName>*
+			IteratorMapComponents *pIteratorMapComponents 
+								= new("IteratorMapSourcesNTargets") IteratorMapComponents(m_mapComponents.begin());
+			this->SendReplyEvent(
+				(*pIteratorMapComponents)->second->GetUId(), 
+				(int)Component::EEventType::eFinalize,
+					0, nullptr, pIteratorMapComponents);
 		}
 	}
 }
 
 void LifecycleManager::StopSchedulers(Event* pEvent) {
 	if (pEvent->IsReply()) {
-		LOG_NEWLINE("- StopSchedulers: ", 
-			Directory::s_dirComponents[pEvent->GetUIdSource().GetComponentId()]);
-		if (pEvent->IsAllReplied()) {
-			for (auto itr : m_mapSchedulers) {
-				itr.second->Join();
-			}
+		IteratorMapScheduler *pIteratorMapScheduler = (IteratorMapScheduler*)(pEvent->GetPIterator());
+		if (((*pIteratorMapScheduler) + 1) == m_mapSchedulers.end()) {
+			delete pIteratorMapScheduler;
 			LOG_FOOTER("LifecycleManager::StopSchedulers");
+		}
+		else {
+			(*pIteratorMapScheduler)->second->Join();
+			(*pIteratorMapScheduler)++;
+			this->SendReplyEvent(
+				(*pIteratorMapScheduler)->second->GetUId(), 
+				(int)IScheduler::EEventType::eStop, 0, nullptr, pIteratorMapScheduler
+			);
 		}
 	}
 	else {
-		LOG_HEADER("LifecycleManager::StopSchedulers");
-		for (auto itr : m_mapSchedulers) {
-			this->SendReplyEvent(itr.second->GetUId(), (int)IScheduler::EEventType::eStop);
+		if (!m_mapSchedulers.Empty()) {
+			LOG_HEADER("LifecycleManager::StartSchedulers");		
+			IteratorMapScheduler *pIteratorMapScheduler 
+						= new("IteratorMapScheduler") IteratorMapScheduler(m_mapSchedulers.begin());
+			this->SendReplyEvent(
+				(*pIteratorMapScheduler)->second->GetUId(), 
+				(int)IScheduler::EEventType::eStop, 0, nullptr, pIteratorMapScheduler
+			);
 		}
 	}
 }
