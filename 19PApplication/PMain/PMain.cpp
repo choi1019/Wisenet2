@@ -10,19 +10,15 @@
 
 PMain::PMain(unsigned uClassId,
 	const char* pcClassName)
-	: Main(uClassId, pcClassName)
+	: Main(new("PMain::PEventQueue") PEventQueue(this), uClassId, pcClassName)
 {
 }
 PMain::~PMain() {
+	delete this->GetPEventQueue();
 }
 
 void PMain::BootstrapSystem() {
 	LOG_HEADER0();
-
-	// Main EventQueue
-	PEventQueue* pPEventQueue = new("PMain::PEventQueue") PEventQueue(this->GetComponentId());
-	this->SetPEventQueue(pPEventQueue);
-
 	// Lifecycle Manager
 	PLifecycleManager *pPLifecycleManager = new("PLifecycleManager") PLifecycleManager();
 	this->SetPLifecycleManager(pPLifecycleManager);
@@ -38,7 +34,6 @@ void PMain::RunAsAMain() {
 }
 
 void PMain::ShutdownSystem() {
-	delete this->GetPEventQueue();
 	delete this->GetPLifecycleManager();
 }
 

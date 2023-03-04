@@ -2,6 +2,7 @@
 #include <01Base/Aspect/Exception.h>
 #include <01Base/Aspect/Log.h>
 
+//----------------------------------------------------------------------------
 void Main::RegisterEventTypes() {
 	Directory::s_dirEvents[(int)IMain::EEventType::eInitializeAsAMain] = "eInitializeAsAMain";
 	Directory::s_dirEvents[(int)IMain::EEventType::eRunAsAMain] = "eRunAsAMain";
@@ -11,17 +12,24 @@ void Main::RegisterEventTypes() {
 void  Main::RegisterExceptions() {
 //	REGISTER_EVENT(IMain, eEventTypeError);
 }
+//----------------------------------------------------------------------------
 
 Main::Main(
+	EventQueue *pEventQueue,
 	unsigned uClassId,
 	const char* pcClassName)
-	: Scheduler(uClassId, pcClassName)
+	: Scheduler(pEventQueue, uClassId, pcClassName)
 	, m_pLifecycleManager(nullptr)
 {
 	this->RegisterEventTypes();
 	this->RegisterExceptions();
 }
-Main::~Main() {}
+Main::~Main() {
+	Directory::s_dirClasses.Clear();
+	Directory::s_dirComponents.Clear();
+	Directory::s_dirEvents.Clear();
+	Directory::s_dirExceptions.Clear();
+}
 
 void Main::RunAsAMain() {
 	Scheduler::RunAsAScheduler();

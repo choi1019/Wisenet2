@@ -2,6 +2,7 @@
 #include <01Base/Aspect/Exception.h>
 #include <12PPlatform/PEventQueue/PEventQueue.h>
 
+//----------------------------------------------------------
 void* CallBackPScheduler(void *pObject) {
 	PScheduler *pPScheduler = (PScheduler *)pObject;
 	pPScheduler->RunAsAScheduler();
@@ -17,18 +18,18 @@ void PScheduler::Join() {
 }
 
 void PScheduler::RunThread() {
-
 }
+//----------------------------------------------------------
 
 PScheduler::PScheduler(
 	int uClassId,
 	const char* pcClassName)
-	: Scheduler(uClassId, pcClassName)
+	: Scheduler(new("PScheduler::PEventQueue") PEventQueue(this), uClassId, pcClassName)
 {
-	this->SetPEventQueue(new("PEventQueue") PEventQueue());
 }
-PScheduler::~PScheduler() 
+PScheduler::~PScheduler()
 {
+	delete this->GetPEventQueue();
 }
 
 void PScheduler::InitializeAsAScheduler(int uPriority) {

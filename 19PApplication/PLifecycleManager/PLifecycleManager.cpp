@@ -29,8 +29,8 @@ void PLifecycleManager::Finalize() {
 
 void PLifecycleManager::RegisterUserShedulers() {
 	this->RegisterAScheduler((int)EComponents::eScheduler1, new("eScheduler1") PScheduler());
-	ValueObject::s_pMemory->Show("PLifecycleManager::RegisterUserShedulers");
-	this->RegisterAScheduler((int)EComponents::eScheduler2, new("eScheduler2") PScheduler());
+	//ValueObject::s_pMemory->Show("PLifecycleManager::RegisterUserShedulers");
+//	this->RegisterAScheduler((int)EComponents::eScheduler2, new("eScheduler2") PScheduler());
 	//this->RegisterAScheduler((int)EComponents::eSkeleton, new("eSkeleton") PSkeleton(10000));
 }
 void PLifecycleManager::RegisterUserComponents() {
@@ -46,8 +46,8 @@ void PLifecycleManager::RegisterUserComponents() {
 void PLifecycleManager::AllocateUserComponents() {
 	//this->AllocateAComponent((int)EComponents::eStub, (int)EComponents::eScheduler1);
 	this->AllocateAComponent((int)EComponents::eVideoManager, (int)EComponents::eScheduler1);
-	this->AllocateAComponent((int)EComponents::eVideoProviderManager, (int)EComponents::eScheduler2);
-	this->AllocateAComponent((int)EComponents::eVideoRequesterManager, (int)EComponents::eScheduler2);
+	this->AllocateAComponent((int)EComponents::eVideoProviderManager, (int)ILifecycleManager::EReceivers::eMainScheduler);
+	this->AllocateAComponent((int)EComponents::eVideoRequesterManager, (int)ILifecycleManager::EReceivers::eMainScheduler);
 	// this->AllocateAComponent((int)EComponents::eTimerLinux, (int)EComponents::eScheduler2);
 	// this->AllocateAComponent((int)EComponents::eTimerLinux1, (int)EComponents::eScheduler1);
 	//	this->AllocateAComponent((int)EComponents::eTimerLinux2, (int)EComponents::eScheduler2);

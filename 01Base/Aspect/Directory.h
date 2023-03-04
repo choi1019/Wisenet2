@@ -8,7 +8,7 @@
 #include <01Base/StdLib/String.h>
 
 typedef Map<size_t, String> DirectoryMap;
-class Directory : public DirectoryMap
+class Directory
 {
 public:
 	enum class EType {
@@ -24,6 +24,7 @@ public:
 	static void ClearDirectories();
 	
 private:
+	DirectoryMap m_mapDirectory;
 	EType m_eType;
 
 public:
@@ -33,17 +34,22 @@ public:
 	static Directory s_dirExceptions;
 
 	Directory(EType eType)
-		: DirectoryMap(_Directory_Id, _Directory_Name)
-		, m_eType(eType)
+		: m_eType(eType)
 	{
 	}
-	virtual ~Directory() {}
+	virtual ~Directory() {
+		m_mapDirectory.SetSize(0);
+	}
 
+	inline MapIterator<size_t, String> begin() { return m_mapDirectory.begin(); }
+	inline MapIterator<size_t, String> end() {	return m_mapDirectory.end();	}
+	String& operator[](size_t key) { return m_mapDirectory[key]; }
+	void Clear() { m_mapDirectory.Clear(); }
 	virtual void Initialize() {
-		DirectoryMap::Initialize();
+		m_mapDirectory.Initialize();
 	}
 	virtual void Finalize() {
-		DirectoryMap::Finalize();
+		m_mapDirectory.Finalize();
 	}
 	void Show(const char* pcTitle);
 };

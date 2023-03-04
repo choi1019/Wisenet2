@@ -8,10 +8,11 @@
 #include <01Base/Object/ValueObject.h>
 #include <02Platform/EventQueue/Event.h>
 
+class Scheduler;
 class EventQueue : public BaseObject
 {
 private:
-	int m_nSchedulerId;
+	Scheduler *m_pScheduler;
 	Event* m_pFront;
 	Event* m_pRear;
 	unsigned m_nLength;
@@ -22,14 +23,14 @@ protected:
 	virtual void PopUnlock() = 0;
 
 public:
-	int GetSchedulerId() { return this->m_nSchedulerId; }
+	Scheduler *GetPScheduler() { return this->m_pScheduler; }
 
 	EventQueue(
-		int uSchedulerId = UNDEFINED,
+		Scheduler *pScheduler = nullptr,
 		int uClassId = _EventQueue_Id,
 		const char* pcClassName = _EventQueue_Name)
 		: BaseObject(uClassId, pcClassName)
-		, m_nSchedulerId(uSchedulerId)
+		, m_pScheduler(pScheduler)
 		, m_pFront(nullptr)
 		, m_pRear(nullptr)
 		, m_nLength(0)

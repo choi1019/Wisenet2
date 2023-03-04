@@ -70,9 +70,9 @@ Component* LifecycleManager::FindAComponent(UId uId) {
 
 /////////////////////////////////////////////////////////////////////////
 void LifecycleManager::RegisterAScheduler(int name, Scheduler* pScheduler) {
+	LOG_NEWLINE("- RegisterAScheduler: ", name, Directory::s_dirComponents[pScheduler->GetComponentId()]);
 	this->m_mapSchedulers[name] = pScheduler;
 	this->RegisterAComponent(name, pScheduler);
-	LOG_NEWLINE("- RegisterAScheduler: ", name, Directory::s_dirComponents[pScheduler->GetComponentId()]);
 }
 void LifecycleManager::RegisterSystemSchedulers() {
 	this->RegisterAScheduler((int)ILifecycleManager::EReceivers::eMainScheduler, m_pMainScheduler);
@@ -84,6 +84,7 @@ void LifecycleManager::RegisterSchedulers(Event* pEvent) {
 	this->RegisterUserShedulers();
 	LOG_FOOTER("LifecycleManager::RegisterSchedulers");
 }
+//----------------------------------------------------------------------
 // Initialize Schedulers
 void LifecycleManager::InitializeSchedulers(Event* pEvent) {
 	LOG_HEADER("LifecycleManager::InitializeSchedulers");
@@ -505,13 +506,12 @@ void LifecycleManager::FinalizeComponents(Event* pEvent) {
 void LifecycleManager::StopSchedulers(Event* pEvent) {
 	if (pEvent->IsReply()) {
 		IteratorMapScheduler *pIteratorMapScheduler = (IteratorMapScheduler*)(pEvent->GetPIterator());
-		if (((*pIteratorMapScheduler) + 1) == m_mapSchedulers.end()) {
+		(*pIteratorMapScheduler)->second->Join();
+		if ((++(*pIteratorMapScheduler)) == m_mapSchedulers.end()) {
 			delete pIteratorMapScheduler;
 			LOG_FOOTER("LifecycleManager::StopSchedulers");
 		}
 		else {
-			(*pIteratorMapScheduler)->second->Join();
-			(*pIteratorMapScheduler)++;
 			this->SendReplyEvent(
 				(*pIteratorMapScheduler)->second->GetUId(), 
 				(int)IScheduler::EEventType::eStop, 0, nullptr, pIteratorMapScheduler
@@ -520,7 +520,7 @@ void LifecycleManager::StopSchedulers(Event* pEvent) {
 	}
 	else {
 		if (!m_mapSchedulers.Empty()) {
-			LOG_HEADER("LifecycleManager::StartSchedulers");		
+			LOG_HEADER("LifecycleManager::StopSchedulers");		
 			IteratorMapScheduler *pIteratorMapScheduler 
 						= new("IteratorMapScheduler") IteratorMapScheduler(m_mapSchedulers.begin());
 			this->SendReplyEvent(

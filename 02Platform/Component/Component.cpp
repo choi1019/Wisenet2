@@ -12,18 +12,20 @@ Component::Component(unsigned uClassId, const char* sClassName)
 	: ComponentPart(uClassId, sClassName)
 {
 	this->SetPUId(new("UId") UId(this->GetObjectId(), nullptr));
-	this->SetPMReceivers(new("ReceiversMap") Map<unsigned, UId, MAXRECEIVERCOMPONENTS>());
-	this->SetPMTargetsGroups(new("TargetsMap") Map<unsigned, Vector<UId, MAXTARGETCOMPONENTS>*, MAXTARGETGROUPS>());
-
-	SetEState(IComponent::EState::eCreated);
-
 	// component id directory
 	Directory::s_dirComponents[this->GetComponentId()] = sClassName;
 	this->RegisterEventTypes();
 	this->RegisterExceptions();
+
+	this->SetPMReceivers(new("ReceiversMap") Map<unsigned, UId, MAXRECEIVERCOMPONENTS>());
+	this->SetPMTargetsGroups(new("TargetsMap") Map<unsigned, Vector<UId, MAXTARGETCOMPONENTS>*, MAXTARGETGROUPS>());
+	// default target
+	this->AssociateAReceiver((int)EReceivers::eThis, this->GetUId());
+	// state
+	SetEState(IComponent::EState::eCreated);
 }
+
 Component::~Component() {
-	MLOG_NEWLINE("======= Component::~Component", this->GetClassName(), this->GetObjectId());
 	for (MapPair<int, ComponentPart*> itrComponentPart: m_mComponentParts) {
 		delete itrComponentPart.second;
 	}
@@ -34,7 +36,6 @@ Component::~Component() {
 		delete itr.second;
 	}
 	delete this->m_pmTargetsGroups;
-	// LOG
 }
 
 void Component::RegisterEventTypes() {
@@ -102,9 +103,8 @@ void Component::SetPEventQueue(EventQueue* pEventQueue) {
 
 void Component::AssociateAReceiver(unsigned receiverName, UId receiverUId) {
 	this->GetPMReceivers()->Add(receiverName, receiverUId);
-	LOG_NEWLINE(
-		Directory::s_dirComponents[this->GetComponentId()]
-		, __func__
+	LOG_NEWLINE("Component::AssociateAReceiver"
+		, Directory::s_dirComponents[this->GetComponentId()]
 		, Directory::s_dirComponents[receiverUId.GetComponentId()]);
 }
 

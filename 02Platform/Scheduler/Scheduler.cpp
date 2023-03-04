@@ -4,12 +4,16 @@
 #include <01Base/Aspect/Log.h>
 
 Scheduler::Scheduler(
+	EventQueue *pEventQueue,
 	unsigned classId, const char* className)
 	: Component(classId, className)
-	, m_pEventQueue(nullptr)
+	, m_pEventQueue(pEventQueue)
 {
+	LOG_NEWLINE("- Scheduler::Scheduler", "new", className);
 	this->RegisterEventTypes();
 	this->m_eState = IScheduler::EState::eCreated;
+	// default target
+	this->AllocateAComponent(this);
 }
 Scheduler::~Scheduler() {
 }
@@ -40,20 +44,16 @@ void Scheduler::RegisterEventTypes() {
 EventQueue* Scheduler::GetPEventQueue() { 
 	return this->m_pEventQueue; 
 }
-
 void Scheduler::SetPEventQueue(EventQueue* pEventQueue) {
 	this->m_pEventQueue = pEventQueue;
-	this->AllocateAComponent(this);
 }
 
 // jobs to do before the thread is started
 void Scheduler::InitializeAsAScheduler(int uPriority) {
-	this->m_mComponents.Clear();
 	this->m_eState = IScheduler::EState::eInitializedAsAScheduler;
 }
 void Scheduler::FinalizeAsAScheduler() {
 	this->m_eState = IScheduler::EState::eFinalizedAsAScheduler;
-		LOG_HEADER("Scheduler::DeleteVarialbes", Directory::s_dirComponents[this->GetComponentId()], "EventQueue");
 	this->m_pEventQueue->Show(Directory::s_dirComponents[this->GetComponentId()].c_str());
 
 	Event* pEvent = this->m_pEventQueue->Front();
@@ -118,11 +118,18 @@ void Scheduler::RunOnce()
 		Event* pEvent = pEvent = m_pEventQueue->PopFront();
 		if (pEvent != nullptr) {
 			UId uidTarget = pEvent->GetUIdTarget();
+			LOG_NEWLINE("== RunOnce ==>"
+						, pEvent->GetType(), Directory::s_dirEvents[pEvent->GetType()]
+						, pEvent->GetUIdSource().GetComponentId(), Directory::s_dirComponents[pEvent->GetUIdSource().GetComponentId()]
+						, pEvent->GetUIdTarget().GetComponentId(), Directory::s_dirComponents[pEvent->GetUIdTarget().GetComponentId()]);
 			Component* pTargetComponent = m_mComponents[uidTarget.GetComponentId()];
 			if (pTargetComponent == nullptr) {
-				throw Exception((unsigned)IScheduler::EError::eComponentNotFound, this->GetClassName(), __func__, "eComponentNotFound");
+				throw Exception((unsigned)IScheduler::EError::eComponentNotFound
+				, this->GetClassName(), __func__, "eComponentNotFound"
+				, pEvent->GetUIdTarget().GetComponentId(), Directory::s_dirComponents[pEvent->GetUIdTarget().GetComponentId()]
+				);
 			}
-//			pEvent->Show("<*Begin Scheduler::RunOnce(ComponentId)", this->GetComponentId());
+
 			pTargetComponent->BeginSequence(pEvent);
 			pTargetComponent->ProcessAEvent(pEvent);
 			pTargetComponent->EndSequence(pEvent);
@@ -136,12 +143,11 @@ void Scheduler::RunOnce()
 }
 
 void Scheduler::AllocateAComponent(Component* pComponent) {
+	LOG_NEWLINE("Scheduler::AllocateAComponent"
+				, this->GetComponentId(), Directory::s_dirComponents[this->GetComponentId()]
+				, pComponent->GetComponentId(), Directory::s_dirComponents[pComponent->GetComponentId()]);
 	pComponent->SetPEventQueue(this->GetPEventQueue());
 	m_mComponents.Add(pComponent->GetComponentId(), pComponent);
-	LOG_NEWLINE("Scheduler::AllocateAComponent"
-		, Directory::s_dirComponents[this->GetComponentId()]
-		, Directory::s_dirComponents[pComponent->GetComponentId()]
-	);
 }
 void Scheduler::DellocateAComponent(Component* pComponent) {
 	m_mComponents.Remove(pComponent->GetComponentId());

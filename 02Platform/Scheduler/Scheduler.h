@@ -19,7 +19,7 @@ private:
 	virtual void RegisterEventTypes();
 
 public:
-	Scheduler(unsigned classId = _Scheduler_Id, const char* className = _Scheduler_Name);
+	Scheduler(EventQueue *pEventQueue, unsigned classId = _Scheduler_Id, const char* className = _Scheduler_Name);
 	virtual ~Scheduler();
 
 protected:

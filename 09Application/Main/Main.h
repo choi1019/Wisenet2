@@ -15,6 +15,7 @@ private:
 
 public:
 	Main(
+		EventQueue *pEventQueue,
 		unsigned uClassId = _Main_Id,
 		const char* pcClassName = _Main_Name);
 	virtual ~Main();
@@ -27,8 +28,13 @@ public:
 	virtual void ShutdownSystem() = 0;
 
 	// as a Scheduler - do nothing except "RunAsAScheduler"
-	void InitializeAsAScheduler(int uPriority) override {}
-	void FinalizeAsAScheduler() override {}
+	void InitializeAsAScheduler(int uPriority) override {
+		Scheduler::InitializeAsAScheduler(uPriority);
+	}
+	void FinalizeAsAScheduler() override {
+		Scheduler::FinalizeAsAScheduler();
+	}
+	// main is not a normal scheduler
 	void Fork() override {}
 	void Join() override {}
 	void StartAsAScheduler() override {}

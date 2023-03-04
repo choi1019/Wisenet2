@@ -45,6 +45,7 @@ void* MemoryDynamic::operator new(size_t szThis, void* pMemoryAllocated, size_t 
 }
 void MemoryDynamic::operator delete(void* pObject) {
     // delete this
+    
  }
 void MemoryDynamic::operator delete(void* pObject, void *pApplicationMemeory, size_t szApplicationMemory, int szPage, const char* sMessage) {
     throw Exception((unsigned)IMemory::EException::_eNotSupport, "MemoryDynamic::delete", __LINE__);

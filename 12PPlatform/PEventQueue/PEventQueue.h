@@ -12,6 +12,8 @@
 
 #define MAXLENGTH_EVENTQUEUE 20
 
+class Scheduler;
+
 class PEventQueue: public EventQueue {
 private:
 	pthread_mutex_t m_mutex;
@@ -37,36 +39,11 @@ protected:
 	}
 public:
 	PEventQueue(
-		int nSchedulerId = UNDEFINED,
+		Scheduler *pScheduler = nullptr,
 		int nClassId = _PEventQueue_Id, 
-		const char* pcClassName = _PEventQueue_Name)
-		: EventQueue(nSchedulerId, nClassId, pcClassName)
-	{
-		int result = pthread_mutex_init(&m_mutex, nullptr);
-		if (result != 0) {
-			throw Exception(-1, "PEventQueue::PEventQueue");
-		}
-		result = sem_init(&m_semaphoreFull, 0, MAXLENGTH_EVENTQUEUE);
-		if (result != 0) {
-			throw Exception(-1, "PEventQueue::PEventQueue");
-		}
-		result = sem_init(&m_semaphoreEmpty, 0, 0);
-		if (result != 0) {
-			throw Exception(-1, "PEventQueue::PEventQueue");
-		}
-		LOG_NEWLINE("PEventQueue::pthread_mutex_init(result)", result);
-	}
-	virtual ~PEventQueue() 
-	{
-		sem_destroy(&m_semaphoreEmpty);
-		sem_destroy(&m_semaphoreFull);
-		pthread_mutex_destroy(&m_mutex);
-	}
+		const char* pcClassName = _PEventQueue_Name);
+	virtual ~PEventQueue();
 
-	void Initialize() override {
-		EventQueue::Initialize();
-	}
-	void Finalize() override {
-		EventQueue::Finalize();        
-	}
+	void Initialize() override;
+	void Finalize() override;
 };
