@@ -26,6 +26,7 @@ PageIndex::PageIndex(
     , m_pSlotList(nullptr)
     , m_numSlotsAllocated(0)
     , m_numSlotsCurrent(0)
+    , m_pSlotHead(nullptr)
 {
 }
 

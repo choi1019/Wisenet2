@@ -27,6 +27,7 @@ private:
 
 	int m_numSlotsAllocated;
 	int m_numSlotsCurrent;
+	void *m_pSlotHead;
 
 public:
 	unsigned GetIndex() { return this->m_index; }
@@ -47,6 +48,8 @@ public:
 	void AllocateASlot() { --m_numSlotsCurrent; }
 	void DelocateASlot() { ++m_numSlotsCurrent;	}
 	bool IsGarbage() { return (m_numSlotsCurrent == m_numSlotsAllocated)? true: false; }
+	void *GetPSlotHead() { return this->m_pSlotHead; }
+	void SetPSlotHead(void *pSlotHead) { m_pSlotHead = pSlotHead; }
 
 public:
 	PageIndex(
