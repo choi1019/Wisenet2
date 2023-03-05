@@ -1,10 +1,9 @@
 #include <13PTechnical/PMemoryManager/PMemoryDynamic.h>
 
 PMemoryDynamic::PMemoryDynamic(
-	size_t szSlotUnit,
 	unsigned nClassId,
 	const char* pcClassName)
-	: MemoryDynamic(szSlotUnit, nClassId, pcClassName)
+	: MemoryDynamic(nClassId, pcClassName)
 {
 	pthread_mutex_init(&m_mutex, nullptr);
 }
@@ -12,8 +11,8 @@ PMemoryDynamic::~PMemoryDynamic() {
 	pthread_mutex_destroy(&m_mutex);
 }
 
-void PMemoryDynamic::Initialize() {
-	MemoryDynamic::Initialize();
+void PMemoryDynamic::Initialize(int szPage, int szSlotUnit) {
+	MemoryDynamic::Initialize(szPage, szSlotUnit);
 }
 void PMemoryDynamic::Finalize() {
 	MemoryDynamic::Finalize();

@@ -12,38 +12,39 @@
 
 class PageList : public MemoryObject {
 public:
-	static void* 	s_pMemeoryAllocated;
-	static size_t 	s_szMemoryAllocated;
-	static void* 	s_pMemeoryCurrent;
-	static size_t 	s_szMemoryCurrent;
-
-	void* operator new(size_t szThis, void *s_pMemeoryAllocated, size_t s_szMemoryAllocated, const char* sMessage);
+	void* operator new(size_t szThis, void *pMemoryCurrent, const char* sMessage);
 	void operator delete(void* pObject);
-	void operator delete(void* pObject, void *s_pMemeoryAllocated, size_t s_szMemoryAllocated, const char* sMessage);
+	void operator delete(void* pObject, void *pMemoryCurrent, const char* sMessage);
 
 private:
+	void *m_pMemoryAllocated;
+	size_t m_szMemoryAllocated;
+	void *m_pMemoryCurrent;
+	size_t m_szMemoryCurrent;
+	
 	size_t m_szPage;
 	unsigned m_numPagesAllocated;
 	unsigned m_numPagesCurrent;
+	void *m_pPageHead;
+
 	PageIndex** m_apPageIndices;
-	void *m_pStartPage;
-	
+		
 public:
 	size_t GetSzPage() { return this->m_szPage; }
 	unsigned GetNumPagesCurrent() { return this->m_numPagesCurrent; }
 	unsigned GetNumPagesAllocated() { return this->m_numPagesAllocated; }
 	int GetIdxPage(void *pObject) { 
-			return ((size_t)pObject - (size_t)m_pStartPage) / m_szPage; 
+			return ((size_t)pObject - (size_t)m_pPageHead) / m_szPage; 
 	}
 	PageIndex *GetPPageIndex(void *pObject) { return m_apPageIndices[GetIdxPage(pObject)]; }
 
 public:
 	PageList(
-		size_t szPage,
+		
 		int nClassId = _PageList_Id,
 		const char* pClassName = _PageList_Name);
 	virtual ~PageList();
-	virtual void Initialize();
+	virtual size_t Initialize(void *pMemoryCurrent, size_t szMemoryCurrent, size_t szPage);
 	virtual void Finalize();
 
 	PageIndex* AllocatePages(unsigned numPagesRequired, SlotList *pSlotList);

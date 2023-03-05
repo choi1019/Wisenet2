@@ -4,8 +4,36 @@
 #include <stdlib.h>
 #include <03Technical/MemoryManager/SlotInfo.h>
 
+//------------------------------------------------------------------------------
 SlotInfoChunk *SlotInfoGenerator::s_pSlotInfoChunktHead = nullptr;
 
+void* SlotInfoGenerator::operator new(size_t szThis, void* PMemoryAllocated, const char* sMessage) {
+    s_pSlotInfoChunktHead = nullptr;
+    return PMemoryAllocated;
+}
+
+void SlotInfoGenerator::operator delete(void* pObject) {    
+}
+
+void SlotInfoGenerator::operator delete(void* pObject, void* PMemoryAllocated, const char* sMessage) {
+    throw Exception((unsigned)IMemory::EException::_eNotSupport, "SlotInfoGenerator::delete", "_eNotSupport");
+}
+
+//------------------------------------------------------------------------------
+SlotInfoGenerator::SlotInfoGenerator(int nClassId, const char* pClassName)
+    : MemoryObject(nClassId, pClassName)
+{ 
+}
+SlotInfoGenerator::~SlotInfoGenerator() {
+}
+void SlotInfoGenerator::Initialize() {
+    MemoryObject::Initialize();
+}
+void SlotInfoGenerator::Finalize() {
+    MemoryObject::Finalize();
+}
+
+//------------------------------------------------------------------------------
 void SlotInfoGenerator::GenerateSlotInfoChunks() {
     Page *pPage = SlotInfo::s_pPageList->AllocatePages(1, nullptr)->GetPPage();
     int szSlotInfo = sizeof(SlotInfo);
@@ -22,53 +50,22 @@ void SlotInfoGenerator::GenerateSlotInfoChunks() {
     }
     pPrevious->pNext = nullptr;
 }
-void* SlotInfoGenerator::operator new(size_t szThis, const char* sMessage) {
-    SlotInfoChunk *pSlotInfoChunk = nullptr;
-    if (s_pSlotInfoChunktHead == nullptr) {        
-        GenerateSlotInfoChunks();
-    }
-    pSlotInfoChunk = s_pSlotInfoChunktHead;
-    s_pSlotInfoChunktHead = s_pSlotInfoChunktHead->pNext;
-    return pSlotInfoChunk;
-}
 
-void SlotInfoGenerator::operator delete(void* pObject) {
-    ((SlotInfoChunk*)pObject)->pNext = s_pSlotInfoChunktHead;
-    s_pSlotInfoChunktHead =  (SlotInfoChunk*)pObject;
-}
-
-void SlotInfoGenerator::operator delete(void* pObject, const char* sMessage) {
-    throw Exception((unsigned)IMemory::EException::_eNotSupport, "SlotInfoGenerator::delete", "_eNotSupport");
-}
-
-// for head
-SlotInfoGenerator::SlotInfoGenerator(int nClassId, const char* pClassName)
-    : MemoryObject(nClassId, pClassName)
-{ 
-}
-SlotInfoGenerator::~SlotInfoGenerator() {
-}
-void SlotInfoGenerator::Initialize() {
-    MemoryObject::Initialize();
-}
-void SlotInfoGenerator::Finalize() {
-    MemoryObject::Finalize();
-}
 void* SlotInfoGenerator::Malloc(size_t szObject, const char* sMessage) {
-    SlotInfoChunk *pSlotInfoChunk = nullptr;
     if (s_pSlotInfoChunktHead == nullptr) {        
         GenerateSlotInfoChunks();
     }
-    pSlotInfoChunk = s_pSlotInfoChunktHead;
+    SlotInfoChunk *pSlotInfoChunk = s_pSlotInfoChunktHead;
     s_pSlotInfoChunktHead = s_pSlotInfoChunktHead->pNext;
     return pSlotInfoChunk; 
 }
+//------------------------------------------------------------------------------
 bool SlotInfoGenerator::Free(void* pObject) {
     ((SlotInfoChunk*)pObject)->pNext = s_pSlotInfoChunktHead;
     s_pSlotInfoChunktHead =  (SlotInfoChunk*)pObject;
     return true;
 }
-
+//------------------------------------------------------------------------------
 // maintenance
 void SlotInfoGenerator::Show(const char* sMessage) { 
 };

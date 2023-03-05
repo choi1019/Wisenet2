@@ -21,26 +21,25 @@ public:
 		eEnd
 	};
 
-	// for recycle
 	static SlotListChunk *s_pSlotLisChunktHead;
-	static void GenerateSlotListChunks();
 
 	// static SlotInfo** s_apSlotInfo;
-	void* operator new(size_t szThis, const char* sMessage);
+	void* operator new(size_t szThis, void* pMemoryAllocated, const char* sMessage);
 	void operator delete(void* pObject);
-	void operator delete(void* pObject, const char* sMessage);
+	void operator delete(void* pObject, void* pMemoryAllocated, const char* sMessage);
 
 public:
 	SlotListGenerator(int nClassId = _SlotListGenerator_Id,
 		const char* pClassName = _SlotListGenerator_Name);
-	virtual ~SlotListGenerator();
-	virtual void Initialize();
-	virtual void Finalize();
+	~SlotListGenerator();
+	void Initialize();
+	void Finalize();
 
-	virtual void* Malloc(size_t szObject, const char* sMessage);
-	virtual bool Free(void* pObject);
+	void GenerateSlotListChunks();
+	void* Malloc(size_t szObject, const char* sMessage);
+	bool Free(void* pObject);
 
 	// maintenance
-	virtual void Show(const char* sMessage);
+	void Show(const char* sMessage);
 };
 

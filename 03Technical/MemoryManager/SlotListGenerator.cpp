@@ -6,6 +6,31 @@
 
 SlotListChunk *SlotListGenerator::s_pSlotLisChunktHead = nullptr;
 
+void* SlotListGenerator::operator new(size_t szThis, void* pMemoryAllocated, const char* sMessage) {
+    SlotListChunk *pSlotListChunk = nullptr;
+    return pMemoryAllocated;
+}
+
+void SlotListGenerator::operator delete(void* pObject) {
+}
+
+void SlotListGenerator::operator delete(void* pObject, void* pMemoryAllocated, const char* sMessage) {
+    throw Exception((unsigned)IMemory::EException::_eNotSupport, "SlotListGenerator::delete", "_eNotSupport");
+}
+
+SlotListGenerator::SlotListGenerator(int nClassId, const char* pClassName)
+    : MemoryObject(nClassId, pClassName)
+{ 
+}
+SlotListGenerator::~SlotListGenerator() {
+}
+void SlotListGenerator::Initialize() {
+    MemoryObject::Initialize();
+}
+void SlotListGenerator::Finalize() {
+    MemoryObject::Finalize();
+}
+
 void SlotListGenerator::GenerateSlotListChunks() {
     Page *pPage = SlotList::s_pPageList->AllocatePages(1, nullptr)->GetPPage();
     int szSlotList = sizeof(SlotList);
@@ -22,47 +47,16 @@ void SlotListGenerator::GenerateSlotListChunks() {
     }
     pPrevious->pNext = nullptr;
 }
-void* SlotListGenerator::operator new(size_t szThis, const char* sMessage) {
-    SlotListChunk *pSlotListChunk = nullptr;
-    if (s_pSlotLisChunktHead == nullptr) {        
-        GenerateSlotListChunks();
-    }
-    pSlotListChunk = s_pSlotLisChunktHead;
-    s_pSlotLisChunktHead = s_pSlotLisChunktHead->pNext;
-    return pSlotListChunk;
-}
 
-void SlotListGenerator::operator delete(void* pObject) {
-    ((SlotListChunk*)pObject)->pNext = s_pSlotLisChunktHead;
-    s_pSlotLisChunktHead =  (SlotListChunk*)pObject;
-}
-
-void SlotListGenerator::operator delete(void* pObject, const char* sMessage) {
-    throw Exception((unsigned)IMemory::EException::_eNotSupport, "SlotListGenerator::delete", "_eNotSupport");
-}
-
-// for head
-SlotListGenerator::SlotListGenerator(int nClassId, const char* pClassName)
-    : MemoryObject(nClassId, pClassName)
-{ 
-}
-SlotListGenerator::~SlotListGenerator() {
-}
-void SlotListGenerator::Initialize() {
-    MemoryObject::Initialize();
-}
-void SlotListGenerator::Finalize() {
-    MemoryObject::Finalize();
-}
 void* SlotListGenerator::Malloc(size_t szObject, const char* sMessage) {
-    SlotListChunk *pSlotListChunk = nullptr;
     if (s_pSlotLisChunktHead == nullptr) {        
         GenerateSlotListChunks();
     }
-    pSlotListChunk = s_pSlotLisChunktHead;
+    SlotListChunk *pSlotListChunk = s_pSlotLisChunktHead;
     s_pSlotLisChunktHead = s_pSlotLisChunktHead->pNext;
     return pSlotListChunk; 
 }
+
 bool SlotListGenerator::Free(void* pObject) {
     ((SlotListChunk*)pObject)->pNext = s_pSlotLisChunktHead;
     s_pSlotLisChunktHead =  (SlotListChunk*)pObject;

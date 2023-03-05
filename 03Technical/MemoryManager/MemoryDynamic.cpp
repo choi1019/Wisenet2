@@ -22,53 +22,63 @@ size_t MemoryDynamic::s_szMemoryCurrent = 0;
 
 PageList* MemoryDynamic::s_pPageList = nullptr;
 
-void* MemoryDynamic::operator new(size_t szThis, void* pMemoryAllocated, size_t szMemoryAllocated, int szPage, const char* sMessage) {
-    MemoryDynamic::s_pMemoryAllocated = pMemoryAllocated;
-    MemoryDynamic::s_szMemoryAllocated = szMemoryAllocated;
+void* MemoryDynamic::operator new(size_t szThis, void* pMemoryAllocated, size_t szMemoryAllocated, const char* sMessage) {
+    s_pMemoryAllocated = pMemoryAllocated;
+    s_szMemoryAllocated = szMemoryAllocated;
 
     // allocate this
-    MemoryDynamic::s_pMemoryCurrent = (void*)((size_t)MemoryDynamic::s_pMemoryAllocated + szThis);
-    MemoryDynamic::s_szMemoryCurrent = MemoryDynamic::s_szMemoryAllocated - szThis;
-
-    // create a PageList
-    MemoryDynamic::s_pPageList = new(s_pMemoryCurrent, s_szMemoryCurrent, "PageList") PageList(szPage);
-    // SlotList
-    SlotListGenerator::s_pSlotLisChunktHead = nullptr;
-    SlotList::s_pPageList = MemoryDynamic::s_pPageList;
-    SlotList::s_pMemory = new("SlotListGenerator") SlotListGenerator();
-    // SlotInfo
-    SlotInfoGenerator::s_pSlotInfoChunktHead = nullptr;
-    SlotInfo::s_pPageList = MemoryDynamic::s_pPageList;
-    SlotInfo::s_pMemory = new("SlotInfoGenerator") SlotInfoGenerator();
-
+    s_pMemoryCurrent = (void*)((size_t)s_pMemoryAllocated + szThis);
+    s_szMemoryCurrent = s_szMemoryAllocated - szThis;
+    
     return s_pMemoryAllocated;
 }
 void MemoryDynamic::operator delete(void* pObject) {
-    // delete this
-    
+    // delete this    
  }
-void MemoryDynamic::operator delete(void* pObject, void *pApplicationMemeory, size_t szApplicationMemory, int szPage, const char* sMessage) {
+void MemoryDynamic::operator delete(void* pObject, void *pApplicationMemeory, size_t szApplicationMemory, const char* sMessage) {
     throw Exception((unsigned)IMemory::EException::_eNotSupport, "MemoryDynamic::delete", __LINE__);
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////
 
-MemoryDynamic::MemoryDynamic(unsigned szSlotUnit, int nClassId, const char* pClassName)
+MemoryDynamic::MemoryDynamic(int nClassId, const char* pClassName)
     : MemoryObject(nClassId, pClassName)
 {
-    m_szPage = MemoryDynamic::s_pPageList->GetSzPage();
-    m_szUnit = szSlotUnit;
-
-    // create a head SlotList
-    this->m_pSlotListHead = new("SlotList-Head") SlotList(0, nullptr);
-    this->m_szUnitExponentOf2 = (unsigned)(log2(static_cast<double>(this->m_szUnit)));
 }
 
 MemoryDynamic::~MemoryDynamic() {
 }
 
-void MemoryDynamic::Initialize() {
+void MemoryDynamic::Initialize(int szPage, int szSlotUnit) {
     MemoryObject::Initialize();
+    m_szPage = szPage;
+    m_szUnit = szSlotUnit;
+
+    // PageList
+    s_pPageList = new(s_pMemoryCurrent, "PageList") PageList();
+        s_pMemoryCurrent = (void *)((size_t)s_pMemoryCurrent + sizeof(PageList));
+        s_szMemoryCurrent = s_szMemoryAllocated - sizeof(PageList);
+    // SlotListGenerator
+    SlotList::s_pMemory = new(s_pMemoryCurrent, "SlotListGenerator") SlotListGenerator();
+        s_pMemoryCurrent = (void *)((size_t)s_pMemoryCurrent + sizeof(SlotListGenerator));
+        s_szMemoryCurrent = s_szMemoryAllocated - sizeof(SlotListGenerator);
+    // SlotInfoGenerator
+    SlotInfo::s_pMemory = new(s_pMemoryCurrent, "SlotInfoGenerator") SlotInfoGenerator();
+        s_pMemoryCurrent = (void *)((size_t)s_pMemoryCurrent + sizeof(SlotInfoGenerator));
+        s_szMemoryCurrent = s_szMemoryAllocated - sizeof(SlotInfoGenerator);   
+
+    // PageList Memory Allocation
+    size_t szAllocated = s_pPageList->Initialize(s_pMemoryCurrent, s_szMemoryCurrent, szPage);
+        s_pMemoryCurrent = (void *)((size_t)s_pMemoryCurrent + szAllocated);
+        s_szMemoryCurrent = s_szMemoryCurrent - szAllocated;
+
+    // associate
+    SlotList::s_pPageList = MemoryDynamic::s_pPageList;
+    SlotInfo::s_pPageList = MemoryDynamic::s_pPageList;
+
+    // create a head SlotList
+    this->m_pSlotListHead = new("SlotList-Head") SlotList(0, nullptr);
+    this->m_szUnitExponentOf2 = (unsigned)(log2(static_cast<double>(this->m_szUnit)));
 }
 void MemoryDynamic::Finalize() {
     MemoryObject::Finalize();

@@ -25,6 +25,9 @@ private:
 	unsigned m_numAllocated;
 	SlotList *m_pSlotList;
 
+	int m_numSlotsAllocated;
+	int m_numSlotsCurrent;
+
 public:
 	unsigned GetIndex() { return this->m_index; }
 	Page* GetPPage() { return this->m_pPage; }
@@ -35,14 +38,21 @@ public:
 	void SetPSlotList(SlotList *pSlotList) { m_pSlotList = pSlotList; }
 	SlotList *GetPSlotList() { return this->m_pSlotList; }
 
+	void SetNumSlots(int numSlots) { 
+		m_numSlotsAllocated = numSlots;
+		m_numSlotsCurrent = m_numSlotsAllocated; 
+	}
+	int GetNumSlotsAllocated() { return m_numSlotsAllocated; }
+	int GetNumSlotsAvailable() { return m_numSlotsCurrent; }
+	void AllocateASlot() { --m_numSlotsCurrent; }
+	void DelocateASlot() { ++m_numSlotsCurrent;	}
+
 public:
 	PageIndex(
-		unsigned index,
-		void* pMemoryAllocated,
 	 	int nClassId = _PageIndex_Id,
 		const char* pClassName = _PageIndex_Name);
 	virtual ~PageIndex();
-	virtual void Initialize();
+	virtual void Initialize(unsigned indexPage, void* pPage);
 	virtual void Finalize();
 
 	void* Malloc(size_t szObject, const char* sMessage) override { return nullptr; }

@@ -3,6 +3,7 @@
 #include <01Base/Aspect/Exception.h>
 #include <stdlib.h>
 
+//-----------------------------------------------------------------------------------
 PageList* SlotList::s_pPageList = nullptr;
 IMemory* SlotList::s_pMemory = nullptr;
 
@@ -18,7 +19,8 @@ void SlotList::operator delete(void* pObject) {
 void SlotList::operator delete(void* pObject, const char* sMessage) {
     throw Exception((unsigned)IMemory::EException::_eNotSupport, "SlotList::delete", "_eNotSupport");
 }
-// for head
+
+//-----------------------------------------------------------------------------------
 SlotList::SlotList(size_t szSlot, SlotList *pSlotListHead, int nClassId, const char* pClassName)
     : MemoryObject(nClassId, pClassName)
     , m_szSlot(szSlot)
@@ -69,18 +71,22 @@ SlotList::SlotList(size_t szSlot, SlotList *pSlotListHead, int nClassId, const c
         pPrevious->pNext = nullptr;
     }
 }
+
 SlotList::~SlotList() {
     if (m_pSlotListHead != nullptr) {
         SlotList::s_pPageList->DelocatePages(this->m_idxPage);
     }
 }
+
 void SlotList::Initialize() {
     MemoryObject::Initialize();
 }
+
 void SlotList::Finalize() {
     MemoryObject::Finalize();
 }
 
+//-----------------------------------------------------------------------------------
 SlotInfo* SlotList::FindSlotInfo(Slot* pSlot) {    
     SlotList *pSlotList = s_pPageList->GetPPageIndex(pSlot)->GetPSlotList();
     if (pSlotList == nullptr) {
@@ -98,6 +104,7 @@ SlotInfo* SlotList::FindSlotInfo(Slot* pSlot) {
     return nullptr;
 }
 
+//-----------------------------------------------------------------------------------
 void SlotList::AllocateASlotInfo(Slot *pSlot, const char* sMessage) {
     SlotInfo *pSlotInfo = new("SlotInfo") SlotInfo(pSlot, sMessage, this);
     if (m_pSlotListHead == nullptr) {
@@ -140,6 +147,7 @@ void* SlotList::Malloc(size_t szObject, const char* sMessage) {
     return pTargetSlot; 
 }
 
+//-----------------------------------------------------------------------------------
 void SlotList::DelocateASlotInfo(Slot* pSlot) {    
     SlotList *pSlotList = s_pPageList->GetPPageIndex(pSlot)->GetPSlotList();
     if (pSlotList == nullptr) {
@@ -177,6 +185,7 @@ void SlotList::DelocateASlot(Slot* pSlotFree) {
         this->m_bGarbage = false;
     }
 }
+
 bool SlotList::Free(void* pObject) {
     size_t idxPage = s_pPageList->GetIdxPage(pObject);
 
@@ -201,6 +210,7 @@ bool SlotList::Free(void* pObject) {
     return false;
 }
 
+//-----------------------------------------------------------------------------------
 // maintenance
 void SlotList::Show(const char* sMessage) { 
     MLOG_HEADER("SlotList::Show", "(szSlot, numMaxSlots, sMessage)", GetSzSlot(), GetNumMaxSlots(), sMessage);

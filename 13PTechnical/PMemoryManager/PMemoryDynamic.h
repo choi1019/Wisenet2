@@ -18,12 +18,11 @@ protected:
 
 public:
 	PMemoryDynamic(
-		size_t szSlotUnit,
 		unsigned nClassId = _PMemoryDynamic_Id,
 		const char* pcClassName = _PMemoryDynamic_Name);
 	~PMemoryDynamic() override;
 
-	void Initialize() override;
+	void Initialize(int szPage, int szSlotUnit);
 	void Finalize() override;
 
 	void* Malloc(size_t szObject, const char* sMessage);

@@ -1,67 +1,74 @@
 #include <03Technical/MemoryManager/PageList.h>
 #include <03Technical/MemoryManager/SlotList.h>
 	
-void* PageList::s_pMemeoryAllocated = nullptr;
-size_t PageList::s_szMemoryAllocated = 0;
-void* PageList::s_pMemeoryCurrent = nullptr;
-size_t PageList::s_szMemoryCurrent = 0;
-
-void* PageList::operator new(size_t szThis, void *pApplicationMemeory, size_t szApplicationMemory, const char* sMessage) {
-    // allocate this
-    s_pMemeoryAllocated = pApplicationMemeory;
-    s_szMemoryAllocated = szApplicationMemory;
-    s_pMemeoryCurrent = (void*)((size_t)s_pMemeoryAllocated + szThis);
-    s_szMemoryCurrent = s_szMemoryAllocated - szThis;
-
-    return s_pMemeoryAllocated;
+void* PageList::operator new(size_t szThis, void *pMemoryAllocated, const char* sMessage) {
+    return pMemoryAllocated;
 }
 void PageList::operator delete(void* pObject) {
     // delete this
  }
-void PageList::operator delete(void* pObject, void *pApplicationMemeory, size_t szApplicationMemory, const char* sMessage) {
+void PageList::operator delete(void* pObject,  void *pMemoryAllocated, const char* sMessage) {
     throw Exception((unsigned)IMemory::EException::_eNotSupport, "PageList::delete", __LINE__);
 }
 
-PageList::PageList(
-    size_t szPage,
+PageList::PageList(    
     int nClassId,
     const char* pClassName)
     : MemoryObject(nClassId, pClassName)
-    , m_szPage(szPage)
-    , m_pStartPage(nullptr)
+    , m_pMemoryCurrent(nullptr)
+    , m_szMemoryCurrent(0)
+    , m_numPagesAllocated(0)
+    , m_numPagesCurrent(0)
+    , m_apPageIndices(nullptr)
+    , m_szPage(0)
+    , m_pPageHead(nullptr)
 {
-    if (s_szMemoryCurrent < (sizeof(PageIndex*) + sizeof(PageIndex) + m_szPage)) {
-        throw Exception((unsigned)(IMemory::EException::_eMemoryAllocatedIsSmallerThanAPage)
-                            , "PageList", "PageList", "MemoryTooSmall");
-    }
-    // compute number of pages, szTotalMemory = (szP-PageIndex + szPageIndex + szPage) * numPages
-    m_numPagesAllocated = s_szMemoryCurrent / (sizeof(PageIndex*) + sizeof(PageIndex) + m_szPage);
-    m_numPagesCurrent = m_numPagesAllocated;
-
-    // allocate PageIndex Pointer Array
-    m_apPageIndices = (PageIndex**)s_pMemeoryCurrent;
-    s_pMemeoryCurrent = (void*)((size_t)s_pMemeoryCurrent + (sizeof(PageIndex*) * m_numPagesAllocated));
-
-    // compute start address of real pages
-    m_pStartPage =  (void*)((size_t)s_pMemeoryCurrent + sizeof(PageIndex) * m_numPagesAllocated);
-    // alllocate PageIndex Array and allocate a real page
-    void *pPage = m_pStartPage;
-    for (unsigned index = 0; index < m_numPagesAllocated; index++) {
-        m_apPageIndices[index] = new(s_pMemeoryCurrent, "PageIndex") PageIndex(GetIdxPage(pPage), pPage);
-        s_pMemeoryCurrent = (void *)((size_t)s_pMemeoryCurrent + sizeof(PageIndex));
-        pPage = (Page*)((size_t)pPage + m_szPage);
-    }
-    // compute the size allocated
-    size_t szTotalAllocated = m_numPagesAllocated * (sizeof(PageIndex*) + sizeof(PageIndex) + m_szPage);
-    s_szMemoryCurrent = s_szMemoryCurrent - szTotalAllocated;
 }
 
 PageList::~PageList() {
 }
-void PageList::Initialize() {
+
+size_t PageList::Initialize(void *pMemoryAllocated, size_t szMemoryAllocated, size_t szPage) {
     MemoryObject::Initialize();
-    SlotList::s_pPageList = this;
-    
+    m_pMemoryAllocated = pMemoryAllocated;
+    m_szMemoryAllocated = szMemoryAllocated;
+    m_szPage = szPage;
+
+    m_pMemoryCurrent = m_pMemoryAllocated;
+    m_szMemoryCurrent = m_szMemoryAllocated;
+    if (m_szMemoryCurrent < (sizeof(PageIndex*) + sizeof(PageIndex) + m_szPage)) {
+        throw Exception((unsigned)(IMemory::EException::_eMemoryAllocatedIsSmallerThanAPage)
+                            , "PageList", "PageList", "MemoryTooSmall");
+    }
+
+    // compute szTotalMemory = (szP-PageIndex + szPageIndex + szPage) * numPages
+    m_numPagesAllocated = m_szMemoryCurrent / (sizeof(PageIndex*) + sizeof(PageIndex) + m_szPage);
+    m_numPagesCurrent = m_numPagesAllocated;
+
+    // allocate PageIndex Pointer Array
+    m_apPageIndices = (PageIndex**)m_pMemoryCurrent;
+        m_pMemoryCurrent = (void*)((size_t)m_pMemoryCurrent + (sizeof(PageIndex*) * m_numPagesAllocated));
+        m_szMemoryCurrent = m_szMemoryCurrent - (sizeof(PageIndex*) * m_numPagesAllocated);
+
+    // allocate PageIndices
+    for (unsigned index = 0; index < m_numPagesAllocated; index++) {
+        m_apPageIndices[index] = new(m_pMemoryCurrent, "PageIndex") PageIndex();
+        m_pMemoryCurrent = (void *)((size_t)m_pMemoryCurrent + sizeof(PageIndex));
+    }
+    m_szMemoryCurrent = m_szMemoryCurrent - (sizeof(PageIndex) * m_numPagesAllocated);
+
+    // alllocate Pages 
+    m_pPageHead = m_pMemoryCurrent;
+    Page *pPage = (Page*) m_pPageHead;
+    for (unsigned index = 0; index < m_numPagesAllocated; index++) {
+        m_apPageIndices[index]->Initialize(GetIdxPage(pPage), pPage);
+        pPage = (Page*)((size_t)pPage + m_szPage);
+    }
+    m_szMemoryCurrent = m_szMemoryCurrent - (m_szPage * m_numPagesAllocated);
+
+    // compute total size allocated
+    size_t szTotalAllocated = m_szMemoryAllocated - m_szMemoryCurrent;    
+    return szTotalAllocated;
 }
 void PageList::Finalize() {
     MemoryObject::Finalize();

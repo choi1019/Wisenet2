@@ -18,9 +18,9 @@ public:
 
 	static PageList* s_pPageList;
 
-	void* operator new(size_t szThis, void *pMemoryAllocated, size_t s_szMemoryAllocated, int szPage, const char* sMessage);
+	void* operator new(size_t szThis, void *pMemoryAllocated, size_t s_szMemoryAllocated, const char* sMessage);
 	void operator delete(void* pObject);
-	void operator delete(void* pObject, void *pMemoryAllocated, size_t s_szMemoryAllocated, int szPage, const char* sMessage);
+	void operator delete(void* pObject, void *pMemoryAllocated, size_t s_szMemoryAllocated, const char* sMessage);
 
 private:
 	// attributes
@@ -36,12 +36,11 @@ protected:
 public:
 	// constructors and destructors
 	MemoryDynamic(
-		unsigned szSlotUnit,
 		int nClassId = _MemoryDynamic_Id,
 		const char* pClassName = _MemoryDynamic_Name);
 	virtual ~MemoryDynamic();;
 
-	virtual void Initialize();
+	virtual void Initialize(int szPage, int szSlotUnit);
 	virtual void Finalize();
 
 	SlotInfo *GetPSlotInfo(void *pObject);

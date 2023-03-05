@@ -4,35 +4,38 @@
 #include <01Base/Aspect/Log.h>
 #include <01Base/Aspect/Exception.h>
 
-void* PageIndex::operator new(size_t szThis, void *pApplicationMemeory, const char* sMessage) {
-    return pApplicationMemeory;
+void* PageIndex::operator new(size_t szThis, void *pMemoryAllocated, const char* sMessage) {
+    return pMemoryAllocated;
 }
 void PageIndex::operator delete(void* pObject) {
     // delete this
  }
-void PageIndex::operator delete(void* pObject, void *pApplicationMemeory, const char* sMessage) {
-    throw Exception((unsigned)IMemory::EException::_eNotSupport, "PageList::delete", __LINE__);
+void PageIndex::operator delete(void* pObject, void *pMemoryAllocated, const char* sMessage) {
+    throw Exception((unsigned)IMemory::EException::_eNotSupport, "PageIndex::delete", __LINE__);
 }
 
 PageIndex::PageIndex(
-    unsigned index,
-    void* pMemoryAllocated,
     int nClassId,
     const char* pClassName)
     : MemoryObject(nClassId, pClassName)		
-    , m_index(index)
-    , m_pPage((Page*)pMemoryAllocated)	
-    , m_numAllocated(1)
+    , m_index(0)
+    , m_pPage(nullptr)
+
     , m_bAllocated(false)
+    , m_numAllocated(1)
     , m_pSlotList(nullptr)
+    , m_numSlotsAllocated(0)
+    , m_numSlotsCurrent(0)
 {
 }
 
 PageIndex::~PageIndex() {
 }
 
-void PageIndex::Initialize() {
+void PageIndex::Initialize(unsigned indexPage, void* pPage) {
     MemoryObject::Initialize();
+    m_index = indexPage;
+    m_pPage = (Page*)pPage;
 }
 
 void PageIndex::Finalize() {
