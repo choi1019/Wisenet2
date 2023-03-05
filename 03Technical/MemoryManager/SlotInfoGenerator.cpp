@@ -35,12 +35,15 @@ void SlotInfoGenerator::Finalize() {
 
 //------------------------------------------------------------------------------
 void SlotInfoGenerator::GenerateSlotInfoChunks() {
-    Page *pPage = SlotInfo::s_pPageList->AllocatePages(1, nullptr)->GetPPage();
+    PageIndex *pPageIndex = SlotInfo::s_pPageList->AllocatePages(1, nullptr);
+
     int szSlotInfo = sizeof(SlotInfo);
     int szPage = SlotInfo::s_pPageList->GetSzPage();
     int numMaxSlotInfoChunks = szPage / szSlotInfo;
+    // for SlotInfo
+    // pPageIndex->SetNumSlots(numMaxSlotInfoChunks);
 
-    s_pSlotInfoChunktHead = (SlotInfoChunk*)pPage;
+    s_pSlotInfoChunktHead = (SlotInfoChunk*)pPageIndex->GetPPage();;
     SlotInfoChunk* pPrevious = nullptr;
     SlotInfoChunk* pCurrent = s_pSlotInfoChunktHead;
     for (int i = 0; i < numMaxSlotInfoChunks; i++) {
@@ -57,12 +60,25 @@ void* SlotInfoGenerator::Malloc(size_t szObject, const char* sMessage) {
     }
     SlotInfoChunk *pSlotInfoChunk = s_pSlotInfoChunktHead;
     s_pSlotInfoChunktHead = s_pSlotInfoChunktHead->pNext;
+
+    // for SlotInfo
+    // PageIndex *pPageIndex = SlotInfo::s_pPageList->GetPPageIndex(pSlotInfoChunk);
+    // pPageIndex->AllocateASlot();
+
     return pSlotInfoChunk; 
 }
 //------------------------------------------------------------------------------
 bool SlotInfoGenerator::Free(void* pObject) {
     ((SlotInfoChunk*)pObject)->pNext = s_pSlotInfoChunktHead;
     s_pSlotInfoChunktHead =  (SlotInfoChunk*)pObject;
+
+    // for SlotInfo
+    // PageIndex *pPageIndex = SlotInfo::s_pPageList->GetPPageIndex(pObject);
+    // pPageIndex->DelocateASlot();
+    // if (pPageIndex->IsGarbage()) {
+    //     SlotInfo::s_pPageList->DelocatePages(pPageIndex->GetIndex());
+    // }
+
     return true;
 }
 //------------------------------------------------------------------------------

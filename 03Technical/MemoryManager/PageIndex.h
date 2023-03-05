@@ -46,6 +46,7 @@ public:
 	int GetNumSlotsAvailable() { return m_numSlotsCurrent; }
 	void AllocateASlot() { --m_numSlotsCurrent; }
 	void DelocateASlot() { ++m_numSlotsCurrent;	}
+	bool IsGarbage() { return (m_numSlotsCurrent == m_numSlotsAllocated)? true: false; }
 
 public:
 	PageIndex(

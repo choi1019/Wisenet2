@@ -34,8 +34,7 @@ public:
 	unsigned GetNumPagesCurrent() { return this->m_numPagesCurrent; }
 	unsigned GetNumPagesAllocated() { return this->m_numPagesAllocated; }
 	int GetIdxPage(void *pObject) { 
-			return ((size_t)pObject - (size_t)m_pPageHead) / m_szPage; 
-	}
+			return ((size_t)pObject - (size_t)m_pPageHead) / m_szPage;	}
 	PageIndex *GetPPageIndex(void *pObject) { return m_apPageIndices[GetIdxPage(pObject)]; }
 
 public:
