@@ -7,11 +7,6 @@
 #include <03Technical/MemoryManager/MemoryObject.h>
 #include <03Technical/MemoryManager/PageList.h>
 
-class SlotInfoChunk {
-public:
-	SlotInfoChunk* pNext;
-};
-
 class SlotInfoGenerator : public MemoryObject {
 public:
 	enum class EException {
@@ -35,7 +30,7 @@ public:
 	~SlotInfoGenerator();
 	void Initialize();
 	void Finalize();
-	void GenerateSlotInfoChunks();
+	void *AllocateAPage();
 	void* Malloc(size_t szObject, const char* sMessage);
 	bool Free(void* pObject);
 

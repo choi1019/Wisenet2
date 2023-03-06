@@ -47,3 +47,38 @@ void PageIndex::Show(const char* pTitle) {
     MLOG_NEWLINE("PageIndex::show(index, pPage, numAllocated, bAllocated)"
                         , m_index, (size_t)m_pPage, m_numAllocated, m_bAllocated);
 }
+
+void PageIndex::AllocateSlots(int szSlot) {
+    int szPage = SlotInfo::s_pPageList->GetSzPage();
+    m_pSlotHead = (Slot*)this->GetPPage();
+    m_numSlotsAllocated = szPage / szSlot;
+    m_numSlotsCurrent = m_numSlotsAllocated;
+    
+    Slot* pPrevious = nullptr;
+    Slot* pCurrent = m_pSlotHead;
+    for (int i = 0; i < m_numSlotsAllocated; i++) {
+        pCurrent->m_pNext = (Slot*)((size_t)pCurrent + szSlot);
+        pPrevious = pCurrent;
+        pCurrent = pCurrent->m_pNext;
+    }
+    pPrevious->m_pNext = nullptr;
+}
+void *PageIndex::AllocateASlot() { 
+    void *pSlot = nullptr;
+    if (m_pSlotHead != nullptr) {
+        pSlot = m_pSlotHead;
+        m_pSlotHead = m_pSlotHead->m_pNext;
+        --m_numSlotsCurrent; 
+    }
+    return (void*)pSlot;
+}
+void PageIndex::DelocateASlot(void *pObject) { 
+    Slot *pSlot = (Slot*)pObject;
+    if (m_pSlotHead == nullptr) {
+        m_pSlotHead = pSlot;
+    } else {
+        pSlot->m_pNext = m_pSlotHead;
+        m_pSlotHead = pSlot;
+    }
+    ++m_numSlotsCurrent;
+}

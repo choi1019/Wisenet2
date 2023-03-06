@@ -25,16 +25,16 @@ private:
 
 	unsigned m_index;
 	Page* m_pPage;
-
 	bool m_bAllocated;
 	unsigned m_numAllocated;
-
+	// for SlotList
 	SlotList *m_pSlotList;
-	PageIndex *m_pSibling;
 
+	// for SlotInfo, SlotList genrators
+	Slot *m_pSlotHead;
 	int m_numSlotsAllocated;
 	int m_numSlotsCurrent;
-	void *m_pSlotHead;
+	PageIndex *m_pSibling;
 
 public:
 	unsigned GetIndex() { return this->m_index; }
@@ -47,36 +47,18 @@ public:
 	// for generators
 	void SetPSlotList(SlotList *pSlotList) { m_pSlotList = pSlotList; }
 	SlotList *GetPSlotList() { return this->m_pSlotList; }
-	void *GetPSlotHead() { return this->m_pSlotHead; }
-	void SetPSlotHead(void *pSlotHead) { m_pSlotHead = pSlotHead; }
+	void *GetPSlotHead() { return (void*)m_pSlotHead; }
+	void SetPSlotHead(void *pSlotHead) { m_pSlotHead = (Slot*)pSlotHead; }
 	void SetPSibling(PageIndex *pSibling) { m_pSibling = pSibling; }
 	PageIndex *GetPSibling() { return this->m_pSibling; }
 
-	void* GenerateSlots(int szSlot) {
-		int szPage = SlotInfo::s_pPageList->GetSzPage();
-		int numMaxSlotInfoChunks = szPage / szSlot;
-		// for SlotInfo
-		// pPageIndex->SetNumSlots(numMaxSlotInfoChunks);
-
-		Slot* pPrevious = nullptr;
-		Slot* pCurrent = (Slot*)this->GetPPage();
-		for (int i = 0; i < numMaxSlotInfoChunks; i++) {
-			pCurrent->m_pNext = (Slot*)((size_t)pCurrent + szSlot);
-			pPrevious = pCurrent;
-			pCurrent = pCurrent->m_pNext;
-		}
-		pPrevious->m_pNext = nullptr;
-	}
-
-	void SetNumSlots(int numSlots) { 
-		m_numSlotsAllocated = numSlots;
-		m_numSlotsCurrent = m_numSlotsAllocated; 
-	}
-	int GetNumSlotsAllocated() { return m_numSlotsAllocated; }
-	int GetNumSlotsAvailable() { return m_numSlotsCurrent; }
-	void AllocateASlot() { --m_numSlotsCurrent; }
-	void DelocateASlot() { ++m_numSlotsCurrent;	}
+	void AllocateSlots(int szSlot);
+	void *AllocateASlot();
+	void DelocateASlot(void *pObject);
 	bool IsGarbage() { return (m_numSlotsCurrent == m_numSlotsAllocated)? true: false; }
+	// int GetNumSlotsAllocated() { return m_numSlotsAllocated; }
+	// int GetNumSlotsAvailable() { return m_numSlotsCurrent; }
+
 
 public:
 	PageIndex(

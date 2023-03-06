@@ -12,10 +12,8 @@ void* SlotInfoGenerator::operator new(size_t szThis, void* PMemoryAllocated, con
     s_pPageIndexHead = nullptr;
     return PMemoryAllocated;
 }
-
 void SlotInfoGenerator::operator delete(void* pObject) {    
 }
-
 void SlotInfoGenerator::operator delete(void* pObject, void* PMemoryAllocated, const char* sMessage) {
     throw Exception((unsigned)IMemory::EException::_eNotSupport, "SlotInfoGenerator::delete", "_eNotSupport");
 }
@@ -35,39 +33,56 @@ void SlotInfoGenerator::Finalize() {
 }
 
 //------------------------------------------------------------------------------
-void SlotInfoGenerator::GenerateSlotInfoChunks() {
+void *SlotInfoGenerator::AllocateAPage() {
     PageIndex *pPageIndex = SlotInfo::s_pPageList->AllocatePages(1, nullptr);
-    pPageIndex->GenerateSlots(sizeof(SlotInfo));
+    pPageIndex->AllocateSlots(sizeof(SlotInfo));
     pPageIndex->SetPSibling(s_pPageIndexHead);
-    s_pPageIndexHead->SetPSibling(pPageIndex);
+    s_pPageIndexHead = pPageIndex;
+
+    void* pSlotInfoChunk = pPageIndex->AllocateASlot();
+    return pSlotInfoChunk;
 }
 
 void* SlotInfoGenerator::Malloc(size_t szObject, const char* sMessage) {
-    if (s_pSlotInfoChunktHead == nullptr) {        
-        GenerateSlotInfoChunks();
+    void *pSlotInfoChunk = nullptr;   
+    PageIndex *pPageIndex = s_pPageIndexHead;
+    while (pPageIndex != nullptr) {
+        pSlotInfoChunk = s_pPageIndexHead->AllocateASlot();
+        if (pSlotInfoChunk != nullptr) {
+            break;
+        }
+        pPageIndex = pPageIndex->GetPSibling();
     }
-    SlotInfoChunk *pSlotInfoChunk = s_pSlotInfoChunktHead;
-    s_pSlotInfoChunktHead = s_pSlotInfoChunktHead->pNext;
-
-    // for SlotInfo
-    // PageIndex *pPageIndex = SlotInfo::s_pPageList->GetPPageIndex(pSlotInfoChunk);
-    // pPageIndex->AllocateASlot();
-
+    if (pSlotInfoChunk == nullptr) {
+        pSlotInfoChunk = AllocateAPage();
+    }
     return pSlotInfoChunk; 
 }
+
 //------------------------------------------------------------------------------
 bool SlotInfoGenerator::Free(void* pObject) {
-    ((SlotInfoChunk*)pObject)->pNext = s_pSlotInfoChunktHead;
-    s_pSlotInfoChunktHead =  (SlotInfoChunk*)pObject;
-
-    // for SlotInfo
-    // PageIndex *pPageIndex = SlotInfo::s_pPageList->GetPPageIndex(pObject);
-    // pPageIndex->DelocateASlot();
-    // if (pPageIndex->IsGarbage()) {
-    //     SlotInfo::s_pPageList->DelocatePages(pPageIndex->GetIndex());
-    // }
-
-    return true;
+    int idxPage =  SlotInfo::s_pPageList->GetIdxPage(pObject);
+    PageIndex *pPrevious = nullptr;
+    PageIndex *pCurrent = s_pPageIndexHead;
+    while (pCurrent != nullptr) {
+        // found
+        if (pCurrent->GetIndex() == idxPage) {
+            pCurrent->DelocateASlot(pObject);
+            if (pCurrent->IsGarbage()) {
+                // head page is garbase
+                if (pPrevious == nullptr) {
+                    s_pPageIndexHead = s_pPageIndexHead->GetPSibling(); 
+                } else {
+                    pPrevious->SetPSibling(pCurrent->GetPSibling());
+                }
+                delete pCurrent;
+            }
+            return true;
+        }
+        pPrevious = pCurrent;
+        pCurrent = pCurrent->GetPSibling();
+    }
+    return false;
 }
 //------------------------------------------------------------------------------
 // maintenance
