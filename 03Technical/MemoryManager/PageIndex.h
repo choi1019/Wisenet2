@@ -18,11 +18,17 @@ public:
 	void operator delete(void* pObject, void *s_pMemeoryAllocated, const char* sMessage);
 	
 private:
+	class Slot {
+		public:
+			Slot* m_pNext;
+	};
+
 	unsigned m_index;
 	Page* m_pPage;
 
 	bool m_bAllocated;
 	unsigned m_numAllocated;
+
 	SlotList *m_pSlotList;
 	PageIndex *m_pSibling;
 
@@ -35,14 +41,32 @@ public:
 	Page* GetPPage() { return this->m_pPage; }
 	bool IsAllocated() { return this->m_bAllocated; }
 	void SetIsAllocated(bool bAllocated) { this->m_bAllocated = bAllocated; }
-	// for generators
 	unsigned GetNumAllocated() { return this->m_numAllocated; }
 	void SetNumAllocated(size_t numAllocated) { this->m_numAllocated = numAllocated; }
+
+	// for generators
 	void SetPSlotList(SlotList *pSlotList) { m_pSlotList = pSlotList; }
 	SlotList *GetPSlotList() { return this->m_pSlotList; }
-
+	void *GetPSlotHead() { return this->m_pSlotHead; }
+	void SetPSlotHead(void *pSlotHead) { m_pSlotHead = pSlotHead; }
 	void SetPSibling(PageIndex *pSibling) { m_pSibling = pSibling; }
 	PageIndex *GetPSibling() { return this->m_pSibling; }
+
+	void* GenerateSlots(int szSlot) {
+		int szPage = SlotInfo::s_pPageList->GetSzPage();
+		int numMaxSlotInfoChunks = szPage / szSlot;
+		// for SlotInfo
+		// pPageIndex->SetNumSlots(numMaxSlotInfoChunks);
+
+		Slot* pPrevious = nullptr;
+		Slot* pCurrent = (Slot*)this->GetPPage();
+		for (int i = 0; i < numMaxSlotInfoChunks; i++) {
+			pCurrent->m_pNext = (Slot*)((size_t)pCurrent + szSlot);
+			pPrevious = pCurrent;
+			pCurrent = pCurrent->m_pNext;
+		}
+		pPrevious->m_pNext = nullptr;
+	}
 
 	void SetNumSlots(int numSlots) { 
 		m_numSlotsAllocated = numSlots;
@@ -53,8 +77,6 @@ public:
 	void AllocateASlot() { --m_numSlotsCurrent; }
 	void DelocateASlot() { ++m_numSlotsCurrent;	}
 	bool IsGarbage() { return (m_numSlotsCurrent == m_numSlotsAllocated)? true: false; }
-	void *GetPSlotHead() { return this->m_pSlotHead; }
-	void SetPSlotHead(void *pSlotHead) { m_pSlotHead = pSlotHead; }
 
 public:
 	PageIndex(

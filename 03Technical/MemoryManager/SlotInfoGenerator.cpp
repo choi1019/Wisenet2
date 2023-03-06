@@ -9,7 +9,7 @@
 PageIndex *SlotInfoGenerator::s_pPageIndexHead = nullptr;
 
 void* SlotInfoGenerator::operator new(size_t szThis, void* PMemoryAllocated, const char* sMessage) {
-    //s_pSlotInfoChunktHead = nullptr;
+    s_pPageIndexHead = nullptr;
     return PMemoryAllocated;
 }
 
@@ -37,22 +37,9 @@ void SlotInfoGenerator::Finalize() {
 //------------------------------------------------------------------------------
 void SlotInfoGenerator::GenerateSlotInfoChunks() {
     PageIndex *pPageIndex = SlotInfo::s_pPageList->AllocatePages(1, nullptr);
-
-    int szSlotInfo = sizeof(SlotInfo);
-    int szPage = SlotInfo::s_pPageList->GetSzPage();
-    int numMaxSlotInfoChunks = szPage / szSlotInfo;
-    // for SlotInfo
-    // pPageIndex->SetNumSlots(numMaxSlotInfoChunks);
-
-    s_pSlotInfoChunktHead = (SlotInfoChunk*)pPageIndex->GetPPage();;
-    SlotInfoChunk* pPrevious = nullptr;
-    SlotInfoChunk* pCurrent = s_pSlotInfoChunktHead;
-    for (int i = 0; i < numMaxSlotInfoChunks; i++) {
-        pCurrent->pNext = (SlotInfoChunk*)((size_t)pCurrent + szSlotInfo);
-        pPrevious = pCurrent;
-        pCurrent = pCurrent->pNext;
-    }
-    pPrevious->pNext = nullptr;
+    pPageIndex->GenerateSlots(sizeof(SlotInfo));
+    pPageIndex->SetPSibling(s_pPageIndexHead);
+    s_pPageIndexHead->SetPSibling(pPageIndex);
 }
 
 void* SlotInfoGenerator::Malloc(size_t szObject, const char* sMessage) {
