@@ -24,6 +24,7 @@ private:
 	bool m_bAllocated;
 	unsigned m_numAllocated;
 	SlotList *m_pSlotList;
+	PageIndex *m_pSibling;
 
 	int m_numSlotsAllocated;
 	int m_numSlotsCurrent;
@@ -34,10 +35,14 @@ public:
 	Page* GetPPage() { return this->m_pPage; }
 	bool IsAllocated() { return this->m_bAllocated; }
 	void SetIsAllocated(bool bAllocated) { this->m_bAllocated = bAllocated; }
+	// for generators
 	unsigned GetNumAllocated() { return this->m_numAllocated; }
 	void SetNumAllocated(size_t numAllocated) { this->m_numAllocated = numAllocated; }
 	void SetPSlotList(SlotList *pSlotList) { m_pSlotList = pSlotList; }
 	SlotList *GetPSlotList() { return this->m_pSlotList; }
+
+	void SetPSibling(PageIndex *pSibling) { m_pSibling = pSibling; }
+	PageIndex *GetPSibling() { return this->m_pSibling; }
 
 	void SetNumSlots(int numSlots) { 
 		m_numSlotsAllocated = numSlots;

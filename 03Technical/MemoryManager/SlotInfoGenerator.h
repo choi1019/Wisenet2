@@ -21,7 +21,8 @@ public:
 		eEnd
 	};
 
-	static SlotInfoChunk *s_pSlotInfoChunktHead;
+	//static SlotInfoChunk *s_pSlotInfoChunktHead;
+	static PageIndex *s_pPageIndexHead;
 
 	// static SlotInfo** s_apSlotInfo;
 	void* operator new(size_t szThis, void* PMemoryAllocated, const char* sMessage);

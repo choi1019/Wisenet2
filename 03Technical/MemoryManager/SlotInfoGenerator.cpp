@@ -5,10 +5,11 @@
 #include <03Technical/MemoryManager/SlotInfo.h>
 
 //------------------------------------------------------------------------------
-SlotInfoChunk *SlotInfoGenerator::s_pSlotInfoChunktHead = nullptr;
+//SlotInfoChunk *SlotInfoGenerator::s_pSlotInfoChunktHead = nullptr;
+PageIndex *SlotInfoGenerator::s_pPageIndexHead = nullptr;
 
 void* SlotInfoGenerator::operator new(size_t szThis, void* PMemoryAllocated, const char* sMessage) {
-    s_pSlotInfoChunktHead = nullptr;
+    //s_pSlotInfoChunktHead = nullptr;
     return PMemoryAllocated;
 }
 
