@@ -6,144 +6,148 @@
 
 #include "Collection.h"
 
-template <class KEYTYPE, class VALUETYPE>
-class MapPair : public ValueObject {
-public:
-	KEYTYPE first;
-	VALUETYPE second;
-	
-	MapPair() { 
-		first = KEYTYPE (); 
-		second = VALUETYPE();
-	}
-	MapPair(KEYTYPE key, VALUETYPE value) : first(key), second(value) {}
-	inline bool operator==(const MapPair& rhs) { return (first == rhs.first && second == rhs.second); }
-	inline bool operator!=(const MapPair& rhs) { return !(first == rhs.first && second == rhs.second); }
-};
+namespace wisenet {
+	template <class KEYTYPE, class VALUETYPE>
+	class MapPair : public ValueObject {
+	public:
+		KEYTYPE first;
+		VALUETYPE second;
+		
+		MapPair() { 
+			first = KEYTYPE (); 
+			second = VALUETYPE();
+		}
+		MapPair(KEYTYPE key, VALUETYPE value) : first(key), second(value) {}
+		inline bool operator==(const MapPair& rhs) { return (first == rhs.first && second == rhs.second); }
+		inline bool operator!=(const MapPair& rhs) { return !(first == rhs.first && second == rhs.second); }
+	};
 
-template <class KEYTYPE, class VALUETYPE>
-class MapIterator : public ValueObject {
-private:
-	MapPair<KEYTYPE, VALUETYPE>* pElement;
-public:
-	MapIterator(MapPair<KEYTYPE, VALUETYPE>* pElement) : pElement(pElement) {}
-	MapIterator() : pElement(nullptr) {}
+	template <class KEYTYPE, class VALUETYPE>
+	class MapIterator : public ValueObject {
+	private:
+		MapPair<KEYTYPE, VALUETYPE>* pElement;
+	public:
+		MapIterator(MapPair<KEYTYPE, VALUETYPE>* pElement) : pElement(pElement) {}
+		MapIterator() : pElement(nullptr) {}
 
-	inline MapIterator operator++() {
-		pElement++;
-		return pElement;
-	}
-	inline MapIterator operator++(int) {
-		MapIterator current = pElement; 
-		pElement++;
-		return current;
-	}
-	inline MapIterator operator+(const int i) {	return pElement + i; }
-	inline MapIterator operator-(const int i) { return pElement - i; }
-	inline MapPair<KEYTYPE, VALUETYPE>& operator*() { return *pElement; }
-	inline MapPair<KEYTYPE, VALUETYPE>* operator->() { return pElement; }
-	inline bool operator==(const MapIterator& rhs) { return pElement == rhs.pElement; }
-	inline bool operator!=(const MapIterator& rhs) { return pElement != rhs.pElement; }
-	inline bool operator=(const MapIterator& rhs) { return pElement = rhs.pElement; }
-};
+		inline MapIterator operator++() {
+			pElement++;
+			return pElement;
+		}
+		inline MapIterator operator++(int) {
+			MapIterator current = pElement; 
+			pElement++;
+			return current;
+		}
+		inline MapIterator operator+(const int i) {	return pElement + i; }
+		inline MapIterator operator-(const int i) { return pElement - i; }
+		inline MapPair<KEYTYPE, VALUETYPE>& operator*() { return *pElement; }
+		inline MapPair<KEYTYPE, VALUETYPE>* operator->() { return pElement; }
+		inline bool operator==(const MapIterator& rhs) { return pElement == rhs.pElement; }
+		inline bool operator!=(const MapIterator& rhs) { return pElement != rhs.pElement; }
+		inline bool operator=(const MapIterator& rhs) { return pElement = rhs.pElement; }
+	};
 
-template <class KEYTYPE, class VALUETYPE, int MAXLENGTH = 100>
-class Map: public Collection {
-private:
-	int length;
-	MapPair<KEYTYPE, VALUETYPE> elements[MAXLENGTH];
+	template <class KEYTYPE, class VALUETYPE, int MAXLENGTH = 100>
+	class Map: public Collection {
+	private:
+		int length;
+		MapPair<KEYTYPE, VALUETYPE> elements[MAXLENGTH];
 
-public:
-	typedef MapIterator<KEYTYPE, VALUETYPE> Iterator;
-	Map(int nClassId = _Map_Id, const char *pcClassName = _Map_Name) 
-		: Collection(nClassId, pcClassName)
-		, elements()
-		, length(0) {}
-	virtual ~Map() {}
+	public:
+		typedef MapIterator<KEYTYPE, VALUETYPE> Iterator;
+		Map(int nClassId = _Map_Id, const char *pcClassName = _Map_Name) 
+			: Collection(nClassId, pcClassName)
+			, elements()
+			, length(0) {}
+		virtual ~Map() {}
 
-	virtual void Initialize() {	Collection::Initialize(); }
-	virtual void Finalize() { Collection::Finalize(); }
+		virtual void Initialize() {	Collection::Initialize(); }
+		virtual void Finalize() { Collection::Finalize(); }
 
-	inline Iterator begin() { return Iterator(this->elements); }
-	inline Iterator end() { return Iterator(this->elements + this->length); }
+		inline Iterator begin() { return Iterator(this->elements); }
+		inline Iterator end() { return Iterator(this->elements + this->length); }
 
-	inline int Size() const { return this->length; }
-	inline int Maxsize() const { return MAXLENGTH; }
-	inline bool Empty() { return (length==0)? true: false; }
-	inline void Clear() { 
-		this->length = 0; 
-	}
-	inline Iterator First() { return Iterator(this->elements); }
+		inline int Size() const { return this->length; }
+		inline int Maxsize() const { return MAXLENGTH; }
+		inline bool Empty() { return (length==0)? true: false; }
+		inline void Clear() { 
+			this->length = 0; 
+		}
+		inline Iterator First() { return Iterator(this->elements); }
 
-	inline Iterator Find(KEYTYPE key) 
-	{
-		Iterator itr = begin();
-		for ( ; itr != end(); ++itr) {
-			if (itr->first == key) {
-				return itr;
+		inline Iterator Find(KEYTYPE key) 
+		{
+			Iterator itr = begin();
+			for ( ; itr != end(); ++itr) {
+				if (itr->first == key) {
+					return itr;
+				}
+			}
+			return itr;
+		}
+
+		inline bool Remove(KEYTYPE key) {
+			Iterator itrFound = begin();
+			for (; itrFound != end(); ++itrFound) {
+				if (itrFound->first == key) {
+					break;
+				}
+			}
+			// not found
+			if (itrFound == this->end()) {
+				return false;
+			} 
+			// found, remove
+			else {
+				for (; itrFound != end() - 1; ++itrFound) {
+					Iterator itrFoundNext = itrFound + 1;
+					itrFound->first = itrFoundNext->first;
+					itrFound->second = itrFoundNext->second;
+				}
+				this->length--;
+				return true;
 			}
 		}
-		return itr;
-	}
 
-	inline bool Remove(KEYTYPE key) {
-		Iterator itrFound = begin();
-		for (; itrFound != end(); ++itrFound) {
-			if (itrFound->first == key) {
-				break;
+		inline bool Add(MapPair<KEYTYPE, VALUETYPE>  mapPair) {
+			if (this->length == MAXLENGTH) {
+	//			throw Exception((int)EError::_eIndexOverflow, "Map", "Add", "eOverFlow");
+				return false;
 			}
-		}
-		// not found
-		if (itrFound == this->end()) {
-			return false;
-		} 
-		// found, remove
-		else {
-			for (; itrFound != end() - 1; ++itrFound) {
-				Iterator itrFoundNext = itrFound + 1;
-				itrFound->first = itrFoundNext->first;
-				itrFound->second = itrFoundNext->second;
+			Iterator itr = this->Find(mapPair.first);
+
+			// found, do not add
+			if (itr != this->end()) {
+				return false;
 			}
-			this->length--;
+			this->elements[this->length] = mapPair;
+			this->length++;
 			return true;
 		}
-	}
 
-	inline bool Add(MapPair<KEYTYPE, VALUETYPE>  mapPair) {
-		if (this->length == MAXLENGTH) {
-//			throw Exception((int)EError::_eIndexOverflow, "Map", "Add", "eOverFlow");
-			return false;
+		inline bool Add(const KEYTYPE& key, VALUETYPE& element)
+		{
+			MapPair<KEYTYPE, VALUETYPE>  mapPair(key, element);
+			return Add(mapPair);
 		}
-		Iterator itr = this->Find(mapPair.first);
 
-		// found, do not add
-		if (itr != this->end()) {
-			return false;
-		}
-		this->elements[this->length] = mapPair;
-		this->length++;
-		return true;
-	}
-
-	inline bool Add(const KEYTYPE& key, VALUETYPE& element)
-	{
-		MapPair<KEYTYPE, VALUETYPE>  mapPair(key, element);
-		return Add(mapPair);
-	}
-
-	VALUETYPE& operator[](const KEYTYPE& key)
-	{
-		Iterator itr = begin();
-		for ( ; itr != end(); ++itr) {
-			if (itr->first == key) {
+		VALUETYPE& operator[](const KEYTYPE& key)
+		{
+			Iterator itr = begin();
+			for ( ; itr != end(); ++itr) {
+				if (itr->first == key) {
+					return itr->second;
+				}
+			}
+			if(itr != this->end()) {
 				return itr->second;
 			}
-		}
-		if(itr != this->end()) {
+			itr->first = key;
+			this->length++;
 			return itr->second;
 		}
-		itr->first = key;
-		this->length++;
-		return itr->second;
-	}
-};
+	};
+}
+
+using namespace wisenet;

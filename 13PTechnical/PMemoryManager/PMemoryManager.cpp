@@ -45,7 +45,6 @@ void PMemoryManager::Allocate(size_t szSystemMemory, size_t szApplicationMemory,
             ValueObject::s_pMemory = s_pMemoryDynamic;
             BaseObject::s_pMemory = s_pMemoryDynamic;
             //------------------------------------------------------------------
-            SHOW_DYNAMIC("PMemoryDynamic::Allocate");
 
         MLOG_FOOTER("PMemoryManager::Allocate");
     } catch (Exception& exception) {
@@ -56,8 +55,6 @@ void PMemoryManager::Allocate(size_t szSystemMemory, size_t szApplicationMemory,
 void PMemoryManager::Delocate() {
     try {
         MLOG_HEADER("PMemoryManager::Delocate");
-
-            SHOW_DYNAMIC("PMemoryDynamic::Delocate");
             s_pMemoryDynamic->Finalize();
             delete s_pMemoryDynamic;
             delete[] s_pApplicationMemeory;

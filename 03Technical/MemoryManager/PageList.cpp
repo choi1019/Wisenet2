@@ -37,7 +37,7 @@ size_t PageList::Initialize(void *pMemoryAllocated, size_t szMemoryAllocated, si
     m_pMemoryCurrent = m_pMemoryAllocated;
     m_szMemoryCurrent = m_szMemoryAllocated;
     if (m_szMemoryCurrent < (sizeof(PageIndex*) + sizeof(PageIndex) + m_szPage)) {
-        throw Exception((unsigned)(IMemory::EException::_eMemoryAllocatedIsSmallerThanAPage)
+        throw Exception((unsigned)(IMemory::EException::_eNoMorePage)
                             , "PageList", "PageList", "MemoryTooSmall");
     }
 

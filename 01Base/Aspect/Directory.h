@@ -28,7 +28,6 @@ private:
 	EType m_eType;
 
 public:
-	static Directory s_dirClasses;
 	static Directory s_dirComponents;
 	static Directory s_dirEvents;
 	static Directory s_dirExceptions;
@@ -54,7 +53,6 @@ public:
 	void Show(const char* pcTitle);
 };
 
-#define SHOW_CLASSNAME(OBJECTID) Directory::s_dirClasses[OBJECTID]
 #define SHOW_COMPONENTNAME(COMPONENTID) Directory::s_dirComponents[COMPONENTID]
 
 #define REGISTER_EVENT(COMPONENTNAME, EVENTTYPE) Directory::s_dirEvents[(int)COMPONENTNAME::EEventType::EVENTTYPE] = "EVENTTYPE"

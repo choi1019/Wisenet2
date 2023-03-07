@@ -140,8 +140,6 @@ void* SlotList::Malloc(size_t szObject, const char* sMessage) {
         this->SetPSibling(pTargetSlotList);        
     }
     Slot *pTargetSlot = pTargetSlotList->AllocateASlot(sMessage);
-    NEW_DYNAMIC(sMessage, pTargetSlot,  "SlotList::Mallocc(szSlot, numSlots)"
-                        , pTargetSlotList->GetSzSlot(), pTargetSlotList->GetNumSlots());
     return pTargetSlot; 
 }
 
@@ -192,7 +190,6 @@ bool SlotList::Free(void* pObject) {
     while(pCurrent != nullptr) {
         if (pCurrent->GetIdxPage() == idxPage) {
             // found
-            DELETE_DYNAMIC((size_t)pObject, pCurrent->GetIdxPage());
             pCurrent->DelocateASlot((Slot *)pObject);
             if (pCurrent->IsGarbage()) {
                 pPrevious->SetPSibling(pCurrent->GetPSibling());

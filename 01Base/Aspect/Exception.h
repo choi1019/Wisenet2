@@ -66,9 +66,9 @@ public:
 };
 
 
-#if _DEBUG_EXCEPTION
-	#define EXCEPTION(EVENTID, ...) \
-		Exception((int)EVENTID, ""#EVENTID"", __PRETTY_FUNCTION__, __LINE__,  ##__VA_ARGS__);
+#if _DEBUG_E
+	#define EXCEPTION(EXCEPTIONID, ...) \
+		Exception((int)EXCEPTIONID, ""#EXCEPTIONID"", __PRETTY_FUNCTION__, __LINE__,  ##__VA_ARGS__);
 #else
 	#define EXCEPTION(COMPOENTNNAME, EVENTID, ...)
 #endif

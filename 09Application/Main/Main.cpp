@@ -25,7 +25,6 @@ Main::Main(
 	this->RegisterExceptions();
 }
 Main::~Main() {
-	Directory::s_dirClasses.Clear();
 	Directory::s_dirComponents.Clear();
 	Directory::s_dirEvents.Clear();
 	Directory::s_dirExceptions.Clear();

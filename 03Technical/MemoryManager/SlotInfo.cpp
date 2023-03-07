@@ -39,5 +39,7 @@ void SlotInfo::Finalize() {
 }
 
 void SlotInfo::Show(const char* sMessage) {
-    MLOG_NEWLINE(sMessage, ":", m_sMessage, "(pSlot=", (size_t)m_pSlot, ")-this=", (size_t)this);
+    RootObject *pRootObject = (RootObject *)m_pSlot;
+    MLOG_NEWLINE("SlotInfo::Show", 
+        m_sMessage, "::", pRootObject->GetClassName(), pRootObject->GetObjectId(), (size_t)m_pSlot);
 }

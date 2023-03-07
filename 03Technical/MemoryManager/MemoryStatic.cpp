@@ -12,7 +12,7 @@ size_t MemoryStatic::s_szCurrent = 0;
 
 void* MemoryStatic::operator new(size_t szThis, void* pMemoryAllocated, size_t szMemoryllocated, const char* sMessage) {
     if (szMemoryllocated < szThis) {
-        throw Exception((unsigned)IMemory::EException::_eNoMoreSystemMemory, "new MemoryStatic", "_eNoMoreSystemMemory");
+        throw Exception((unsigned)IMemory::EException::_eNoMoreStaticMemory, "new MemoryStatic", "_eNoMoreSystemMemory");
     }
     s_pAllocated = pMemoryAllocated;
     s_szAllocated = szMemoryllocated;
@@ -33,7 +33,6 @@ MemoryStatic::MemoryStatic(int nClassId, const char* pClassName)
 {
     // set memory manager of RootObject as this
     BaseObject::s_pMemory = this;
-    SHOW_STATIC("MemoryStatic::MemoryStatic");
 }
 MemoryStatic::~MemoryStatic() {
 //    SHOW_STATIC("MemoryStatic::~MemoryStatic");
@@ -48,7 +47,7 @@ void MemoryStatic::Finalize() {
 // methods
 void* MemoryStatic::Malloc(size_t szObject, const char* sMessage) {
     if (s_szCurrent < szObject) {
-        throw Exception((unsigned)IMemory::EException::_eNoMoreSystemMemory, sMessage, "MemoryStatic::Malloc", "_eNoMoreSystemMemory");
+        throw Exception((unsigned)IMemory::EException::_eNoMoreStaticMemory, sMessage, "MemoryStatic::Malloc", "_eNoMoreSystemMemory");
     }    
     void* pMemoryAllocated = s_pCurrent;
     s_pCurrent = (void*)((size_t)s_pCurrent + szObject);
@@ -58,7 +57,6 @@ void* MemoryStatic::Malloc(size_t szObject, const char* sMessage) {
     return pMemoryAllocated;
 }
 bool MemoryStatic::Free(void* pObject) {
-    DELETE_STATIC(pObject);
     return true;
 }
 

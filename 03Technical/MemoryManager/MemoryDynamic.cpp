@@ -152,7 +152,7 @@ bool MemoryDynamic::Free(void* pObject) {
         pCurrent = pCurrent->GetPNext();
     }
     ValueObject::s_pMemory->Show("MemoryDynamic::Free");
-    throw Exception((unsigned)IMemory::EException::_eSlotlistFreeFailed, "MemoryDynamic::Free", __LINE__);
+    throw Exception((unsigned)IMemory::EException::_eSlotListDelocationFailed, "MemoryDynamic::Free", __LINE__);
 }
 
 // maintenance

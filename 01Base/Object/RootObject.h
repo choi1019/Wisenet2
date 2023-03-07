@@ -24,7 +24,6 @@ private:
 	int 	m_uObjectId;
 	int 	m_nClassId;
 	char 	m_pcClassName[30];
-	size_t 	m_szThis;
 	EState 	m_eState;
 
 public:
@@ -33,8 +32,6 @@ public:
 	inline int GetClassId() { return this->m_nClassId; }
 	inline const char* GetClassName() { return this->m_pcClassName; }
 
-	inline size_t GetSzThis() { return this->m_szThis; }
-	inline void SetSzThis(size_t szThis) { this->m_szThis = szThis; }
 	inline EState GetEState() { return this->m_eState; }
 	inline void SetEState(EState eState) { this->m_eState = eState; }
 

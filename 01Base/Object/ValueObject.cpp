@@ -19,8 +19,8 @@ void ValueObject::operator delete[](void* pObject) {
 }
 // dummy
 void ValueObject::operator delete(void* pObject, const char* sMessage) {
-     throw Exception((unsigned)IMemory::EException::_eNotSupport, "ValueObject::delete[]", (size_t)pObject);
+     throw EXCEPTION((int)IMemory::EException::_eNotSupport, (size_t)pObject);
 }
 void ValueObject::operator delete[](void* pObject, const char* sMessage) {
-     throw Exception((unsigned)IMemory::EException::_eNotSupport, "ValueObject::delete[]", (size_t)pObject);
+     throw EXCEPTION((int)IMemory::EException::_eNotSupport, (size_t)pObject);
 }

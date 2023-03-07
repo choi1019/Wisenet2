@@ -46,7 +46,6 @@ void Component::RegisterEventTypes() {
 	Directory::s_dirEvents[(unsigned)EEventType::eStart] = "eStart";
 	Directory::s_dirEvents[(unsigned)EEventType::eStop] = "eStop";
 	Directory::s_dirEvents[(unsigned)EEventType::eRun] = "eRun";
-	ValueObject::s_pMemory->Show("Component::RegisterEventTypes");
 	Directory::s_dirEvents[(unsigned)EEventType::ePause] = "ePause";
 }
 
@@ -99,7 +98,7 @@ void Component::RemovePartAll() {
 void Component::SetPEventQueue(EventQueue* pEventQueue) {
 	this->GetPUId()->SetPEventQueue(pEventQueue);
 	SetEState(IComponent::EState::eAllocated);
-	LOG_NEWLINE("Component::SetPEventQueue", this->GetClassName(), Directory::s_dirClasses[pEventQueue->GetClassId()]);
+	LOG_NEWLINE("Component::SetPEventQueue", this->GetClassName(), pEventQueue->GetClassId());
 }
 
 void Component::AssociateAReceiver(unsigned receiverName, UId receiverUId) {

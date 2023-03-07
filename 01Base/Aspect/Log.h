@@ -105,7 +105,7 @@ public:
 	}
 	void PrintHeader() {
 		printf(
-			"\n%s<<Begin:%s %s %s %s %s %s %s"
+			"\n%s<<= %s %s %s %s %s %s %s"
 			, Aspect::GetTab()
 			, m_sObject.c_str()
 			, m_sFunction.c_str()
@@ -122,7 +122,7 @@ public:
 	void PrintFooter() {
 		this->RemoveTab();
 		printf(
-			"\n%sEnd>>%s %s %s %s %s %s %s\n"
+			"\n%s>>= %s %s %s %s %s %s %s"
 			, Aspect::GetTab()
 			, m_sObject.c_str()
 			, m_sFunction.c_str()
@@ -137,22 +137,16 @@ public:
 	}
 };
 
-#if _DEBUG
+#if _DEBUG_L
 	#define LOG_HEADER(...) Log(__VA_ARGS__).PrintHeader()
 	#define LOG_FOOTER(...) Log(__VA_ARGS__).PrintFooter()
-
-	#define LOG_HEADER0(...) Log(this->GetClassName(), __func__, ##__VA_ARGS__).PrintHeader()
-	#define LOG_FOOTER0(...) Log(this->GetClassName(), __func__, ##__VA_ARGS__).PrintFooter()
 
 	#define LOG_NEWLINE(...) Log(__VA_ARGS__).Println()
 	#define LOG(...) Log(__VA_ARGS__).Print()
 //	#define LOG_TIME(...) Log(__VA_ARGS__).PrintTime()
 #else
 	#define LOG_HEADER(CLASSNAME, ...)
-	#define LOG_FOOTER(...)
-	
-	#define LOG_HEADER0()
-	#define LOG_FOOTER0()
+	#define LOG_FOOTER(...)	
 
 	#define LOG_NEWLINE(CLASSNAME, ...)
 	#define LOG(CLASSNAME, ...)
@@ -163,53 +157,14 @@ public:
 	#define MLOG_HEADER(...) Log(__VA_ARGS__).PrintHeader()
 	#define MLOG_FOOTER(...) Log(__VA_ARGS__).PrintFooter()
 
-	#define MLOG_HEADER0(...) Log(this->GetClassName(), __func__, ##__VA_ARGS__).PrintHeader()
-	#define MLOG_FOOTER0(...) Log(this->GetClassName(), __func__, ##__VA_ARGS__).PrintFooter()
-
 	#define MLOG_NEWLINE(...) Log(__VA_ARGS__).Println()
-	#define MLOG_NEWLINE0(...) Log(this->GetClassName(), __func__, ##__VA_ARGS__).Println()
 	#define MLOG(...) Log(__VA_ARGS__).Print()
 //	#define MLOG_TIME(...) Log(__VA_ARGS__).PrintTime()
- 	#define MLOG_SHOW(TITLE, MEMORYNAME) MEMORYNAME->Show(""#TITLE"")
 #else
-	#define MLOG_HEADER(CLASSNAME, ...)
+	#define MLOG_HEADER(...)
 	#define MLOG_FOOTER(...)
-	
-	#define MLOG_HEADER0()
-	#define MLOG_FOOTER0()
 
-	#define MLOG_NEWLINE(CLASSNAME, ...)
-	#define MLOG_NEWLINE0(...)
-	#define MLOG(CLASSNAME, ...)
+	#define MLOG_NEWLINE(...)
+	#define MLOG(...)
 //	#define MLOG_TIME(...) Log(__VA_ARGS__).PrintTime()
-
-	#define MLOG_SHOW(MEMORYNAME, ...) 
-#endif
-
-#if _DEBUG_MSTATIC
-	#define NEW_STATIC(MEMORYNAME, ADDRESS, ...) Log("-STATIC::NEW: ", MEMORYNAME, (size_t)ADDRESS, ##__VA_ARGS__).Println()
-	#define DELETE_STATIC(POBJECT, ...) Log("-Static::DELETE: ", (size_t)POBJECT, ##__VA_ARGS__).Println()
-#else
-	#define NEW_STATIC(MEMORYNAME, ADDRESS, ...)
-	#define DELETE_STATIC(POBJECT, ...)
-#endif
-
-#if _DEBUG_MSTATICSHOW
-	#define SHOW_STATIC(MESSAGE) BaseObject::s_pMemory->Show(MESSAGE)
-#else
-	#define SHOW_STATIC(MESSAGE)
-#endif
-
-#if _DEBUG_MSTATIC
-	#define NEW_DYNAMIC(MEMORYNAME, ADDRESS, ...) Log("-DYNAMIC::NEW: ", MEMORYNAME, (size_t)ADDRESS, ##__VA_ARGS__).Println();
-	#define DELETE_DYNAMIC(POBJECT, IDXPAGE, ...) Log("-DYNAMIC:DELETE: ", (size_t)POBJECT, IDXPAGE, ##__VA_ARGS__).Println();
-#else
-	#define NEW_DYNAMIC(MEMORYNAME, ADDRESS, ...) 
-	#define DELETE_DYNAMIC(POBJECT, IDXPAGE, ...)
-#endif
-
-#if _DEBUG_MDYNAMICSHOW
-	#define SHOW_DYNAMIC(MESSAGE) ValueObject::s_pMemory->Show(MESSAGE)
-#else
-	#define SHOW_DYNAMIC(MESSAGE)
 #endif

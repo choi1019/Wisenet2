@@ -18,7 +18,7 @@ PMain::~PMain() {
 }
 
 void PMain::BootstrapSystem() {
-	LOG_HEADER0();
+	LOG_HEADER("PMain::BootstrapSystem");
 	// Lifecycle Manager
 	PLifecycleManager *pPLifecycleManager = new("PLifecycleManager") PLifecycleManager();
 	this->SetPLifecycleManager(pPLifecycleManager);
@@ -26,7 +26,7 @@ void PMain::BootstrapSystem() {
 	// root event
 	this->SendNoReplyEvent(this->GetUId(), (unsigned)IMain::EEventType::eInitializeAsAMain, 0, nullptr);
 
-	LOG_FOOTER0();
+	LOG_FOOTER("PMain::BootstrapSystem");
 }
 
 void PMain::RunAsAMain() {

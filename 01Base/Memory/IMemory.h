@@ -11,15 +11,18 @@ public:
 	enum class EException
 	{
 		_eBegin = _IMemory_Id,
-		_eNoMoreSystemMemory,
-		_eMemoryAllocatedIsSmallerThanAPage,
 		_eNoMorePage,
 		_eNoMoreSlot,
-		_eSlotSizeSmall,
-		_ePageIndexNotFound,
+		_eNoMoreSlotList,
+		_eNoMoreStaticMemory,
+
+		_eSlotAllocationFailed,
+		_eSlotListAllocationFailed,
+
+		_eSlotDelocationFailed,
+		_eSlotListDelocationFailed,
+
 		_eNotSupport,
-		_eSlotlistAllocationFailed,
-		_eSlotlistFreeFailed,
 		_eEnd
 	};
 
