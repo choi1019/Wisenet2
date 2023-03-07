@@ -1,16 +1,14 @@
 #include <03Technical/MemoryManager/SlotInfoGenerator.h>
 #include <01Base/Aspect/Log.h>
 #include <01Base/Aspect/Exception.h>
-#include <stdlib.h>
 #include <03Technical/MemoryManager/SlotInfo.h>
 
 //------------------------------------------------------------------------------
-//SlotInfoChunk *SlotInfoGenerator::s_pSlotInfoChunktHead = nullptr;
 PageIndex *SlotInfoGenerator::s_pPageIndexHead = nullptr;
 
-void* SlotInfoGenerator::operator new(size_t szThis, void* PMemoryAllocated, const char* sMessage) {
+void* SlotInfoGenerator::operator new(size_t szThis, void* pMemoryAllocated, const char* sMessage) {
     s_pPageIndexHead = nullptr;
-    return PMemoryAllocated;
+    return pMemoryAllocated;
 }
 void SlotInfoGenerator::operator delete(void* pObject) {    
 }
@@ -47,9 +45,9 @@ void* SlotInfoGenerator::Malloc(size_t szObject, const char* sMessage) {
     void *pSlotInfoChunk = nullptr;   
     PageIndex *pPageIndex = s_pPageIndexHead;
     while (pPageIndex != nullptr) {
-        pSlotInfoChunk = s_pPageIndexHead->AllocateASlot();
+        pSlotInfoChunk = pPageIndex->AllocateASlot();
         if (pSlotInfoChunk != nullptr) {
-            break;
+            return pSlotInfoChunk;
         }
         pPageIndex = pPageIndex->GetPSibling();
     }
@@ -75,7 +73,7 @@ bool SlotInfoGenerator::Free(void* pObject) {
                 } else {
                     pPrevious->SetPSibling(pCurrent->GetPSibling());
                 }
-                delete pCurrent;
+                SlotInfo::s_pPageList->DelocatePages(pCurrent->GetIndex()); ;
             }
             return true;
         }

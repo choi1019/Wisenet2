@@ -76,6 +76,7 @@ void PageList::Finalize() {
 
 PageIndex* PageList::AllocatePages(unsigned numPagesRequired, SlotList *pSlotList) {
     if (m_numPagesCurrent < numPagesRequired) {
+        ValueObject::s_pMemory->Show("PageList::AllocatePages");
         throw Exception((unsigned)IMemory::EException::_eNoMorePage, "Memory", "Malloc", "_eNoMorePage");
     } else {
         // if numPagesRequired > 1

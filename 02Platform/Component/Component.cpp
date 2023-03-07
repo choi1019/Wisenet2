@@ -46,6 +46,7 @@ void Component::RegisterEventTypes() {
 	Directory::s_dirEvents[(unsigned)EEventType::eStart] = "eStart";
 	Directory::s_dirEvents[(unsigned)EEventType::eStop] = "eStop";
 	Directory::s_dirEvents[(unsigned)EEventType::eRun] = "eRun";
+	ValueObject::s_pMemory->Show("Component::RegisterEventTypes");
 	Directory::s_dirEvents[(unsigned)EEventType::ePause] = "ePause";
 }
 

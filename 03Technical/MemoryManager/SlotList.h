@@ -31,19 +31,19 @@ public:
 	void operator delete(void* pObject, const char* sMessage);
 
 private:
-	int m_numPagesRequired;
-	int m_idxPage;
-	PageIndex* m_pPageIndex;
-	int m_nCountSlotLists;
-	bool m_bGarbage;
-
 	size_t m_szSlot;
+	SlotList *m_pSlotListHead;
+
+	PageIndex* m_pPageIndex;
+	int m_idxPage;
+	int m_numPagesRequired;
+
 	unsigned m_numMaxSlots;
 	unsigned m_numSlots;
 	Slot* m_pSlotHead;
 
-	// head SlotList of the same size
-	SlotList *m_pSlotListHead;
+	int m_nCountSlotLists;
+	bool m_bGarbage;
 	SlotList* m_pSibling;
 	SlotList* m_pNext;
 protected:

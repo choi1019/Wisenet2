@@ -49,26 +49,23 @@ SlotList::SlotList(size_t szSlot, SlotList *pSlotListHead, int nClassId, const c
         if (m_szSlot > m_numPagesRequired * szPage) {
             m_numPagesRequired++;
         }
-        // compute the number of slots allocatable
-        this->m_numMaxSlots = m_numPagesRequired * szPage / m_szSlot;    
-
         // allocate required number of pages
         this->m_pPageIndex = s_pPageList->AllocatePages(m_numPagesRequired, this);
         this->m_idxPage = this->m_pPageIndex->GetIndex();
 
+        // compute the number of slots allocatable
+        this->m_numMaxSlots = m_numPagesRequired * szPage / m_szSlot;
         // set the number of slots allocatable
-        this->m_numSlots = this->m_numMaxSlots;
+        this->m_numSlots = this->m_numMaxSlots;    
 
         // allocate slots
         this->m_pSlotHead = (Slot*)this->m_pPageIndex->GetPPage();
-        Slot* pPrevious = this->m_pSlotHead;
-        Slot* pCurrent = pPrevious;
-        for (int i = 0; i < m_numMaxSlots; i++) {
+        Slot* pCurrent = m_pSlotHead;
+        for (int i = 1; i < m_numMaxSlots; i++) {
             pCurrent->pNext = (Slot*)((size_t)pCurrent + m_szSlot);
-            pPrevious = pCurrent;
             pCurrent = pCurrent->pNext;
         }
-        pPrevious->pNext = nullptr;
+        pCurrent->pNext = nullptr;
     }
 }
 
@@ -90,7 +87,7 @@ void SlotList::Finalize() {
 SlotInfo* SlotList::FindSlotInfo(Slot* pSlot) {    
     SlotList *pSlotList = s_pPageList->GetPPageIndex(pSlot)->GetPSlotList();
     if (pSlotList == nullptr) {
-        return nullptr;
+        throw Exception((unsigned)IMemory::EException::_eNotSupport, "SlotList::FindSlotInfo", "_eNotSupport");
     }
     SlotInfo *pPrevious = nullptr;
     SlotInfo *pCurrent = pSlotList->GetPSlotInfoHead();    
@@ -101,14 +98,14 @@ SlotInfo* SlotList::FindSlotInfo(Slot* pSlot) {
         pPrevious = pCurrent;
         pCurrent = pCurrent->GetPNext();
     }
-    return nullptr;
+    throw Exception((unsigned)IMemory::EException::_eNotSupport, "SlotList::FindSlotInfo", "_eNotSupport");
 }
 
 //-----------------------------------------------------------------------------------
 void SlotList::AllocateASlotInfo(Slot *pSlot, const char* sMessage) {
     SlotInfo *pSlotInfo = new("SlotInfo") SlotInfo(pSlot, sMessage, this);
     if (m_pSlotListHead == nullptr) {
-        return;
+        throw Exception((unsigned)IMemory::EException::_eNotSupport, "SlotList::AllocateASlotInfo", "_eNotSupport");
     }
     pSlotInfo->SetPNext(m_pSlotInfoHead);
     m_pSlotInfoHead = pSlotInfo;
@@ -148,10 +145,11 @@ void* SlotList::Malloc(size_t szObject, const char* sMessage) {
 }
 
 //-----------------------------------------------------------------------------------
-void SlotList::DelocateASlotInfo(Slot* pSlot) {    
+void SlotList::DelocateASlotInfo(Slot* pSlot) {  
+    pSlot->pNext = nullptr;  
     SlotList *pSlotList = s_pPageList->GetPPageIndex(pSlot)->GetPSlotList();
     if (pSlotList == nullptr) {
-        return;
+        throw Exception((unsigned)IMemory::EException::_eNotSupport, "SlotList::DelocateASlotInfo", "_eNotSupport");
     }
     SlotInfo *pPrevious = nullptr;
     SlotInfo *pCurrent = pSlotList->GetPSlotInfoHead();    
@@ -207,7 +205,7 @@ bool SlotList::Free(void* pObject) {
         pPrevious = pCurrent;
         pCurrent = pCurrent->GetPSibling();
     }
-    return false;
+    throw Exception((unsigned)IMemory::EException::_eNotSupport, "SlotList::Free", "_eNotSupport");
 }
 
 //-----------------------------------------------------------------------------------

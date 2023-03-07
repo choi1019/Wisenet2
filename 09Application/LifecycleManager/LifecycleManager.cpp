@@ -71,6 +71,7 @@ Component* LifecycleManager::FindAComponent(UId uId) {
 /////////////////////////////////////////////////////////////////////////
 void LifecycleManager::RegisterAScheduler(int name, Scheduler* pScheduler) {
 	LOG_NEWLINE("- RegisterAScheduler: ", name, Directory::s_dirComponents[pScheduler->GetComponentId()]);
+	ValueObject::s_pMemory->Show("LifecycleManager::RegisterAScheduler");
 	this->m_mapSchedulers[name] = pScheduler;
 	this->RegisterAComponent(name, pScheduler);
 }
@@ -214,6 +215,7 @@ void LifecycleManager::AllocateComponents(Event* pEvent) {
 /////////////////////////////////////////////////////////////////////////
 void LifecycleManager::AssociateASenderNAReceiver(int senderName, int receiverId, int receiverName) {
 	this->m_mapSendersNReceivers[MapPairSender(senderName, receiverId)] = receiverName;
+	ValueObject::s_pMemory->Show("LifecycleManager::AssociateASenderNAReceiver");
 	Component* pSenderComponent = this->m_mapComponents[senderName];
 	Component* pReceiverComponent = this->m_mapComponents[receiverName];
 

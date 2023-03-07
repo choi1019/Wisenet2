@@ -16,7 +16,6 @@ public:
 		eEnd
 	};
 
-	//static SlotInfoChunk *s_pSlotInfoChunktHead;
 	static PageIndex *s_pPageIndexHead;
 
 	// static SlotInfo** s_apSlotInfo;
@@ -30,6 +29,7 @@ public:
 	~SlotInfoGenerator();
 	void Initialize();
 	void Finalize();
+	
 	void *AllocateAPage();
 	void* Malloc(size_t szObject, const char* sMessage);
 	bool Free(void* pObject);

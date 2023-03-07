@@ -50,18 +50,21 @@ void PageIndex::Show(const char* pTitle) {
 
 void PageIndex::AllocateSlots(int szSlot) {
     int szPage = SlotInfo::s_pPageList->GetSzPage();
-    m_pSlotHead = (Slot*)this->GetPPage();
-    m_numSlotsAllocated = szPage / szSlot;
-    m_numSlotsCurrent = m_numSlotsAllocated;
-    
-    Slot* pPrevious = nullptr;
-    Slot* pCurrent = m_pSlotHead;
-    for (int i = 0; i < m_numSlotsAllocated; i++) {
-        pCurrent->m_pNext = (Slot*)((size_t)pCurrent + szSlot);
-        pPrevious = pCurrent;
-        pCurrent = pCurrent->m_pNext;
+    if (szSlot > szPage) {
+        throw Exception(-1, "AllocateSlots");
+    } else {
+        m_numSlotsAllocated = szPage / szSlot;
+        m_numSlotsCurrent = m_numSlotsAllocated;
+        
+        m_pSlotHead = (Slot*)this->GetPPage();
+        Slot* pCurrent = m_pSlotHead;
+        for (int i = 1; i < m_numSlotsAllocated; i++) {
+            pCurrent->m_pNext = (Slot*)((size_t)pCurrent + szSlot);
+            pCurrent = pCurrent->m_pNext;
+        }
+        pCurrent->m_pNext = nullptr;
+
     }
-    pPrevious->m_pNext = nullptr;
 }
 void *PageIndex::AllocateASlot() { 
     void *pSlot = nullptr;
@@ -74,6 +77,7 @@ void *PageIndex::AllocateASlot() {
 }
 void PageIndex::DelocateASlot(void *pObject) { 
     Slot *pSlot = (Slot*)pObject;
+    pSlot->m_pNext = nullptr;
     if (m_pSlotHead == nullptr) {
         m_pSlotHead = pSlot;
     } else {

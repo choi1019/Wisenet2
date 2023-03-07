@@ -26,8 +26,9 @@ private:
 	// attributes
 	unsigned m_szPage;
 	unsigned m_szUnit;
-	SlotList* m_pSlotListHead;
 	unsigned m_szUnitExponentOf2;
+
+	SlotList* m_pSlotListHead;
 	
 protected:
 	virtual void* Malloc(size_t szObject, const char* sMessage);
