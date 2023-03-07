@@ -30,7 +30,7 @@ public:
 	void Initialize();
 	void Finalize();
 
-	void *AllocateAPage();
+	PageIndex *AllocateAPage();
 	void* Malloc(size_t szObject, const char* sMessage);
 	bool Free(void* pObject);
 

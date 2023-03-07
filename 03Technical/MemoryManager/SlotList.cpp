@@ -66,6 +66,7 @@ SlotList::SlotList(size_t szSlot, SlotList *pSlotListHead, int nClassId, const c
             pCurrent = pCurrent->pNext;
         }
         pCurrent->pNext = nullptr;
+
     }
 }
 
@@ -87,7 +88,7 @@ void SlotList::Finalize() {
 SlotInfo* SlotList::FindSlotInfo(Slot* pSlot) {    
     SlotList *pSlotList = s_pPageList->GetPPageIndex(pSlot)->GetPSlotList();
     if (pSlotList == nullptr) {
-        throw Exception((unsigned)IMemory::EException::_eNotSupport, "SlotList::FindSlotInfo", "_eNotSupport");
+        return nullptr;
     }
     SlotInfo *pPrevious = nullptr;
     SlotInfo *pCurrent = pSlotList->GetPSlotInfoHead();    
@@ -98,14 +99,14 @@ SlotInfo* SlotList::FindSlotInfo(Slot* pSlot) {
         pPrevious = pCurrent;
         pCurrent = pCurrent->GetPNext();
     }
-    throw Exception((unsigned)IMemory::EException::_eNotSupport, "SlotList::FindSlotInfo", "_eNotSupport");
+    return nullptr;
 }
 
 //-----------------------------------------------------------------------------------
 void SlotList::AllocateASlotInfo(Slot *pSlot, const char* sMessage) {
     SlotInfo *pSlotInfo = new("SlotInfo") SlotInfo(pSlot, sMessage, this);
     if (m_pSlotListHead == nullptr) {
-        throw Exception((unsigned)IMemory::EException::_eNotSupport, "SlotList::AllocateASlotInfo", "_eNotSupport");
+        return;
     }
     pSlotInfo->SetPNext(m_pSlotInfoHead);
     m_pSlotInfoHead = pSlotInfo;
@@ -145,11 +146,10 @@ void* SlotList::Malloc(size_t szObject, const char* sMessage) {
 }
 
 //-----------------------------------------------------------------------------------
-void SlotList::DelocateASlotInfo(Slot* pSlot) {  
-    pSlot->pNext = nullptr;  
+void SlotList::DelocateASlotInfo(Slot* pSlot) {    
     SlotList *pSlotList = s_pPageList->GetPPageIndex(pSlot)->GetPSlotList();
     if (pSlotList == nullptr) {
-        throw Exception((unsigned)IMemory::EException::_eNotSupport, "SlotList::DelocateASlotInfo", "_eNotSupport");
+        return;
     }
     SlotInfo *pPrevious = nullptr;
     SlotInfo *pCurrent = pSlotList->GetPSlotInfoHead();    
@@ -205,7 +205,7 @@ bool SlotList::Free(void* pObject) {
         pPrevious = pCurrent;
         pCurrent = pCurrent->GetPSibling();
     }
-    throw Exception((unsigned)IMemory::EException::_eNotSupport, "SlotList::Free", "_eNotSupport");
+    return false;
 }
 
 //-----------------------------------------------------------------------------------

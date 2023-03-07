@@ -30,14 +30,12 @@ void SlotListGenerator::Finalize() {
     MemoryObject::Finalize();
 }
 //------------------------------------------------------------------------------
-void *SlotListGenerator::AllocateAPage() {
+PageIndex *SlotListGenerator::AllocateAPage() {
     PageIndex *pPageIndex = SlotList::s_pPageList->AllocatePages(1, nullptr);
     pPageIndex->AllocateSlots(sizeof(SlotList));
     pPageIndex->SetPSibling(s_pPageIndexHead);
     s_pPageIndexHead = pPageIndex;
-
-    void* pSlotListChunk = pPageIndex->AllocateASlot();
-    return pSlotListChunk;
+    return pPageIndex;
 }
 
 void* SlotListGenerator::Malloc(size_t szObject, const char* sMessage) {
@@ -51,7 +49,8 @@ void* SlotListGenerator::Malloc(size_t szObject, const char* sMessage) {
         pPageIndex = pPageIndex->GetPSibling();
     }
     if (pSlotListChunk == nullptr) {
-        pSlotListChunk = AllocateAPage();
+        pPageIndex = AllocateAPage();
+        pSlotListChunk = pPageIndex->AllocateASlot();
     }
     return pSlotListChunk; 
 }
@@ -78,9 +77,18 @@ bool SlotListGenerator::Free(void* pObject) {
         pPrevious = pCurrent;
         pCurrent = pCurrent->GetPSibling();
     }
-    return false;
+    throw Exception((unsigned)IMemory::EException::_eNotSupport, "SlotListGenerator::Free", "_eNotSupport");
 }
 
 // maintenance
-void SlotListGenerator::Show(const char* sMessage) { 
+void SlotListGenerator::Show(const char* sMessage) {
+    PageIndex *pPageIndex = s_pPageIndexHead;
+    while (pPageIndex != nullptr) {
+        SlotInfo *pSlotInfo = (SlotInfo*)pPageIndex->GetPSlotHead();
+        while (pSlotInfo != nullptr) {
+            pSlotInfo->Show(sMessage);
+            pSlotInfo = pSlotInfo->GetPNext();
+        }
+        pPageIndex = pPageIndex->GetPSibling();
+    }
 };

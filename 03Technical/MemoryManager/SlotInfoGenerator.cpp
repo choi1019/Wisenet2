@@ -84,5 +84,14 @@ bool SlotInfoGenerator::Free(void* pObject) {
 }
 //------------------------------------------------------------------------------
 // maintenance
-void SlotInfoGenerator::Show(const char* sMessage) { 
+void SlotInfoGenerator::Show(const char* sMessage) {
+    PageIndex *pPageIndex = s_pPageIndexHead;
+    while (pPageIndex != nullptr) {
+        SlotInfo *pSlotInfo = (SlotInfo*)pPageIndex->GetPSlotHead();
+        while (pSlotInfo != nullptr) {
+            pSlotInfo->Show(sMessage);
+            pSlotInfo = pSlotInfo->GetPNext();
+        }
+        pPageIndex = pPageIndex->GetPSibling();
+    }
 };

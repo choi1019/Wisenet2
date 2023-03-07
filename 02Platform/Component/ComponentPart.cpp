@@ -69,6 +69,10 @@ void ComponentPart::EndSequence(Event*pEvent) {
 			if (pEvent->IsSynchronous()) {
 				ReplyEvent(pEvent);
 			} else {
+				LOG_NEWLINE("**Delete: "
+						, pEvent->GetType(), Directory::s_dirEvents[pEvent->GetType()]
+						, pEvent->GetUIdSource().GetComponentId(), Directory::s_dirComponents[pEvent->GetUIdSource().GetComponentId()]
+						, pEvent->GetUIdTarget().GetComponentId(), Directory::s_dirComponents[pEvent->GetUIdTarget().GetComponentId()]);
 				delete pEvent;					
 			}
 		}
