@@ -42,7 +42,7 @@ void PMain::Finalize() {}
 
 ///////////////////////////////////////////////
 int PMain::main_ex() {
-	PMemoryManager::Allocate(SIZE_MEMORY_SYSTEM, SIZE_MEMORY_APPLICATION, SIZE_PAGE, SIZE_SLOT_UNIT);
+	PMemoryManager::Allocate(SIZE_MEMORY_APPLICATION, SIZE_PAGE, SIZE_SLOT_UNIT);
 
 	PMain* pPMain = new("PMain") PMain();
 	pPMain->BootstrapSystem();

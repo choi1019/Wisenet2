@@ -1,10 +1,11 @@
 #include <03Technical/MemoryManager/MemoryDynamic.h>
 
-#include <03Technical/MemoryManager/SlotInfoGenerator.h>
+#include <03Technical/MemoryManager/SlotGenerator.h>
+//#include <03Technical/MemoryManager/SlotInfoGenerator.h>
 #include <03Technical/MemoryManager/SlotInfo.h>
 
 #include <03Technical/MemoryManager/SlotList.h>
-#include <03Technical/MemoryManager/SlotListGenerator.h>
+//#include <03Technical/MemoryManager/SlotListGenerator.h>
 
 #include <01Base/Object/ValueObject.h>
 #include <01Base/Aspect/Exception.h>
@@ -62,23 +63,23 @@ void MemoryDynamic::Initialize(int szPage, int szSlotUnit) {
         s_pMemoryCurrent = (void *)((size_t)s_pMemoryCurrent + sizeof(PageList));
         s_szMemoryCurrent = s_szMemoryAllocated - sizeof(PageList);
     // SlotListGenerator
-    SlotList::s_pMemory = new(s_pMemoryCurrent, "SlotListGenerator") SlotListGenerator();
-        s_pMemoryCurrent = (void *)((size_t)s_pMemoryCurrent + sizeof(SlotListGenerator));
-        s_szMemoryCurrent = s_szMemoryAllocated - sizeof(SlotListGenerator);
+    SlotList::s_pMemory = new(s_pMemoryCurrent, "SlotListGenerator") SlotGenerator();
+        s_pMemoryCurrent = (void *)((size_t)s_pMemoryCurrent + sizeof(SlotGenerator));
+        s_szMemoryCurrent = s_szMemoryAllocated - sizeof(SlotGenerator);
     // SlotInfoGenerator
-    SlotInfo::s_pMemory = new(s_pMemoryCurrent, "SlotInfoGenerator") SlotInfoGenerator();
-        s_pMemoryCurrent = (void *)((size_t)s_pMemoryCurrent + sizeof(SlotInfoGenerator));
-        s_szMemoryCurrent = s_szMemoryAllocated - sizeof(SlotInfoGenerator);   
+    SlotInfo::s_pMemory = new(s_pMemoryCurrent, "SlotInfoGenerator") SlotGenerator();
+        s_pMemoryCurrent = (void *)((size_t)s_pMemoryCurrent + sizeof(SlotGenerator));
+        s_szMemoryCurrent = s_szMemoryAllocated - sizeof(SlotGenerator);   
 
+    // associate
+    SlotGenerator::s_pPageList = MemoryDynamic::s_pPageList;
+    SlotList::s_pPageList = MemoryDynamic::s_pPageList;
+    SlotInfo::s_pPageList = MemoryDynamic::s_pPageList;
+    
     // PageIndex, Page
     size_t szAllocated = s_pPageList->Initialize(s_pMemoryCurrent, s_szMemoryCurrent, szPage);
         s_pMemoryCurrent = (void *)((size_t)s_pMemoryCurrent + szAllocated);
         s_szMemoryCurrent = s_szMemoryCurrent - szAllocated;
-
-    // associate
-    SlotList::s_pPageList = MemoryDynamic::s_pPageList;
-    SlotInfo::s_pPageList = MemoryDynamic::s_pPageList;
-
     // create a head SlotList
     this->m_pSlotListHead = new("SlotList-Head") SlotList(0, nullptr);
 }

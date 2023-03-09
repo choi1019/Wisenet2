@@ -10,19 +10,14 @@
 
 class PMemoryManager {
 public:
-    static size_t s_szSystemMemory;
     static size_t s_szApplicationMemory;
-
     static size_t s_szPage;
     static size_t s_szSlotUnit;
 
-    static char* s_pSystemMemeory;
     static char* s_pApplicationMemeory;
-
-    static PMemoryStatic* s_pMemoryStatic;
     static PageList *s_pPageList;    
     static PMemoryDynamic* s_pMemoryDynamic;
 
-	static void Allocate(size_t szSystemMemory, size_t szApplicationMemory,  size_t szPage, size_t szSlotUnit);
+	static void Allocate(size_t szApplicationMemory,  size_t szPage, size_t szSlotUnit);
 	static void Delocate();
 };

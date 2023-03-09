@@ -29,7 +29,7 @@ public:
 	void Initialize() {
 		TestSuite::Initialize();
 		try {
-    		PMemoryManager::Allocate(SIZE_MEMORY_SYSTEM, SIZE_MEMORY_APPLICATION, SIZE_PAGE, SIZE_SLOT_UNIT);
+    		PMemoryManager::Allocate(SIZE_MEMORY_APPLICATION, SIZE_PAGE, SIZE_SLOT_UNIT);
 			this->Add(new("PTC11") PTC11());
 			this->Add(new("PTC12") PTC12());
 			this->Add(new("PTC13") PTC13());
@@ -43,9 +43,6 @@ public:
 
 	void Run() override {
 		TestSuite::Run();
-		// this->InitializeAsAScheduler(0);
-		// this->Fork();
-
 	}
 
 	void Finalize() {

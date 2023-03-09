@@ -17,11 +17,12 @@ public:
 	void operator delete(void* pObject);
 	void operator delete(void* pObject, void *s_pMemeoryAllocated, const char* sMessage);
 	
-private:
 	class Slot {
 		public:
 			Slot* m_pNext;
 	};
+private:
+
 
 	unsigned m_index;
 	Page* m_pPage;

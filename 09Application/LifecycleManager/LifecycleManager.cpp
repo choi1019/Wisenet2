@@ -432,6 +432,7 @@ void LifecycleManager::StartSystem(Event* pEvent) {
 		}
 	}
 	else {
+		ValueObject::s_pMemory->Show("LifecycleManager::StartSystem");
 		LOG_HEADER("LifecycleManager::StartSystem");
 		this->StartSystem();
 	}
