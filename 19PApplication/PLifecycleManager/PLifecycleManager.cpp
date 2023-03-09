@@ -29,23 +29,22 @@ void PLifecycleManager::Finalize() {
 
 void PLifecycleManager::RegisterUserShedulers() {
 	this->RegisterAScheduler((int)EComponents::eScheduler1, new("eScheduler1") PScheduler());
-	//ValueObject::s_pMemory->Show("PLifecycleManager::RegisterUserShedulers");
-//	this->RegisterAScheduler((int)EComponents::eScheduler2, new("eScheduler2") PScheduler());
-	//this->RegisterAScheduler((int)EComponents::eSkeleton, new("eSkeleton") PSkeleton(10000));
+	this->RegisterAScheduler((int)EComponents::eScheduler2, new("eScheduler2") PScheduler());
+	this->RegisterAScheduler((int)EComponents::eSkeleton, new("eSkeleton") PSkeleton(10000));
 }
 void PLifecycleManager::RegisterUserComponents() {
-	//this->RegisterAComponent((int)EComponents::eStub, new("eStub") PStub(10000));
+	this->RegisterAComponent((int)EComponents::eStub, new("eStub") PStub(10000));
 	this->RegisterAComponent((int)EComponents::eVideoManager, new("eVideoManager") VideoManager());
 	this->RegisterAComponent((int)EComponents::eVideoProviderManager, new("eVideoProviderManager") VideoProviderManager());
 	this->RegisterAComponent((int)EComponents::eVideoRequesterManager, new("eVideoRequesterManager") VideoRequesterManager());
 	// this->RegisterAComponent((int)EComponents::eTimerLinux, new("eTimerLinux") PTimerLinux(900));
 	// this->RegisterAComponent((int)EComponents::eTimerLinux1, new("eTimerLinux") PTimerLinux2(500));
-	//	this->RegisterAComponent((int)EComponents::eTimerLinux2, new("eTimerLinux") PTimerLinux2(1000));
-	//	this->RegisterAComponent((int)EComponents::eTimerRTC, new("PTimerRTC") PTimerRTC(2000));
+	// this->RegisterAComponent((int)EComponents::eTimerLinux2, new("eTimerLinux") PTimerLinux2(1000));
+	// this->RegisterAComponent((int)EComponents::eTimerRTC, new("PTimerRTC") PTimerRTC(2000));
 }
 void PLifecycleManager::AllocateUserComponents() {
-	//this->AllocateAComponent((int)EComponents::eStub, (int)EComponents::eScheduler1);
-	this->AllocateAComponent((int)EComponents::eVideoManager, (int)EComponents::eScheduler1);
+	this->AllocateAComponent((int)EComponents::eStub, (int)EComponents::eScheduler1);
+	this->AllocateAComponent((int)EComponents::eVideoManager, (int)EComponents::eScheduler2);
 	this->AllocateAComponent((int)EComponents::eVideoProviderManager, (int)ILifecycleManager::EReceivers::eMainScheduler);
 	this->AllocateAComponent((int)EComponents::eVideoRequesterManager, (int)ILifecycleManager::EReceivers::eMainScheduler);
 	// this->AllocateAComponent((int)EComponents::eTimerLinux, (int)EComponents::eScheduler2);
@@ -54,7 +53,7 @@ void PLifecycleManager::AllocateUserComponents() {
 }
 void PLifecycleManager::AssociateUserSendersNReceivers() {
 	// this->AssociateASenderNAReceiver(
-	// 	(int)EComponents::eVideoManager, (int)IVideoManager::ESources::eTimer, (int)EComponents::eTimer33);
+	// (int)EComponents::eVideoManager, (int)IVideoManager::ESources::eTimer, (int)EComponents::eTimer33);
 	this->AssociateASenderNAReceiver(
 		(int)EComponents::eVideoManager, (int)IVideoManager::EReceivers::eVideoProviderManager, 
 		(int)EComponents::eVideoProviderManager);
@@ -67,13 +66,11 @@ void PLifecycleManager::AssociateUserSourcesNTargets() {
 }
 
 void PLifecycleManager::StartSystem() {
-	// BaseObject::s_pMemory->Show("Static");
-	// ValueObject::s_pMemory->Show("Dynamic");
-	// this->SendReplyEvent((int)EComponents::eSkeleton, (int)IComponent::EEventType::eStart);
-	// this->SendReplyEvent((int)EComponents::eStub, (int)IComponent::EEventType::eStart);
+	this->SendReplyEvent((int)EComponents::eSkeleton, (int)IComponent::EEventType::eStart);
+	this->SendReplyEvent((int)EComponents::eStub, (int)IComponent::EEventType::eStart);
 	// this->SendReplyEvent((int)EComponents::eTimerLinux, (int)IComponent::EEventType::eStart);
 	// this->SendReplyEvent((int)EComponents::eTimerLinux1, (int)IComponent::EEventType::eStart);
-	//	this->SendReplyEvent((int)EComponents::eTimerLinux2, (int)IComponent::EEventType::eStart);
+	// this->SendReplyEvent((int)EComponents::eTimerLinux2, (int)IComponent::EEventType::eStart);
 	// this->SendReplyEvent((int)EComponents::eTimerRTC, (int)IComponent::EEventType::eStart);
 
 	this->SendReplyEvent((int)EComponents::eVideoManager, (int)IComponent::EEventType::eStart);

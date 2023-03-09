@@ -39,7 +39,14 @@ public:
     }
 
     void Initialize() override {
-        // create socket
+    }
+    void Finalize() override {
+        close(server_sockfd); 
+    }
+
+    void Start() override {
+        Component::Start();
+                // create socket
         if((server_sockfd = socket(AF_INET, SOCK_STREAM, 0)) == -1){
             throw Exception((int)(IStub::EException::eSocket));
         }
@@ -53,15 +60,9 @@ public:
         if (result < 0){
             throw Exception((int)(IStub::EException::eConnect), "eConnect", result);
         }
-    }
-    void Finalize() override {
-        close(server_sockfd); 
-    }
 
-    void Start() override {
-        Component::Start();
         this->SendNoReplyEvent(this->GetUId(), (int)IStub::EEventType::eSend);
-        this->SendNoReplyEvent(this->GetUId(), (int)IStub::EEventType::eSend);
+        //this->SendNoReplyEvent(this->GetUId(), (int)IStub::EEventType::eSend);
     }
 
     void Send() {
