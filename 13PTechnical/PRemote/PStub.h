@@ -86,7 +86,7 @@ public:
         if(result <= 0){
             throw Exception((int)(IStub::EException::eRead), "eRead", result);
         }
-        LOG_NEWLINE("PStub::Send - ", buf);
+        LOG_NEWLINE("PStub::Send and Reply - ", buf);
         fflush(stdout);
     }
 
