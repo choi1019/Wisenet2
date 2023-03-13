@@ -18,11 +18,11 @@ Scheduler::Scheduler(
 Scheduler::~Scheduler() {
 }
 
-void Scheduler::Initialize() {
-	Component::Initialize();
+void Scheduler::Initialize(Event *pEvent) {
+	Component::Initialize(pEvent);
 }
-void Scheduler::Finalize() {
-	Component::Finalize();
+void Scheduler::Finalize(Event *pEvent) {
+	Component::Finalize(pEvent);
 }
 
 void Scheduler::RegisterEventTypes() {
@@ -118,10 +118,11 @@ void Scheduler::RunOnce()
 		Event* pEvent = pEvent = m_pEventQueue->PopFront();
 		if (pEvent != nullptr) {
 			UId uidTarget = pEvent->GetUIdTarget();
-			LOG_NEWLINE("== RunOnce ==>"
-						, pEvent->GetType(), Directory::s_dirEvents[pEvent->GetType()]
-						, pEvent->GetUIdSource().GetComponentId(), Directory::s_dirComponents[pEvent->GetUIdSource().GetComponentId()]
-						, pEvent->GetUIdTarget().GetComponentId(), Directory::s_dirComponents[pEvent->GetUIdTarget().GetComponentId()]);
+			// LOG_NEWLINE(String("== RunOnce ==>")+pEvent->IsReply()
+			// 			, pEvent->GetType(), Directory::s_dirEvents[pEvent->GetType()]
+			// 			, pEvent->GetUIdSource().GetComponentId(), Directory::s_dirComponents[pEvent->GetUIdSource().GetComponentId()]
+			// 			, pEvent->GetUIdTarget().GetComponentId(), Directory::s_dirComponents[pEvent->GetUIdTarget().GetComponentId()]
+			// 			);
 			Component* pTargetComponent = m_mComponents[uidTarget.GetComponentId()];
 			if (pTargetComponent == nullptr) {
 				throw Exception((unsigned)IScheduler::EError::eComponentNotFound

@@ -24,6 +24,7 @@ public:
 	enum class EReceivers {
 		eBegin = _VideoProviderManager_Id,
 		eVideoRequesterManager,
+		ePStub,
 		eEnd
 	};
 

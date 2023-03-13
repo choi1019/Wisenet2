@@ -1,37 +1,44 @@
 #pragma once
 
 #include <13PTechnical/typedef.h>
-#define _PSkeletonWorker_Id _GET_CLASS_UID(_ELayer_PTechnical::_ePSkeletonWorker) 
-#define _PSkeletonWorker_Name "SkeletonWorker"
+#define _PSkeleton_Id _GET_CLASS_UID(_ELayer_PTechnical::_ePSkeleton) 
+#define _PSkeleton_Name "Skeleton"
 
-class ISkeletonWorker {
+class IPSkeleton {
 public:
 enum class EException {
-		eBegin = _PSkeletonWorker_Id,
+		eBegin = _PSkeleton_Id,
+        eSocket,
+        eBind,
+        eListen,
+        eAccept,
 		eRead,
 		eWrite,
 		eEnd
 	};
 
 	enum class EEventType {
-		eBegin = _PSkeletonWorker_Id,
+		eBegin = _PSkeleton_Id,
+		eInitialize,
+		eStart,
 		eEnd
 	};
 
 	enum class EParts {
-		eBegin = _PSkeletonWorker_Id,
+		eBegin = _PSkeleton_Id,
+		ePSkeletonPart,
 		eEnd
 	};
 	enum class EReceivers {
-		eBegin = _PSkeletonWorker_Id,
+		eBegin = _PSkeleton_Id,
 		Skeleton_Id
 	};
 	enum class ETargetGroups {
-		eBegin = _PSkeletonWorker_Id,
+		eBegin = _PSkeleton_Id,
 		eEnd
 	};
 	enum class EAttributes {
-		eBegin = _PSkeletonWorker_Id,
+		eBegin = _PSkeleton_Id,
 		eEnd
 	};
 

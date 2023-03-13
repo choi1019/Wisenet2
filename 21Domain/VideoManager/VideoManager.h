@@ -32,16 +32,7 @@ protected:
 		Component::RegisterExceptions();
 	}
 
-private:
-	void Start(Event* pEvent) {
-		if (pEvent->IsReply()) {
-			LOG_FOOTER("VideoManager::Start");
-		}
-		else {
-			LOG_HEADER("VideoManager::Start");
-			Component::Start(pEvent);
-			this->SendReplyEvent(this->GetUId(), (int)IVideoManager::EEventType::eRegister);
-		}
+	void Initialize(Event* pEvent) override {
 	}
 
 	void Register(Event* pEvent) {
@@ -56,12 +47,25 @@ private:
 				(int)IVideoProviderManager::EEventType::eRegister);
 		}
 	}
+	void Start(Event* pEvent) override {
+		if (pEvent->IsReply()) {
+			LOG_FOOTER("VideoManager::Start");
+		}
+		else {
+			LOG_HEADER("VideoManager::Start");
+			Component::Start(pEvent);
+			this->SendReplyEvent((int)IVideoManager::EReceivers::eVideoProviderManager, (int)IComponent::EEventType::eStart);
+		}
+	}
 
-protected:
-	void ProcessAEvent(Event* pEvent) {
+	void ProcessAEvent(Event* pEvent) override {
 		switch (pEvent->GetType()) {
 		case (int)IVideoManager::EEventType::eRegister:
 			this->Register(pEvent);
+			//this->Stop(pEvent);
+			break;
+		case (int)IVideoManager::EEventType::eStart:
+			this->Start(pEvent);
 			//this->Stop(pEvent);
 			break;
 		default:

@@ -66,8 +66,9 @@ protected:
 	virtual void AssociateSystemSourcesNTargets();
 	virtual void AssociateUserSourcesNTargets() = 0;
 
-	virtual void StartSystem() = 0;
-	virtual void StopSystem() = 0;
+	virtual void InitializeComponents(Event* pEvent) = 0;
+	virtual void StartSystem(Event* pEvent) = 0;
+	virtual void StopSystem(Event* pEvent) = 0;
 
 private: 
 	//  InitializeAsALifecycleManager
@@ -79,10 +80,6 @@ private:
 	void AllocateComponents(Event* pEvent);
 	void AssociateSendersNReceivers(Event* pEvent);
 	void AssociateSourcesNTargets(Event* pEvent);
-	void InitializeComponents(Event* pEvent);
-
-	void StartSystem(Event* pEvent);
-	void StopSystem(Event* pEvent);
 	
 	// FinalizeAsALifecycleManager
 	void FinalizeAsALifecycleManager(Event* pEvent);

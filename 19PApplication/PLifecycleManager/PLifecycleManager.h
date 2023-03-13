@@ -1,36 +1,14 @@
 #pragma once
 
-#include <19PApplication/typedef.h>
-#define _PLifecycleManager_Id _GET_CLASS_UID(_ELayer_PApplication::_ePLifecycleManager)
-#define _PLifecycleManager_name "PLifecycleManager"
-
+#include <19PApplication/PLifecycleManager/IPLifecycleManager.h>
 #include <09Application/LifecycleManager/LifecycleManager.h>
 
-class PLifecycleManager : public LifecycleManager {
-public:
-	enum class EComponents {
-		eBegin = _PLifecycleManager_Id,
-		eScheduler1,
-		eScheduler2,
-		eScheduler3,
-		eTimerLinux,
-		eTimerLinux1,
-		eTimerLinux2,
-		eTimerRTC,
-		
-		eVideoManager,
-		eVideoRequesterManager,
-		eVideoProviderManager,
+class PLifecycleManager : public LifecycleManager, public IPLifecycleManager {
 
-		eStub,
-		eSkeleton,
-
-		eEnd
-	};
 public:
 	PLifecycleManager(
 		unsigned typeId = _PLifecycleManager_Id,
-		const char* pClassName = _PLifecycleManager_name);
+		const char* pClassName = _PLifecycleManager_Name);
 	~PLifecycleManager() override;
 	void Initialize() override;
 	void Finalize() override;
@@ -42,6 +20,7 @@ protected:
 	virtual void AssociateUserSendersNReceivers();
 	virtual void AssociateUserSourcesNTargets();
 
-	virtual void StartSystem();
-	virtual void StopSystem();
+	virtual void InitializeComponents(Event* pEvent);
+	virtual void StartSystem(Event *pEvent);
+	virtual void StopSystem(Event *pEvent);
 };

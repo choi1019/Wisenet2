@@ -28,8 +28,8 @@ public:
 	void RunThread() override;
 
 protected:
-	virtual void Initialize();
-	virtual void Finalize();
+	virtual void Initialize(Event *pEvent);
+	virtual void Finalize(Event *pEvent);
 
 //	void RunOnce();
 };

@@ -35,7 +35,7 @@ public:
 	};
 
 
-	enum class EReceivers {
+	enum class ECompponents {
 		eBegin = _LifecycleManager_Id,
 		eMainScheduler,
 		eLifecycleManager,

@@ -1,7 +1,7 @@
 #pragma once
 
 #include <12PPlatform/PComponent/PComponentPart.h>
-#include <13PTechnical/PRemote/ISkeletonWorker.h>
+#include <13PTechnical/PRemote/IPSkeletonWorker.h>
 #include <01Base/Aspect/Exception.h>
 
 #include <sys/socket.h>
@@ -10,7 +10,7 @@
 
 #define MAXBUF 1024
 
-class PSkeletonWorker : public PComponentPart, public ISkeletonWorker
+class PSkeletonWorker : public PComponentPart, public IPSkeletonWorker
 {
 private:
     int m_nSockfdClient;
@@ -40,18 +40,14 @@ public:
             // read
             memset(buf, 0x00, MAXBUF);
             result = read(m_nSockfdClient, buf, MAXBUF);
-            if(result == 0) {
-                break;
-            } else if (result < 0) {
-                throw Exception((int)(ISkeleton::EException::eRead), "eRead", result);
+            if (result < 0) {
+                throw Exception((int)(IPSkeleton::EException::eRead), "eRead", result);
             }
-
             // write
             result = write(m_nSockfdClient, buf, MAXBUF);
             if(result <= 0) {
-                throw Exception((int)(ISkeleton::EException::eWrite), "eWrite", result);
+                throw Exception((int)(IPSkeleton::EException::eWrite), "eWrite", result);
             }
-
         }
         close(m_nSockfdClient);
     }

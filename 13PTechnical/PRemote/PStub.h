@@ -1,7 +1,7 @@
 #pragma once
 
 #include <02Platform/Component/Component.h>
-#include <13PTechnical/PRemote/IStub.h>
+#include <13PTechnical/PRemote/IPStub.h>
 #include <01Base/Aspect/Exception.h>
 #include <01Base/Aspect/Log.h>
 
@@ -11,7 +11,7 @@
 
 #define MAXLINE     1024
 
-class PStub : public Component, public IStub
+class PStub : public Component, public IPStub
 {
 private:
     struct sockaddr_in serveraddr;
@@ -38,17 +38,18 @@ public:
 
     }
 
-    void Initialize() override {
+    void Initialize(Event *pEvent) override {
+//        this->SendNoReplyEvent(this->GetUId(), (int)IStub::EEventType::eSend);
+        //this->SendNoReplyEvent(this->GetUId(), (int)IStub::EEventType::eSend);
     }
-    void Finalize() override {
+    void Finalize(Event *pEvent) override {
         close(server_sockfd); 
     }
 
-    void Start() override {
-        Component::Start();
-                // create socket
+    void Register(Event *pEvent) {
+        // create a socket
         if((server_sockfd = socket(AF_INET, SOCK_STREAM, 0)) == -1){
-            throw Exception((int)(IStub::EException::eSocket));
+            throw Exception((int)(IPStub::EException::eSocket));
         }
 
         // connect
@@ -58,16 +59,11 @@ public:
         int result = connect(server_sockfd, (struct sockaddr *)&serveraddr, sizeof(serveraddr));
         bool isWaited = false;
         if (result < 0){
-            throw Exception((int)(IStub::EException::eConnect), "eConnect", result);
+            throw Exception((int)(IPStub::EException::eConnect), "eConnect", result);
         }
-
-        this->SendNoReplyEvent(this->GetUId(), (int)IStub::EEventType::eSend);
-        //this->SendNoReplyEvent(this->GetUId(), (int)IStub::EEventType::eSend);
     }
 
-    void Send() {
-        Component::Start();
-
+    void Send(Event *pEvent) {
         // write
         memset(buf, 0x00, MAXLINE);
         buf[0] = 't';
@@ -77,30 +73,28 @@ public:
         buf[4] = '\0';
         int result = write(server_sockfd, buf, MAXLINE);
         if(result <= 0){
-            throw Exception((int)(IStub::EException::eWrite), "eWrite", result);
+            throw Exception((int)(IPStub::EException::eWrite), "eWrite", result);
         }
 
         // reply
         memset(buf, 0x00, MAXLINE);
         result = read(server_sockfd, buf, MAXLINE);
         if(result <= 0){
-            throw Exception((int)(IStub::EException::eRead), "eRead", result);
+            throw Exception((int)(IPStub::EException::eRead), "eRead", result);
         }
         LOG_NEWLINE("PStub::Send and Reply - ", buf);
         fflush(stdout);
     }
 
-    void Stop() override {
-        Component::Stop();
-    }
-
-    void Send(Event *pEvent) {
-        this->Send();
+    void Stop(Event *pEvent) override {
     }
 
     void ProcessAEvent(Event *pEvent) {
         switch(pEvent->GetType()) {
-            case (int)IStub::EEventType::eSend:
+            case (int)IPStub::EEventType::eRegister:
+                this->Register(pEvent);
+                break;
+            case (int)IPStub::EEventType::eSend:
                 this->Send(pEvent);
                 break;
             default:

@@ -1,42 +1,41 @@
 #pragma once
 
 #include <13PTechnical/typedef.h>
-#define _PSkeleton_Id _GET_CLASS_UID(_ELayer_PTechnical::_ePSkeleton) 
-#define _PSkeleton_Name "Skeleton"
+#define _PStub_Id _GET_CLASS_UID(_ELayer_PTechnical::_ePStub) 
+#define _PStub_Name "PStub"
 
-class ISkeleton {
+class IPStub {
 public:
 enum class EException {
-		eBegin = _PSkeleton_Id,
+		eBegin = _PStub_Id,
         eSocket,
-        eBind,
-        eListen,
-        eAccept,
-		eRead,
+        eConnect,
 		eWrite,
+		eRead,
 		eEnd
 	};
 
 	enum class EEventType {
-		eBegin = _PSkeleton_Id,
+		eBegin = _PStub_Id,
+		eRegister,
+		eSend,
 		eEnd
 	};
 
 	enum class EParts {
-		eBegin = _PSkeleton_Id,
-		ePSkeletonPart,
+		eBegin = _PStub_Id,
 		eEnd
 	};
 	enum class EReceivers {
-		eBegin = _PSkeleton_Id,
-		Skeleton_Id
+		eBegin = _PStub_Id,
+		eEnd
 	};
 	enum class ETargetGroups {
-		eBegin = _PSkeleton_Id,
+		eBegin = _PStub_Id,
 		eEnd
 	};
 	enum class EAttributes {
-		eBegin = _PSkeleton_Id,
+		eBegin = _PStub_Id,
 		eEnd
 	};
 
