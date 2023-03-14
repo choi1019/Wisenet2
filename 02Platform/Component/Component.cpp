@@ -41,12 +41,12 @@ Component::~Component() {
 void Component::RegisterEventTypes() {
 	Directory::s_dirEvents[(unsigned)EEventType::eAssociateAReceiver] = "eAssociateAReceiver";
 	Directory::s_dirEvents[(unsigned)EEventType::eAssociateATarget] = "eAssociateATarget";
-	Directory::s_dirEvents[(unsigned)EEventType::eInitialize] = "eInitialize";
-	Directory::s_dirEvents[(unsigned)EEventType::eFinalize] = "eFinalize";
-	Directory::s_dirEvents[(unsigned)EEventType::eStart] = "eStart";
-	Directory::s_dirEvents[(unsigned)EEventType::eStop] = "eStop";
-	Directory::s_dirEvents[(unsigned)EEventType::eRun] = "eRun";
-	Directory::s_dirEvents[(unsigned)EEventType::ePause] = "ePause";
+	// Directory::s_dirEvents[(unsigned)EEventType::eInitialize] = "eInitialize";
+	// Directory::s_dirEvents[(unsigned)EEventType::eFinalize] = "eFinalize";
+	// Directory::s_dirEvents[(unsigned)EEventType::eStart] = "eStart";
+	// Directory::s_dirEvents[(unsigned)EEventType::eStop] = "eStop";
+	// Directory::s_dirEvents[(unsigned)EEventType::eRun] = "eRun";
+	// Directory::s_dirEvents[(unsigned)EEventType::ePause] = "ePause";
 }
 
 void Component::RegisterExceptions() {
@@ -228,24 +228,24 @@ void Component::ProcessAEvent(Event* pEvent) {
 	case (unsigned)EEventType::eAssociateATarget:
 		this->AssociateATarget(pEvent);
 		break;
-	case (unsigned)EEventType::eInitialize:
-		this->Initialize(pEvent);
-		break;
-	case (unsigned)EEventType::eStart:
-		this->Start(pEvent);
-		break;
-	case (unsigned)EEventType::eStop:
-		this->Stop(pEvent);
-		break;
-	case (unsigned)EEventType::eRun:
-		this->Run(pEvent);
-		break;
-	case (unsigned)EEventType::ePause:
-		this->Pause(pEvent);
-		break;
-	case (unsigned)EEventType::eFinalize:
-		this->Finalize(pEvent);
-		break;
+	// case (unsigned)EEventType::eInitialize:
+	// 	this->Initialize(pEvent);
+	// 	break;
+	// case (unsigned)EEventType::eStart:
+	// 	this->Start(pEvent);
+	// 	break;
+	// case (unsigned)EEventType::eStop:
+	// 	this->Stop(pEvent);
+	// 	break;
+	// case (unsigned)EEventType::eRun:
+	// 	this->Run(pEvent);
+	// 	break;
+	// case (unsigned)EEventType::ePause:
+	// 	this->Pause(pEvent);
+	// 	break;
+	// case (unsigned)EEventType::eFinalize:
+	// 	this->Finalize(pEvent);
+	// 	break;
 	default:
 		throw Exception(
 			(unsigned)EException::eEventNotSupported,

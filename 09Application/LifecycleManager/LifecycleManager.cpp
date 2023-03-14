@@ -449,59 +449,59 @@ void LifecycleManager::InitializeAsALifecycleManager(Event* pEvent) {
 /////////////////////////////////////////////////////////////////////////
 // FinalizeAsALifecycleManager
 void LifecycleManager::StopComponents(Event* pEvent) {
-	if (pEvent->IsReply()) {
-		IteratorMapComponents *pIteratorMapComponents 
-							= (IteratorMapComponents*)(pEvent->GetPIterator());
-		if (++(*pIteratorMapComponents) == m_mapComponents.end()) {
-			delete pIteratorMapComponents;
-			LOG_FOOTER("LifecycleManager::StopComponents");
-		} else {
-			//Directory::s_dirComponents[pEvent->GetUIdSource().GetComponentId()];			
-			this->SendReplyEvent(
-				(*pIteratorMapComponents)->second->GetUId(), 
-				(int)Component::EEventType::eStop,
-					0, nullptr, pIteratorMapComponents);
-		}
-	} else {
-		LOG_HEADER("LifecycleManager::StopComponents");
-		if (!m_mapComponents.Empty()) {
-			// sourceName, source.groupName + vector<tarGetName>*
-			IteratorMapComponents *pIteratorMapComponents 
-								= new("IteratorMapSourcesNTargets") IteratorMapComponents(m_mapComponents.begin());
-			this->SendReplyEvent(
-				(*pIteratorMapComponents)->second->GetUId(), 
-				(int)Component::EEventType::eStop,
-					0, nullptr, pIteratorMapComponents);
-		}
-	}
+	// if (pEvent->IsReply()) {
+	// 	IteratorMapComponents *pIteratorMapComponents 
+	// 						= (IteratorMapComponents*)(pEvent->GetPIterator());
+	// 	if (++(*pIteratorMapComponents) == m_mapComponents.end()) {
+	// 		delete pIteratorMapComponents;
+	// 		LOG_FOOTER("LifecycleManager::StopComponents");
+	// 	} else {
+	// 		//Directory::s_dirComponents[pEvent->GetUIdSource().GetComponentId()];			
+	// 		this->SendReplyEvent(
+	// 			(*pIteratorMapComponents)->second->GetUId(), 
+	// 			(int)Component::EEventType::eStop,
+	// 				0, nullptr, pIteratorMapComponents);
+	// 	}
+	// } else {
+	// 	LOG_HEADER("LifecycleManager::StopComponents");
+	// 	if (!m_mapComponents.Empty()) {
+	// 		// sourceName, source.groupName + vector<tarGetName>*
+	// 		IteratorMapComponents *pIteratorMapComponents 
+	// 							= new("IteratorMapSourcesNTargets") IteratorMapComponents(m_mapComponents.begin());
+	// 		this->SendReplyEvent(
+	// 			(*pIteratorMapComponents)->second->GetUId(), 
+	// 			(int)Component::EEventType::eStop,
+	// 				0, nullptr, pIteratorMapComponents);
+	// 	}
+	// }
 }
 
 void LifecycleManager::FinalizeComponents(Event* pEvent) {
-	if (pEvent->IsReply()) {
-		IteratorMapComponents *pIteratorMapComponents 
-							= (IteratorMapComponents*)(pEvent->GetPIterator());
-		if (++(*pIteratorMapComponents) == m_mapComponents.end()) {
-			delete pIteratorMapComponents;
-			LOG_FOOTER("LifecycleManager::FinalizeComponents");
-		} else {
-			//Directory::s_dirComponents[pEvent->GetUIdSource().GetComponentId()];			
-			this->SendReplyEvent(
-				(*pIteratorMapComponents)->second->GetUId(), 
-				(int)Component::EEventType::eFinalize,
-					0, nullptr, pIteratorMapComponents);
-		}
-	} else {
-		LOG_HEADER("LifecycleManager::FinalizeComponents");
-		if (!m_mapComponents.Empty()) {
-			// sourceName, source.groupName + vector<tarGetName>*
-			IteratorMapComponents *pIteratorMapComponents 
-								= new("IteratorMapSourcesNTargets") IteratorMapComponents(m_mapComponents.begin());
-			this->SendReplyEvent(
-				(*pIteratorMapComponents)->second->GetUId(), 
-				(int)Component::EEventType::eFinalize,
-					0, nullptr, pIteratorMapComponents);
-		}
-	}
+	// if (pEvent->IsReply()) {
+	// 	IteratorMapComponents *pIteratorMapComponents 
+	// 						= (IteratorMapComponents*)(pEvent->GetPIterator());
+	// 	if (++(*pIteratorMapComponents) == m_mapComponents.end()) {
+	// 		delete pIteratorMapComponents;
+	// 		LOG_FOOTER("LifecycleManager::FinalizeComponents");
+	// 	} else {
+	// 		//Directory::s_dirComponents[pEvent->GetUIdSource().GetComponentId()];			
+	// 		this->SendReplyEvent(
+	// 			(*pIteratorMapComponents)->second->GetUId(), 
+	// 			(int)Component::EEventType::eFinalize,
+	// 				0, nullptr, pIteratorMapComponents);
+	// 	}
+	// } else {
+	// 	LOG_HEADER("LifecycleManager::FinalizeComponents");
+	// 	if (!m_mapComponents.Empty()) {
+	// 		// sourceName, source.groupName + vector<tarGetName>*
+	// 		IteratorMapComponents *pIteratorMapComponents 
+	// 							= new("IteratorMapSourcesNTargets") IteratorMapComponents(m_mapComponents.begin());
+	// 		this->SendReplyEvent(
+	// 			(*pIteratorMapComponents)->second->GetUId(), 
+	// 			(int)Component::EEventType::eFinalize,
+	// 				0, nullptr, pIteratorMapComponents);
+	// 	}
+	// }
 }
 
 void LifecycleManager::StopSchedulers(Event* pEvent) {

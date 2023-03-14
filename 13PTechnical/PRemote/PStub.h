@@ -43,7 +43,6 @@ public:
         //this->SendNoReplyEvent(this->GetUId(), (int)IStub::EEventType::eSend);
     }
     void Finalize(Event *pEvent) override {
-        close(server_sockfd); 
     }
 
     void Register(Event *pEvent) {
@@ -56,14 +55,13 @@ public:
         serveraddr.sin_family = AF_INET;
         serveraddr.sin_addr.s_addr = m_inAddressIP;
         serveraddr.sin_port = htons(m_nNumPort);
-        int result = connect(server_sockfd, (struct sockaddr *)&serveraddr, sizeof(serveraddr));
-        bool isWaited = false;
-        if (result < 0){
-            throw Exception((int)(IPStub::EException::eConnect), "eConnect", result);
-        }
     }
 
     void Send(Event *pEvent) {
+        int result = connect(server_sockfd, (struct sockaddr *)&serveraddr, sizeof(serveraddr));
+        if (result < 0){
+            throw Exception((int)(IPStub::EException::eConnect), "eConnect", result);
+        }
         // write
         memset(buf, 0x00, MAXLINE);
         buf[0] = 't';
@@ -71,7 +69,7 @@ public:
         buf[2] = 's';
         buf[3] = 't';
         buf[4] = '\0';
-        int result = write(server_sockfd, buf, MAXLINE);
+        result = write(server_sockfd, buf, MAXLINE);
         if(result <= 0){
             throw Exception((int)(IPStub::EException::eWrite), "eWrite", result);
         }
@@ -84,6 +82,7 @@ public:
         }
         LOG_NEWLINE("PStub::Send and Reply - ", buf);
         fflush(stdout);
+        close(server_sockfd); 
     }
 
     void Stop(Event *pEvent) override {

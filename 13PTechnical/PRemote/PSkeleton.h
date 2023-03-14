@@ -99,7 +99,7 @@ public:
 			//this->Stop(pEvent);
 			break;
 		default:
-			Component::ProcessAEvent(pEvent);
+			PScheduler::ProcessAEvent(pEvent);
 			break;
 		}
 	}

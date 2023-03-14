@@ -54,7 +54,7 @@ protected:
 		else {
 			LOG_HEADER("VideoManager::Start");
 			Component::Start(pEvent);
-			this->SendReplyEvent((int)IVideoManager::EReceivers::eVideoProviderManager, (int)IComponent::EEventType::eStart);
+			this->SendReplyEvent((int)IVideoManager::EReceivers::eVideoProviderManager, (int)IVideoProviderManager::EEventType::eStart);
 		}
 	}
 

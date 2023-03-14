@@ -45,15 +45,15 @@ public:
 
 		eAssociateAReceiver,
 		eAssociateATarget,
-		eInitialize,
-		eFinalize,
+		// eInitialize,
+		// eFinalize,
 
-		eStart,
-		eStop,
+		// eStart,
+		// eStop,
 
-		eRun,
-		ePause,
-		eResume,
+		// eRun,
+		// ePause,
+		// eResume,
 
 		eEnd
 	};

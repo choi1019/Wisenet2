@@ -49,7 +49,7 @@ protected:
 
 	void Start(Event* pEvent) {
 		if (pEvent->IsReply()) {
-			if (pEvent->GetReplyType() == (int)IVideoProviderManager::EReceivers::eVideoRequesterManager) {
+			if (pEvent->GetReplyType() == (int)IVideoRequesterManager::EEventType::eStart) {
 				this->SendReplyEvent(
 					(int)IVideoProviderManager::EReceivers::ePStub, 
 					(int)IPStub::EEventType::eSend);
@@ -61,7 +61,7 @@ protected:
 			LOG_HEADER("VideoProviderManager::Start");
 			this->SendReplyEvent(
 				(int)IVideoProviderManager::EReceivers::eVideoRequesterManager, 
-				(int)IComponent::EEventType::eStart);
+				(int)IVideoRequesterManager::EEventType::eStart);
 		}
 	}
 
