@@ -28,8 +28,8 @@ public:
 	void Initialize() override;
 	void Finalize() override;
 
-	void Start() override;
-	void Stop() override;
+	void Start();
+	void Stop();
 
 	void RunThread() override;
 	void Signal();

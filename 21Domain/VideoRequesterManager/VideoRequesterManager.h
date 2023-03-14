@@ -19,14 +19,14 @@ protected:
 	virtual void RegisterExceptions() {
 	}
 
-	void Initialize() {
-		Component::Initialize();
-	}
-	void Finalize() {
-		Component::Finalize();
-	}
+	// void Initialize() {
+	// 	Component::Initialize();
+	// }
+	// void Finalize() {
+	// 	Component::Finalize();
+	// }
 
-	void Start(Event* pEvent) override {
+	void Start(Event* pEvent) {
 		LOG_HEADER("VideoRequesterManage::Start");
 		LOG_FOOTER("VideoRequesterManage::Start");
 	}

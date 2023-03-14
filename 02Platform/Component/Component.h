@@ -3,9 +3,11 @@
 #include <02Platform/Component/ComponentPart.h>
 class Component : public ComponentPart
 {
+public:
+	typedef MapPair<int, ComponentPart*> PairComponentPart;
+	typedef Map<int, ComponentPart*> MapComponentParts;
 private:
-//	static unsigned s_uCounter;
-	Map<int, ComponentPart*, MAXCOMPONENTPARTS> m_mComponentParts;
+	MapComponentParts m_mapComponentParts;
 
 public:
 	Component(unsigned uClassId = Component_Id, const char* pcClassName = Component_Name);
@@ -15,6 +17,7 @@ public:
 	ComponentPart* GetPart(unsigned uName);
 	ComponentPart* RemovePart(unsigned uName);
 	void RemovePartAll();
+	MapComponentParts *GetPComponentParts() { return &m_mapComponentParts; }
 	
 	void SetPEventQueue(EventQueue* pEventQueue);
 
@@ -22,30 +25,30 @@ public:
 	virtual void ProcessAEvent(Event* pEvent);
 	void EndSequence(Event* pEvent);
 	
-protected:
+public:
 	virtual void RegisterEventTypes();
 	virtual void RegisterExceptions();
 
 	virtual void AssociateAReceiver(unsigned receiverName, UId receiverUId);
 	virtual void AssociateATarget(unsigned uGroupName, Vector<UId>& vNewUIdTargetComponents);
 
-	virtual void Initialize();
-	virtual void Finalize();
+	// virtual void Initialize();
+	// virtual void Finalize();
 
-	virtual void Start();
-	virtual void Stop();
-	virtual void Pause();
-	virtual void Run();
+	// virtual void Start();
+	// virtual void Stop();
+	// virtual void Pause();
+	// virtual void Run();
 
 protected:
 	virtual void AssociateAReceiver(Event* pEvent);
 	virtual void AssociateATarget(Event* pEvent);
 
-	virtual void Initialize(Event* pEvent);
-	virtual void Finalize(Event* pEvent);
+	// virtual void Initialize(Event* pEvent);
+	// virtual void Finalize(Event* pEvent);
 
-	virtual void Start(Event* pEvent);
-	virtual void Stop(Event* pEvent);
-	virtual void Run(Event* pEvent);
-	virtual void Pause(Event* pEvent);
+	// virtual void Start(Event* pEvent);
+	// virtual void Stop(Event* pEvent);
+	// virtual void Run(Event* pEvent);
+	// virtual void Pause(Event* pEvent);
 };

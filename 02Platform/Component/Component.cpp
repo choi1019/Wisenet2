@@ -17,8 +17,8 @@ Component::Component(unsigned uClassId, const char* sClassName)
 	this->RegisterEventTypes();
 	this->RegisterExceptions();
 
-	this->SetPMReceivers(new("ReceiversMap") Map<unsigned, UId, MAXRECEIVERCOMPONENTS>());
-	this->SetPMTargetsGroups(new("TargetsMap") Map<unsigned, Vector<UId, MAXTARGETCOMPONENTS>*, MAXTARGETGROUPS>());
+	this->SetPMReceivers(new("ReceiversMap") MapReceivers());
+	this->SetPMTargetsGroups(new("TargetsMap") MapTargetsGroups());
 	// default target
 	this->AssociateAReceiver((int)EReceivers::eThis, this->GetUId());
 	// state
@@ -26,7 +26,7 @@ Component::Component(unsigned uClassId, const char* sClassName)
 }
 
 Component::~Component() {
-	for (MapPair<int, ComponentPart*> itrComponentPart: m_mComponentParts) {
+	for (MapPair<int, ComponentPart*> itrComponentPart: m_mapComponentParts) {
 		delete itrComponentPart.second;
 	}
 	delete this->m_pUId;
@@ -62,13 +62,13 @@ void Component::AddPart(unsigned uName, ComponentPart* pComponentPart) {
 	pComponentPart->SetPMReceivers(this->GetPMReceivers());
 	pComponentPart->SetPMTargetsGroups(this->GetPMTargetsGroups());
 
-	this->m_mComponentParts.Add(uName, pComponentPart);
+	this->m_mapComponentParts.Add(uName, pComponentPart);
 }
 ComponentPart* Component::GetPart(unsigned uName) {
-	return this->m_mComponentParts[uName];
+	return this->m_mapComponentParts[uName];
 }
 ComponentPart* Component::RemovePart(unsigned uName) {
-	ComponentPart* pComponentPart = this->m_mComponentParts[uName];
+	ComponentPart* pComponentPart = this->m_mapComponentParts[uName];
 	if (pComponentPart->GetEState() == IComponent::EState::eRunning) {
 		throw Exception(
 			(unsigned)EException::eNotStopped,
@@ -77,11 +77,11 @@ ComponentPart* Component::RemovePart(unsigned uName) {
 			String("ComponentPart(") + String(uName) + ") is not terminated"
 		);
 	}
-	this->m_mComponentParts.Remove(uName);
+	this->m_mapComponentParts.Remove(uName);
 	return pComponentPart;
 }
 void Component::RemovePartAll() {
-	for (auto iter : this->m_mComponentParts) {
+	for (auto iter : this->m_mapComponentParts) {
 		ComponentPart* pComponentPart = iter.second;
 		if (pComponentPart->GetEState() == IComponent::EState::eRunning) {
 			throw Exception(
@@ -92,7 +92,7 @@ void Component::RemovePartAll() {
 			);
 		}
 	}
-	this->m_mComponentParts.Clear();
+	this->m_mapComponentParts.Clear();
 }
 
 void Component::SetPEventQueue(EventQueue* pEventQueue) {
@@ -136,28 +136,28 @@ void Component::AssociateATarget(unsigned uGroupName, Vector<UId>& vNewUIdTarget
 	}
 }
 
-void Component::Initialize() {
-	ComponentPart::Initialize();
-	SetEState(IComponent::EState::eInitialized);
-	LOG_NEWLINE(Directory::s_dirComponents[this->GetComponentId()], __func__);
-}
-void Component::Finalize() {
-	ComponentPart::Finalize();
-	SetEState(IComponent::EState::eFinalized);
-	LOG_NEWLINE(Directory::s_dirComponents[this->GetComponentId()], __func__);
-}
-void Component::Start() {
-	SetEState(IComponent::EState::eRunning);
-}
-void Component::Stop() {
-	SetEState(IComponent::EState::eStopped);
-	this->RemovePartAll();
-}
-void Component::Run() {
-}
-void Component::Pause() {
-	SetEState(IComponent::EState::ePaused);
-}
+// void Component::Initialize() {
+// 	ComponentPart::Initialize();
+// 	SetEState(IComponent::EState::eInitialized);
+// 	LOG_NEWLINE(Directory::s_dirComponents[this->GetComponentId()], __func__);
+// }
+// void Component::Finalize() {
+// 	ComponentPart::Finalize();
+// 	SetEState(IComponent::EState::eFinalized);
+// 	LOG_NEWLINE(Directory::s_dirComponents[this->GetComponentId()], __func__);
+// }
+// void Component::Start() {
+// 	SetEState(IComponent::EState::eRunning);
+// }
+// void Component::Stop() {
+// 	SetEState(IComponent::EState::eStopped);
+// 	this->RemovePartAll();
+// }
+// void Component::Run() {
+// }
+// void Component::Pause() {
+// 	SetEState(IComponent::EState::ePaused);
+// }
 
 /////////////////////////////////////////////////////////////
 // event mapping functions
@@ -190,27 +190,27 @@ void Component::AssociateATarget(Event* pEvent) {
 	SetEState(IComponent::EState::eTargeted);
 }
 
-void Component::Initialize(Event* pEvent) {
-	this->Initialize();
-}
-void Component::Finalize(Event* pEvent) {
-	this->Finalize();
-}
+// void Component::Initialize(Event* pEvent) {
+// 	this->Initialize();
+// }
+// void Component::Finalize(Event* pEvent) {
+// 	this->Finalize();
+// }
 
-void Component::Start(Event* pEvent) {
-	this->Start();
-}
+// void Component::Start(Event* pEvent) {
+// 	this->Start();
+// }
 
-void Component::Stop(Event* pEvent) {
-	this->Stop();
-}
+// void Component::Stop(Event* pEvent) {
+// 	this->Stop();
+// }
 
-void Component::Run(Event* pEvent) {
-	this->Run();
-}
-void Component::Pause(Event* pEvent) {
-	this->Pause();
-}
+// void Component::Run(Event* pEvent) {
+// 	this->Run();
+// }
+// void Component::Pause(Event* pEvent) {
+// 	this->Pause();
+// }
 
 void Component::BeginSequence(Event* pEvent) {
 	ComponentPart::BeginSequence(pEvent);
@@ -247,11 +247,7 @@ void Component::ProcessAEvent(Event* pEvent) {
 	// 	this->Finalize(pEvent);
 	// 	break;
 	default:
-		throw Exception(
-			(unsigned)EException::eEventNotSupported,
-			this->GetClassName(), __func__,
-			String("eEventNotSupported:") + (unsigned)pEvent->GetType()),
-			SHOW_EVENTNAME(pEvent->GetType());
+		throw EXCEPTION((int)EException::eEventNotSupported);
 		break;
 	}
 }

@@ -22,12 +22,12 @@ protected:
 	virtual void RegisterExceptions() {
 	}
 
-	void Initialize() {
-		Component::Initialize();
-	}
-	void Finalize() {
-		Component::Finalize();
-	}
+	// void Initialize() {
+	// 	Component::Initialize();
+	// }
+	// void Finalize() {
+	// 	Component::Finalize();
+	// }
 
 	void Register(Event* pEvent) {
 		if (pEvent->IsReply()) {

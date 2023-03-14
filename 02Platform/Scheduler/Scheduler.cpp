@@ -18,12 +18,12 @@ Scheduler::Scheduler(
 Scheduler::~Scheduler() {
 }
 
-void Scheduler::Initialize(Event *pEvent) {
-	Component::Initialize(pEvent);
-}
-void Scheduler::Finalize(Event *pEvent) {
-	Component::Finalize(pEvent);
-}
+// void Scheduler::Initialize(Event *pEvent) {
+// 	Component::Initialize(pEvent);
+// }
+// void Scheduler::Finalize(Event *pEvent) {
+// 	Component::Finalize(pEvent);
+// }
 
 void Scheduler::RegisterEventTypes() {
 	Directory::s_dirEvents[(unsigned)IScheduler::EEventType::eInitializeAsAScheduler] = "eInitializeAsAScheduler";

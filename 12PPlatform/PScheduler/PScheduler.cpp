@@ -41,9 +41,9 @@ void PScheduler::FinalizeAsAScheduler() {
 
 }
 
-void PScheduler::Initialize(Event *pEvent) {
-	Scheduler::Initialize(pEvent);
-}
-void PScheduler::Finalize(Event *pEvent) {
-	Scheduler::Finalize(pEvent);
-}
+// void PScheduler::Initialize(Event *pEvent) {
+// 	Scheduler::Initialize(pEvent);
+// }
+// void PScheduler::Finalize(Event *pEvent) {
+// 	Scheduler::Finalize(pEvent);
+// }

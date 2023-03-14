@@ -27,8 +27,10 @@ void PComponentPart::RunThread() {
 }
 
 void PComponentPart::Start() {
+	this->SetEState(IComponent::EState::eRunning);
 	this->Fork();
 }
 void PComponentPart::Stop() {
+	this->SetEState(IComponent::EState::eStopped);  
 	this->Join();
 }

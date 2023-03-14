@@ -32,8 +32,8 @@ protected:
 		Component::RegisterExceptions();
 	}
 
-	void Initialize(Event* pEvent) override {
-	}
+	// void Initialize(Event* pEvent) override {
+	// }
 
 	void Register(Event* pEvent) {
 		if (pEvent->IsReply()) {
@@ -41,19 +41,17 @@ protected:
 		}
 		else {
 			LOG_HEADER("VideoManager::Register");
-			Component::Stop(pEvent);
 			this->SendReplyEvent(
 				(int)IVideoManager::EReceivers::eVideoProviderManager, 
 				(int)IVideoProviderManager::EEventType::eRegister);
 		}
 	}
-	void Start(Event* pEvent) override {
+	void Start(Event* pEvent) {
 		if (pEvent->IsReply()) {
 			LOG_FOOTER("VideoManager::Start");
 		}
 		else {
 			LOG_HEADER("VideoManager::Start");
-			Component::Start(pEvent);
 			this->SendReplyEvent((int)IVideoManager::EReceivers::eVideoProviderManager, (int)IVideoProviderManager::EEventType::eStart);
 		}
 	}

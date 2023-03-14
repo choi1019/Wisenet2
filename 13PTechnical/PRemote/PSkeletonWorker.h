@@ -23,18 +23,10 @@ public:
 	~PSkeletonWorker() override {
     }
 
-    void Start() override {
-        PComponentPart::Start();
-    }
-    void Stop() override {
-        PComponentPart::Stop();
-    }
-
     void RunThread() override {
         int result;
         char buf[MAXBUF];
         
-        this->SetEState(IComponent::EState::eRunning);
         while (this->GetEState() == IComponent::EState::eRunning) {
             LOG_NEWLINE("PSkeletonWorker::Run", this->GetObjectId());
             // read

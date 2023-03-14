@@ -18,13 +18,13 @@ ComponentPart::ComponentPart(unsigned uClassId, const char* acClassName)
 ComponentPart::~ComponentPart() {
 }
 
-void ComponentPart::Initialize() {
-	BaseObject::Initialize();
-}
+// void ComponentPart::Initialize() {
+// 	BaseObject::Initialize();
+// }
 
-void ComponentPart::Finalize() {
-	BaseObject::Finalize();
-}
+// void ComponentPart::Finalize() {
+// 	BaseObject::Finalize();
+// }
 
 UId ComponentPart::FindUid(int nReceiverName) {
 	auto iterator = this->m_pmReceivers->Find(nReceiverName);
@@ -69,10 +69,10 @@ void ComponentPart::EndSequence(Event*pEvent) {
 			if (pEvent->IsSynchronous()) {
 				ReplyEvent(pEvent);
 			} else {
-				LOG_NEWLINE("**Delete: "
-						, pEvent->GetType(), Directory::s_dirEvents[pEvent->GetType()]
-						, pEvent->GetUIdSource().GetComponentId(), Directory::s_dirComponents[pEvent->GetUIdSource().GetComponentId()]
-						, pEvent->GetUIdTarget().GetComponentId(), Directory::s_dirComponents[pEvent->GetUIdTarget().GetComponentId()]);
+				// LOG_NEWLINE("**Delete: "
+				// 		, pEvent->GetType(), Directory::s_dirEvents[pEvent->GetType()]
+				// 		, pEvent->GetUIdSource().GetComponentId(), Directory::s_dirComponents[pEvent->GetUIdSource().GetComponentId()]
+				// 		, pEvent->GetUIdTarget().GetComponentId(), Directory::s_dirComponents[pEvent->GetUIdTarget().GetComponentId()]);
 				delete pEvent;					
 			}
 		}
@@ -122,19 +122,19 @@ void ComponentPart::SendReplyEvent(UId uIdTarget, int nEventType, long long lArg
 	}
 	this->SendAEvent(pEvent);
 }
-void ComponentPart::SendReplyEvent(int nReceiverName, int nEventType, long long lArg, ValueObject* pArg)
+void ComponentPart::SendReplyEvent(int nReceiverName, int nEventType, long long lArg, ValueObject* pArg, ValueObject *pIterator)
 {
 	UId uIdTarget = this->FindUid(nReceiverName);
-	this->SendReplyEvent(uIdTarget, nEventType, lArg, pArg);
+	this->SendReplyEvent(uIdTarget, nEventType, lArg, pArg, pIterator);
 }
 
-void ComponentPart::SendReplyEventIteration(UId uIdTarget, int nEventType, long long lArg, ValueObject* pArg, ValueObject *pIterator) {
-	this->SendReplyEvent(uIdTarget, nEventType, lArg, pArg, pIterator);
-}
-void ComponentPart::SendReplyEventIteration(int nReceiverName, int nEventType, long long lArg, ValueObject* pArg, ValueObject *pIterator) {
-	UId uIdTarget = this->FindUid(nReceiverName);
-	this->SendReplyEvent(uIdTarget, nEventType, lArg, pArg, pIterator);
-}
+// void ComponentPart::SendReplyEventIteration(UId uIdTarget, int nEventType, long long lArg, ValueObject* pArg, ValueObject *pIterator) {
+// 	this->SendReplyEvent(uIdTarget, nEventType, lArg, pArg, pIterator);
+// }
+// void ComponentPart::SendReplyEventIteration(int nReceiverName, int nEventType, long long lArg, ValueObject* pArg, ValueObject *pIterator) {
+// 	UId uIdTarget = this->FindUid(nReceiverName);
+// 	this->SendReplyEvent(uIdTarget, nEventType, lArg, pArg, pIterator);
+// }
 
 ///////////////////////////////////////
 // send an asynchronous event

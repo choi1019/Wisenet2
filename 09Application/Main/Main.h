@@ -43,8 +43,8 @@ public:
 	void StopAsAScheduler() override {}
 
 	// as a Component
-	virtual void Initialize(Event *pEvent) { Scheduler::Initialize(pEvent); }
-	virtual void Finalize(Event *pEvent) { Scheduler::Initialize(pEvent); }
+	// virtual void Initialize(Event *pEvent) { Scheduler::Initialize(pEvent); }
+	// virtual void Finalize(Event *pEvent) { Scheduler::Initialize(pEvent); }
 
 protected:
 	LifecycleManager* GetPLifecycleManager() { return this->m_pLifecycleManager; }

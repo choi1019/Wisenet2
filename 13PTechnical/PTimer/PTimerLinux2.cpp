@@ -90,13 +90,15 @@ void PTimerLinux2::Finalize() {
 }
 
 void PTimerLinux2::Start() {
-    Timer::Start();
+    pthread_mutex_lock(&m_mutex);
+    this->SetEState(IComponent::EState::eRunning);
+    pthread_mutex_unlock(&m_mutex);
     PThread::Fork(CallBackPTimerLinux2, this);
 }
 
 void PTimerLinux2::Stop() {
-    Timer::Stop();
-    // Disable periodic interrupts
+    pthread_mutex_lock(&m_mutex);
+    this->SetEState(IComponent::EState::eStopped);
     pthread_mutex_unlock(&m_mutex);
     PThread::Join();
 }

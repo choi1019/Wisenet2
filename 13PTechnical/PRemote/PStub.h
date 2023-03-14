@@ -38,12 +38,12 @@ public:
 
     }
 
-    void Initialize(Event *pEvent) override {
-//        this->SendNoReplyEvent(this->GetUId(), (int)IStub::EEventType::eSend);
-        //this->SendNoReplyEvent(this->GetUId(), (int)IStub::EEventType::eSend);
-    }
-    void Finalize(Event *pEvent) override {
-    }
+//     void Initialize(Event *pEvent) override {
+// //        this->SendNoReplyEvent(this->GetUId(), (int)IStub::EEventType::eSend);
+//         //this->SendNoReplyEvent(this->GetUId(), (int)IStub::EEventType::eSend);
+//     }
+//     void Finalize(Event *pEvent) override {
+//     }
 
     void Register(Event *pEvent) {
         // create a socket
@@ -85,7 +85,7 @@ public:
         close(server_sockfd); 
     }
 
-    void Stop(Event *pEvent) override {
+    void Stop(Event *pEvent) {
     }
 
     void ProcessAEvent(Event *pEvent) {

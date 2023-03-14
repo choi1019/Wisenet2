@@ -35,7 +35,7 @@ public:
 	~PSkeleton() override {
     }
 
-    void Initialize(Event *pEvent) override {
+    void Initialize(Event *pEvent) {
         // socket
         int result = (m_nSockfdServer = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP));
         if(result < 0){
@@ -56,12 +56,12 @@ public:
         }
     }
 
-    void Finalize(Event *pEvent) override {
+    void Finalize(Event *pEvent) {
         close(m_nSockfdServer);
     }
 
-    void Start(Event *pEvent) override {
-        PScheduler::Start();
+    void Start(Event *pEvent)  {
+        this->SetEState(IComponent::EState::eRunning);
 
         int result;
         int m_nSockfdClient; 
@@ -84,8 +84,11 @@ public:
         }
     }
 
-    void Stop(Event *pEvent) override {
-       PScheduler::Stop();
+    void Stop(Event *pEvent) {
+        for (PairComponentPart pairComponentPart: *GetPComponentParts()) {
+            ((PComponentPart*)(pairComponentPart.second))->Stop();
+        }
+        this->SetEState(IComponent::EState::eStopped);
     }
 
     void ProcessAEvent(Event* pEvent) override {
@@ -96,6 +99,10 @@ public:
 			break;
 		case (int)IPSkeleton::EEventType::eStart:
 			this->Start(pEvent);
+			//this->Stop(pEvent);
+			break;
+        case (int)IPSkeleton::EEventType::eStop:
+			this->Stop(pEvent);
 			//this->Stop(pEvent);
 			break;
 		default:

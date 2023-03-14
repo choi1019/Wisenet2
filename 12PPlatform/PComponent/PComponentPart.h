@@ -9,17 +9,17 @@
 
 #define PRIORITY 100
 
-class PComponentPart : public ComponentPart, public PThread{
+class PComponentPart : public ComponentPart, public PThread {
 
 public:
 	// for Component
 	PComponentPart(int uClassId = PComponentPart_Id, const char* acClassName = PComponentPart_Name);
 	virtual ~PComponentPart();
 
-	virtual void Start();
-	virtual void Stop();
-
 	void Fork();
 	void Join();
 	virtual void RunThread();
+
+	void Start();
+    void Stop();
 };

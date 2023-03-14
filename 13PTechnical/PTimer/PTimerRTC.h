@@ -24,8 +24,8 @@ public:
 	void Initialize() override;
 	void Finalize() override;
 
-	void Start() override;
-	void Stop() override;
+	void Start();
+	void Stop();
 
 	void TimeOut(Event *pEvent) override;
 	void RunThread();

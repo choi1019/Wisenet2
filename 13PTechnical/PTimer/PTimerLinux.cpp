@@ -65,13 +65,16 @@ void PTimerLinux::Finalize() {
 
 }
 void PTimerLinux::Start() {
-    Timer::Start();
+    pthread_mutex_lock(&m_mutex);
+    this->SetEState(IComponent::EState::eRunning);
+    pthread_mutex_unlock(&m_mutex);
     PThread::Fork(&CallBackPTimerLinux, this);
 }
 void PTimerLinux::Stop() {    
     // Disable periodic interrupts
+    pthread_mutex_lock(&m_mutex);
+    this->SetEState(IComponent::EState::eStopped);
     pthread_mutex_unlock(&m_mutex);
-    Timer::Stop();
     PThread::Join();
 }
 void PTimerLinux::TimeOut(Event *pEvent) {

@@ -13,19 +13,15 @@ class IComponent {
 public:
 	enum class EState {
 		eBegin = Component_Id,
-
 		eCreated,
 		eAllocated,
 		eAssociated,
 		eTargeted,
 		eInitialized,
-//		eStarted,
 		eRunning,
 		ePaused,
 		eStopped,
 		eFinalized,
-		eDeleted,
-
 		eEnd
 	};
 
@@ -45,15 +41,6 @@ public:
 
 		eAssociateAReceiver,
 		eAssociateATarget,
-		// eInitialize,
-		// eFinalize,
-
-		// eStart,
-		// eStop,
-
-		// eRun,
-		// ePause,
-		// eResume,
 
 		eEnd
 	};

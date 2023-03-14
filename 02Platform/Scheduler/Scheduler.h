@@ -23,8 +23,8 @@ public:
 	virtual ~Scheduler();
 
 protected:
-	virtual void Initialize(Event *pEvent);
-	virtual void Finalize(Event *pEvent);
+	// virtual void Initialize(Event *pEvent);
+	// virtual void Finalize(Event *pEvent);
 
 public:
 	EventQueue* GetPEventQueue();

@@ -40,7 +40,7 @@ void PTimerRTC::Finalize() {
 }
 
 void PTimerRTC::Start() {
-    Timer::Start();
+    this->SetEState(IComponent::EState::eRunning);
     PThread::Fork(&CallBackPTimerRTC, this);
     // Enable periodic interrupts
 //	int retval = ioctl(m_nFd, RTC_UIE_ON, 0);
@@ -69,7 +69,7 @@ void PTimerRTC::Stop() {
 //    int retval = ioctl(m_nFd, RTC_UIE_OFF, 0);
 	if (retval == -1) {
 	}
-    Timer::Stop();
+    this->SetEState(IComponent::EState::eStopped);
     PThread::Join();
 }
 

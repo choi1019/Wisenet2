@@ -106,7 +106,7 @@ void LifecycleManager::StartSchedulers(Event* pEvent) {
 		else {
 			LOG_NEWLINE("- StartSchedulers -", Directory::s_dirComponents[pEvent->GetUIdSource().GetComponentId()]);
 			(*pIteratorMapScheduler)->second->Fork();
-			this->SendReplyEventIteration(
+			this->SendReplyEvent(
 				(*pIteratorMapScheduler)->second->GetUId(),
 				(int)IScheduler::EEventType::eStart, 0, nullptr, pIteratorMapScheduler);
 		}
@@ -116,7 +116,7 @@ void LifecycleManager::StartSchedulers(Event* pEvent) {
 			LOG_HEADER("LifecycleManager::StartSchedulers");		
 			IteratorMapScheduler *pIteratorMapScheduler = new("IteratorMapScheduler") IteratorMapScheduler(m_mapSchedulers.begin());
 			(*pIteratorMapScheduler)->second->Fork();
-			this->SendReplyEventIteration(
+			this->SendReplyEvent(
 				(*pIteratorMapScheduler)->second->GetUId(),
 				(int)IScheduler::EEventType::eStart, 0, nullptr, pIteratorMapScheduler);
 		}
