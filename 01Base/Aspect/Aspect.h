@@ -16,19 +16,12 @@ public:
 	}
 	virtual ~Aspect() {}
 
-	virtual void Initialize() {
-		RootObject::Initialize();
-	}
-	virtual void Finalize() {
-		RootObject::Finalize();
-	}
 	void PrintNextLine() {
 		printf("%s\n", Aspect::GetTab());
 	}
 	void PrintSeparator() {
 		printf("\n%s-------------------------------------------------", this->GetTab());
 	}
-
 
 public:
 	static int s_uCountTab;

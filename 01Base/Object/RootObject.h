@@ -38,6 +38,4 @@ public:
 	// constructors and destructors
 	RootObject(unsigned nClassId = _RootObject_Id, const char* pcClassName = _RootObject_Name);
 	virtual ~RootObject();
-	virtual void Initialize();
-	virtual void Finalize();
 };

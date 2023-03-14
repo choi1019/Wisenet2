@@ -39,12 +39,6 @@ public:
 	virtual ~EventQueue() 
 	{
 	}
-	virtual void Initialize() {
-		BaseObject::Initialize();
-	}
-	virtual void Finalize() {
-		BaseObject::Finalize();
-	}
 
 	void PushBack(Event* pEvent) {
 		this->PushLock();

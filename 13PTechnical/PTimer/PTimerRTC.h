@@ -21,8 +21,6 @@ public:
 	PTimerRTC(size_t szPeriod, int nComponentId = _PTimerRTC_Id, const char* sComponentName = _PTimerRTC_Name);
 
 	~PTimerRTC() override;
-	void Initialize() override;
-	void Finalize() override;
 
 	void Start();
 	void Stop();

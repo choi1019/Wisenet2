@@ -43,7 +43,4 @@ public:
 		int nClassId = _PEventQueue_Id, 
 		const char* pcClassName = _PEventQueue_Name);
 	virtual ~PEventQueue();
-
-	void Initialize() override;
-	void Finalize() override;
 };

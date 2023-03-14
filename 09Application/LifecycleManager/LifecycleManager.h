@@ -47,9 +47,6 @@ public:
 	virtual ~LifecycleManager();
 
 protected:
-	virtual void Initialize();
-	virtual void Finalize();
-
 	void RegisterAScheduler(int name, Scheduler* pScheduler);
 	virtual void RegisterSystemSchedulers();
 	virtual void RegisterUserShedulers() = 0;

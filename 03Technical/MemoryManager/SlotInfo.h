@@ -37,8 +37,6 @@ public:
 			int nObjectId = _SlotInfo_Id, const char* sObjectName = _SlotInfo_Name
 	);
 	~SlotInfo() override;
-	void Initialize() override;
-	void Finalize() override;
 
 	// maintenance
 	void Show(const char* pTitle);

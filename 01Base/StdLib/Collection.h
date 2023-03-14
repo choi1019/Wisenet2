@@ -22,10 +22,4 @@ public:
 	}
 	virtual ~Collection() {
 	}
-	virtual void Initialize() {
-		ValueObject::Initialize();
-	}
-	virtual void Finalize() {
-		ValueObject::Finalize();
-	}
 };

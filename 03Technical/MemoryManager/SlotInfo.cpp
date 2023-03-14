@@ -31,12 +31,6 @@ SlotInfo::SlotInfo(Slot *pSlot, const char *sMessage, SlotList *pSlotList,
     strcpy(m_sMessage, sMessage);
 }
 SlotInfo::~SlotInfo() {}
-void SlotInfo::Initialize() {
-    RootObject::Initialize();
-}
-void SlotInfo::Finalize() {
-    RootObject::Finalize();
-}
 
 void SlotInfo::Show(const char* sMessage) {
     RootObject *pRootObject = (RootObject *)m_pSlot;

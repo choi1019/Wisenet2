@@ -79,7 +79,6 @@ public:
             LOG_NEWLINE("PSkeleton::Start", inet_ntoa(sockaddrClient.sin_addr));
             PSkeletonWorker *pPSkeletonWorker = new("PSkeletonWorker") PSkeletonWorker(m_nSockfdClient);
             this->AddPart(nSkeletonWorkerId++, pPSkeletonWorker);
-            pPSkeletonWorker->Initialize();
             pPSkeletonWorker->Start();
         }
     }

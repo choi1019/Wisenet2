@@ -33,8 +33,6 @@ public:
 	PTimerLinux2(size_t szPeriod, int nComponentId = _PTimerLinux2_Id, const char* sComponentName = _PTimerLinux2_Name);
 
 	~PTimerLinux2() override;
-	void Initialize() override;
-	void Finalize() override;
 
 	void Start();
 	void Stop();

@@ -62,9 +62,6 @@ namespace wisenet {
 			, length(0) {}
 		virtual ~Map() {}
 
-		virtual void Initialize() {	Collection::Initialize(); }
-		virtual void Finalize() { Collection::Finalize(); }
-
 		inline Iterator begin() { return Iterator(this->elements); }
 		inline Iterator end() { return Iterator(this->elements + this->length); }
 

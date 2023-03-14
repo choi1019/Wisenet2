@@ -44,12 +44,6 @@ public:
 	inline MapIterator<size_t, String> end() {	return m_mapDirectory.end();	}
 	String& operator[](size_t key) { return m_mapDirectory[key]; }
 	void Clear() { m_mapDirectory.Clear(); }
-	virtual void Initialize() {
-		m_mapDirectory.Initialize();
-	}
-	virtual void Finalize() {
-		m_mapDirectory.Finalize();
-	}
 	void Show(const char* pcTitle);
 };
 

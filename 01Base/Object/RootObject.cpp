@@ -15,11 +15,3 @@ RootObject::~RootObject()
 {
     this->m_eState = EState::eDeleted;
 }
-void RootObject::Initialize()
-{
-    this->m_eState = EState::eInitialized;
-}
-void RootObject::Finalize()
-{
-    this->m_eState = EState::eFinalized;
-}

@@ -20,12 +20,6 @@ PLifecycleManager::PLifecycleManager(
 	{}
 PLifecycleManager::~PLifecycleManager() {
 }
-void PLifecycleManager::Initialize() {
-	LifecycleManager::Initialize();
-}
-void PLifecycleManager::Finalize() {
-	LifecycleManager::Finalize();
-}
 
 void PLifecycleManager::RegisterUserShedulers() {
 	this->RegisterAScheduler((int)EComponents::ePScheduler0, new("eScheduler0") PScheduler());

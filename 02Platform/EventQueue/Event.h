@@ -104,13 +104,6 @@ public:
 		}
 	}
 
-	void Initialize() override {
-		ValueObject::Initialize();
-	}
-	void Finalize() override {
-		ValueObject::Finalize();
-	}
-
 	int GetId() { return this->m_nId; }
 	UId GetUIdSource() { return this->m_uidSource; }
 	UId GetUIdTarget() { return this->m_uidTarget; }

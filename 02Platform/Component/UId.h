@@ -20,13 +20,6 @@ public:
 	{}
 	virtual ~UId() {}
 
-	virtual void Initialize() {
-		ValueObject::Initialize();
-	}
-	virtual void Finalize() {
-		ValueObject::Finalize();
-	}
-
 	void SetPEventQueue(EventQueue* pEventQueue) { this->m_pEventQueue = pEventQueue; }
 	EventQueue* GetPEventQueue() { return this->m_pEventQueue; }
 

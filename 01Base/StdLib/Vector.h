@@ -37,8 +37,6 @@ namespace wisenet {
 		{}
 		virtual ~Vector() 
 		{}
-		virtual void Initialize() { Collection::Initialize(); }
-		virtual void Finalize() { Collection::Finalize(); }
 
 		inline iterator begin() { return iterator(this->elements); }
 		inline iterator end() { return iterator(this->elements + this->length); }

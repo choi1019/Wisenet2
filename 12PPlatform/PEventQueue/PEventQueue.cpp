@@ -26,10 +26,3 @@ PEventQueue::~PEventQueue()
     sem_destroy(&m_semaphoreFull);
     pthread_mutex_destroy(&m_mutex);
 }
-
-void PEventQueue::Initialize() {
-    EventQueue::Initialize();
-}
-void PEventQueue::Finalize() {
-    EventQueue::Finalize();        
-}

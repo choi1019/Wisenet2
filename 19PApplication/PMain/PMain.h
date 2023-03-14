@@ -17,9 +17,6 @@ public:
 	virtual ~PMain();
 
 	// as a Component
-	void Initialize() override;
-	void Finalize() override;
-	
 	void BootstrapSystem() override;
 	void RunAsAMain() override;
 	void ShutdownSystem() override;

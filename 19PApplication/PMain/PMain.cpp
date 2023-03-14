@@ -37,9 +37,6 @@ void PMain::ShutdownSystem() {
 	delete this->GetPLifecycleManager();
 }
 
-void PMain::Initialize() {}
-void PMain::Finalize() {}
-
 ///////////////////////////////////////////////
 int PMain::main_ex() {
 	PMemoryManager::Allocate(SIZE_MEMORY_APPLICATION, SIZE_PAGE, SIZE_SLOT_UNIT);

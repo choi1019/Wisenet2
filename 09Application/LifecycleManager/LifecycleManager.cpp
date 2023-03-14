@@ -19,13 +19,6 @@ LifecycleManager::LifecycleManager(int nClassId, const char* pcClassName)
 LifecycleManager::~LifecycleManager() {
 }
 
-void LifecycleManager::Initialize() {
-	Component::Initialize();
-}
-void LifecycleManager::Finalize() {
-	Component::Finalize();
-}
-
 void LifecycleManager::RegisterEventTypes() {
 	Directory::s_dirEvents[(unsigned)ILifecycleManager::EEventType::eStopSystem] = "eStopSystem";
 	Directory::s_dirEvents[(unsigned)ILifecycleManager::EEventType::eInitializeAsALifecycleManager] = "eInitializeAsALifecycleManager";

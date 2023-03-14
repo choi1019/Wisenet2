@@ -20,23 +20,14 @@ PTimerRTC::PTimerRTC(size_t szPeriod, int nComponentId, const char* sComponentNa
     m_nFd = open(path, O_RDONLY);
     if (m_nFd < 0) {
  	}
-}
-
-PTimerRTC::~PTimerRTC() {
-    close(m_nFd);
-}
-
-void PTimerRTC::Initialize() {
-    Timer::Initialize();
 
     int retval = ioctl(m_nFd, RTC_IRQP_SET, 2);
 	if (retval == -1) {
 	}
 }
 
-void PTimerRTC::Finalize() {
-    Timer::Finalize();
-
+PTimerRTC::~PTimerRTC() {
+    close(m_nFd);
 }
 
 void PTimerRTC::Start() {

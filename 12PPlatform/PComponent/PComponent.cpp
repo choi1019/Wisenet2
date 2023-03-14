@@ -21,13 +21,6 @@ void PComponent::RegisterExceptions() {
 	Component::RegisterExceptions();
 }
 
-void PComponent::Initialize() {
-	Component::Initialize();
-}
-void PComponent::Finalize() {
-	Component::Finalize();
-}
-
 void PComponent::Start() {
 	this->Fork();
 }

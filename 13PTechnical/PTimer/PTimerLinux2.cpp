@@ -80,15 +80,6 @@ PTimerLinux2::~PTimerLinux2() {
  	pthread_mutex_destroy(&m_mutex);
 }
 
-void PTimerLinux2::Initialize() {
-    Timer::Initialize();
-}
-
-void PTimerLinux2::Finalize() {
-    Timer::Finalize();
-
-}
-
 void PTimerLinux2::Start() {
     pthread_mutex_lock(&m_mutex);
     this->SetEState(IComponent::EState::eRunning);

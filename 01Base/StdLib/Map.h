@@ -75,9 +75,6 @@ namespace wisenet {
 			}
 		}
 
-		virtual void Initialize() { Collection::Initialize(); }
-		virtual void Finalize() { Collection::Finalize(); }
-
 		inline Iterator begin() { return Iterator(m_pHead); }
 		inline Iterator end() {	return nullptr;	}
 

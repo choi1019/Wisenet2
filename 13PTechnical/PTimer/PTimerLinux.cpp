@@ -57,13 +57,7 @@ PTimerLinux::PTimerLinux(size_t msecInterval, int nComponentId, const char* sCom
 PTimerLinux::~PTimerLinux() {
  	pthread_mutex_destroy(&m_mutex);
 }
-void PTimerLinux::Initialize() {
-    Timer::Initialize();
-}
-void PTimerLinux::Finalize() {
-    Timer::Finalize();
 
-}
 void PTimerLinux::Start() {
     pthread_mutex_lock(&m_mutex);
     this->SetEState(IComponent::EState::eRunning);

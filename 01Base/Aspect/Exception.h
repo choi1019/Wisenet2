@@ -44,13 +44,6 @@ public:
 	}
 	virtual ~Exception() {}
 
-	virtual void Initialize() {	
-		Aspect::Initialize();
-	}
-	virtual void Finalize() {
-		Aspect::Finalize();
-	}
-
 	virtual void Println() {
 		printf(
 			"\n>> Execption(%d-%s) << %s, %s - %s %s\n"

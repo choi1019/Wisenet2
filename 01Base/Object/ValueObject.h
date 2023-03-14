@@ -28,14 +28,6 @@ public:
 	}
 	virtual ~ValueObject() {
 	}
-	
-	virtual void Initialize() {
-		RootObject::Initialize();
-	}
-	
-	virtual void Finalize() {
-		RootObject::Finalize();
-	}
 
 	// cloneable
 	virtual ValueObject* Clone() {

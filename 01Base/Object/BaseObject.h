@@ -30,15 +30,7 @@ public:
 	virtual ~BaseObject() {
 	}
 	
-	virtual void Initialize() {
-		RootObject::Initialize();
-	}
-	
-	virtual void Finalize() {
-		RootObject::Finalize();
-	}
-
-		// cloneable
+	// cloneable
 	virtual BaseObject* Clone() {
 		return nullptr;
 	}

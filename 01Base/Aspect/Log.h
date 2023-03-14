@@ -54,12 +54,6 @@ public:
 	}
 	virtual ~Log() {}
 
-	virtual void Initialize() {
-		Aspect::Initialize();
-	}
-	virtual void Finalize() {
-		Aspect::Finalize();
-	}
 	/*
 	void PrintTime() {
 		printf(

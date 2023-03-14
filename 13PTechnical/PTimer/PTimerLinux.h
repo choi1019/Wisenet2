@@ -25,8 +25,6 @@ public:
 	PTimerLinux(size_t msecInterval, int nComponentId = _PTimerLinux_Id, const char* sComponentName = _PTimerLinux_Name);
 
 	~PTimerLinux() override;
-	void Initialize() override;
-	void Finalize() override;
 
 	void Start();
 	void Stop();

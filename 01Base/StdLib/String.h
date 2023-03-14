@@ -185,8 +185,6 @@ namespace wisenet {
 		}
 		*/
 		~String() {}
-		virtual void Initialize() { Collection::Initialize(); }
-		virtual void Finalize() { Collection::Finalize(); }
 
 		inline String& operator=(const char* rCharArray) {
 			unsigned uLength = this->computeLength(rCharArray);

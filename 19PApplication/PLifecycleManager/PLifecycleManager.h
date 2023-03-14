@@ -10,8 +10,6 @@ public:
 		unsigned typeId = _PLifecycleManager_Id,
 		const char* pClassName = _PLifecycleManager_Name);
 	~PLifecycleManager() override;
-	void Initialize() override;
-	void Finalize() override;
 
 protected:
 	virtual void RegisterUserShedulers();

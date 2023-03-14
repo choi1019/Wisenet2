@@ -14,9 +14,6 @@ protected:
 	void RegisterEventTypes();
 	void RegisterExceptions();
 
-	virtual void Initialize();
-	virtual void Finalize();
-
 public:
 	PComponent(int nClassId = _PCompnent_Id, const char* pcClassName = _PCompnent_Name);
 	virtual ~PComponent() override;
