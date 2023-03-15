@@ -14,7 +14,7 @@ public:
 	virtual ~TestMain() {}
 
 	virtual void BeforeInitialize() { 
-		TESTLOG_NEWLINE("");
+		// TESTLOG_NEWLINE("");
 		TestSuite::BeforeInitialize();
 	}
 	virtual void AfterFinalize() {
