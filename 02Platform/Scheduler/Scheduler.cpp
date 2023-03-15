@@ -80,27 +80,6 @@ void Scheduler::StartAsAScheduler() {
 void Scheduler::StopAsAScheduler() {
 	m_eState = IScheduler::EState::eStopped;
 }
-
-void Scheduler::Fork(Event* pEvent) {
-	this->Fork();
-}
-void Scheduler::Join(Event* pEvent) {
-	this->Join();
-}
-void Scheduler::StartAsAScheduler(Event* pEvent) {
-	this->StartAsAScheduler();
-}
-void Scheduler::StopAsAScheduler(Event* pEvent) {
-	this->StopAsAScheduler();
-}
-void Scheduler::PauseAsAScheduler(Event* pEvent) {
-	this->PauseAsAScheduler();
-}
-void Scheduler::ResumeAsAScheduler(Event* pEvent) {
-	this->ResumeAsAScheduler();
-}
-
-
 void Scheduler::RunAsAScheduler() {
 	m_eState = IScheduler::EState::eRunning;
 	LOG_NEWLINE(Directory::s_dirComponents[this->GetComponentId()], "RunAsAScheduler", "Start");
@@ -147,7 +126,7 @@ void Scheduler::AllocateAComponent(Component* pComponent) {
 	LOG_NEWLINE("Scheduler::AllocateAComponent"
 				, this->GetComponentId(), Directory::s_dirComponents[this->GetComponentId()]
 				, pComponent->GetComponentId(), Directory::s_dirComponents[pComponent->GetComponentId()]);
-	pComponent->SetPEventQueue(this->GetPEventQueue());
+	pComponent->SetPEventQueue(m_pEventQueue);
 	m_mComponents.Add(pComponent->GetComponentId(), pComponent);
 }
 void Scheduler::DellocateAComponent(Component* pComponent) {
@@ -179,6 +158,24 @@ void Scheduler::DellocateAComponent(Event* pEvent) {
 	DellocateAComponent(pParamAllocateAComponent->GetPComponentAllocated());
 }
 
+void Scheduler::Fork(Event* pEvent) {
+	this->Fork();
+}
+void Scheduler::Join(Event* pEvent) {
+	this->Join();
+}
+void Scheduler::StartAsAScheduler(Event* pEvent) {
+	this->StartAsAScheduler();
+}
+void Scheduler::StopAsAScheduler(Event* pEvent) {
+	this->StopAsAScheduler();
+}
+void Scheduler::PauseAsAScheduler(Event* pEvent) {
+	this->PauseAsAScheduler();
+}
+void Scheduler::ResumeAsAScheduler(Event* pEvent) {
+	this->ResumeAsAScheduler();
+}
 
 void Scheduler::ProcessAEvent(Event* pEvent)
 {

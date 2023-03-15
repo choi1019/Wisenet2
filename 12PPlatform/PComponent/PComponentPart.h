@@ -11,15 +11,20 @@
 
 class PComponentPart : public ComponentPart, public PThread {
 
+private:
+	pthread_mutex_t m_mutex;
 public:
 	// for Component
 	PComponentPart(int uClassId = PComponentPart_Id, const char* acClassName = PComponentPart_Name);
 	virtual ~PComponentPart();
 
+	IComponent::EState GetEState() override;
+	void SetEState(IComponent::EState eState) override;
+
 	void Fork();
 	void Join();
-	virtual void RunThread();
+	virtual void RunThread() = 0;
 
-	void Start();
-    void Stop();
+	virtual void Start();
+	virtual void Stop();
 };

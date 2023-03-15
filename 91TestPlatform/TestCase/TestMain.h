@@ -12,4 +12,13 @@ public:
 	: TestSuite(nClassId, pClassName)
 	 {}
 	virtual ~TestMain() {}
+
+	virtual void BeforeInitialize() { 
+		TESTLOG_NEWLINE("");
+		TestSuite::BeforeInitialize();
+	}
+	virtual void AfterFinalize() {
+		TestSuite::AfterFinalize();
+		TESTLOG_NEWLINE("");
+	}
 };

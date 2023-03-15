@@ -46,6 +46,10 @@ public:
 //     }
 
     void Register(Event *pEvent) {
+
+    }
+
+    void Send(Event *pEvent) {
         // create a socket
         if((server_sockfd = socket(AF_INET, SOCK_STREAM, 0)) == -1){
             throw Exception((int)(IPStub::EException::eSocket));
@@ -55,9 +59,6 @@ public:
         serveraddr.sin_family = AF_INET;
         serveraddr.sin_addr.s_addr = m_inAddressIP;
         serveraddr.sin_port = htons(m_nNumPort);
-    }
-
-    void Send(Event *pEvent) {
         int result = connect(server_sockfd, (struct sockaddr *)&serveraddr, sizeof(serveraddr));
         if (result < 0){
             throw Exception((int)(IPStub::EException::eConnect), "eConnect", result);

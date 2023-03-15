@@ -39,6 +39,7 @@ public:
 	// for Component
 	ComponentPart(
 		unsigned uClassId = ComponentPart_Id,
+		
 		const char* acClassName = ComponentPart_Name);
 	virtual ~ComponentPart();
 	// virtual void Initialize();

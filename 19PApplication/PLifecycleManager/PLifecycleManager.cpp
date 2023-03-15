@@ -25,10 +25,10 @@ void PLifecycleManager::RegisterUserShedulers() {
 	this->RegisterAScheduler((int)EComponents::ePScheduler0, new("eScheduler0") PScheduler());
 	this->RegisterAScheduler((int)EComponents::ePScheduler1, new("eScheduler1") PScheduler());
 	this->RegisterAScheduler((int)EComponents::ePScheduler2, new("eScheduler2") PScheduler());
-	this->RegisterAScheduler((int)EComponents::ePSkeleton, new("ePSkeleton") PSkeleton(10000));
 }
 void PLifecycleManager::RegisterUserComponents() {
 	this->RegisterAComponent((int)EComponents::ePStub, new("ePStub") PStub(10000));
+	this->RegisterAComponent((int)EComponents::ePSkeleton, new("ePSkeleton") PSkeleton(10000));
 	this->RegisterAComponent((int)EComponents::eVideoManager, new("eVideoManager") VideoManager());
 	this->RegisterAComponent((int)EComponents::eVideoProviderManager, new("eVideoProviderManager") VideoProviderManager());
 	this->RegisterAComponent((int)EComponents::eVideoRequesterManager, new("eVideoRequesterManager") VideoRequesterManager());
@@ -38,10 +38,14 @@ void PLifecycleManager::RegisterUserComponents() {
 	// this->RegisterAComponent((int)EComponents::eTimerRTC, new("PTimerRTC") PTimerRTC(2000));
 }
 void PLifecycleManager::AllocateUserComponents() {
+
+
+	this->AllocateAComponent((int)EComponents::eVideoManager, (int)EComponents::ePScheduler0);
+		this->AllocateAComponent((int)EComponents::ePSkeleton, (int)EComponents::ePScheduler0);
+	this->AllocateAComponent((int)EComponents::eVideoProviderManager, (int)EComponents::ePScheduler0);
+	this->AllocateAComponent((int)EComponents::eVideoRequesterManager, (int)EComponents::ePScheduler0);
 	this->AllocateAComponent((int)EComponents::ePStub, (int)EComponents::ePScheduler0);
-	this->AllocateAComponent((int)EComponents::eVideoManager, (int)ILifecycleManager::ECompponents::eMainScheduler);
-	this->AllocateAComponent((int)EComponents::eVideoProviderManager, (int)EComponents::ePScheduler1);
-	this->AllocateAComponent((int)EComponents::eVideoRequesterManager, (int)EComponents::ePScheduler2);
+	
 	// this->AllocateAComponent((int)EComponents::eTimerLinux, (int)EComponents::eScheduler2);
 	// this->AllocateAComponent((int)EComponents::eTimerLinux1, (int)EComponents::eScheduler1);
 	//	this->AllocateAComponent((int)EComponents::eTimerLinux2, (int)EComponents::eScheduler2);

@@ -1,9 +1,10 @@
 #pragma once
 
-#include <02Platform/Component/Component.h>
+#include <12PPlatform/PComponent/PComponent.h>
 #include <13PTechnical/PRemote/IPSkeleton.h>
-#include <01Base/Aspect/Exception.h>
 #include <13PTechnical/PRemote/PSkeletonWorker.h>
+
+#include <01Base/Aspect/Exception.h>
 #include <01Base/StdLib/Map.h>
 
 #include <sys/socket.h>
@@ -11,7 +12,7 @@
 #include <arpa/inet.h>
 #include <unistd.h>
 
-class PSkeleton : public PScheduler, public IPSkeleton
+class PSkeleton : public PComponent, public IPSkeleton
 {
 private:
         int m_nSockfdServer;       
@@ -23,7 +24,7 @@ public:
             const char *sAddressIP = nullptr, 
             int nComponentId = _PSkeleton_Id, 
             const char* sComponentName = _PSkeleton_Name)
-    : PScheduler(nComponentId, sComponentName)
+    : PComponent(nComponentId, sComponentName)
     , m_nNumPort(nNumPort)
     {
         if (sAddressIP == nullptr) {
@@ -60,7 +61,7 @@ public:
         close(m_nSockfdServer);
     }
 
-    void Start(Event *pEvent)  {
+    void RunThread() {
         this->SetEState(IComponent::EState::eRunning);
 
         int result;
@@ -76,36 +77,40 @@ public:
                 throw Exception((int)(IPSkeleton::EException::eAccept), "eAccept", result);
             }
 
-            LOG_NEWLINE("PSkeleton::Start", inet_ntoa(sockaddrClient.sin_addr));
+            //LOG_NEWLINE("PSkeleton::Start", inet_ntoa(sockaddrClient.sin_addr));
             PSkeletonWorker *pPSkeletonWorker = new("PSkeletonWorker") PSkeletonWorker(m_nSockfdClient);
             this->AddPart(nSkeletonWorkerId++, pPSkeletonWorker);
             pPSkeletonWorker->Start();
         }
     }
 
+    void Start(Event *pEvent) {
+        PComponent::Start();
+    }
+
     void Stop(Event *pEvent) {
         for (PairComponentPart pairComponentPart: *GetPComponentParts()) {
             ((PComponentPart*)(pairComponentPart.second))->Stop();
         }
-        this->SetEState(IComponent::EState::eStopped);
+        PComponent::Stop();
     }
 
     void ProcessAEvent(Event* pEvent) override {
 		switch (pEvent->GetType()) {
 		case (int)IPSkeleton::EEventType::eInitialize:
 			this->Initialize(pEvent);
-			//this->Stop(pEvent);
+			break;
+		case (int)IPSkeleton::EEventType::eFinalize:
+			this->Finalize(pEvent);
 			break;
 		case (int)IPSkeleton::EEventType::eStart:
 			this->Start(pEvent);
-			//this->Stop(pEvent);
 			break;
-        case (int)IPSkeleton::EEventType::eStop:
+		case (int)IPSkeleton::EEventType::eStop:
 			this->Stop(pEvent);
-			//this->Stop(pEvent);
 			break;
 		default:
-			PScheduler::ProcessAEvent(pEvent);
+			PComponent::ProcessAEvent(pEvent);
 			break;
 		}
 	}

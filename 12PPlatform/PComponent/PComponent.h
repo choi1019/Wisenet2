@@ -10,6 +10,8 @@
 
 class PComponent : public Component, public PThread
 {
+private:
+	pthread_mutex_t m_mutex;
 protected:
 	void RegisterEventTypes();
 	void RegisterExceptions();
@@ -18,10 +20,15 @@ public:
 	PComponent(int nClassId = _PCompnent_Id, const char* pcClassName = _PCompnent_Name);
 	virtual ~PComponent() override;
 
-	virtual void Start();
-	virtual void Stop();
-	
+	IComponent::EState GetEState() override;
+	void SetEState(IComponent::EState eState) override;
+
 	void Fork();
 	void Join();
-	virtual void RunThread() {}
+	virtual void RunThread() = 0;
+
+	virtual void Start();
+	virtual void Stop();
+
+
 };

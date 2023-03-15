@@ -34,7 +34,7 @@ public:
 	virtual void Run() {}
 
 public:
-	void BeforeInitialize() { 
+	virtual void BeforeInitialize() { 
 		TESTLOG_HEADER(this->GetClassName(), "Initialize", "Start");
 	}
 	void BeforeRun() {
@@ -45,7 +45,7 @@ public:
 		TESTLOG_FOOTER(this->GetClassName(), "Run", "End");
 		TESTLOG_HEADER(this->GetClassName(), "Finalize", "Start");
 	}
-	void AfterFinalize() {
+	virtual void AfterFinalize() {
     	TESTLOG_FOOTER(this->GetClassName(), "Finalize", "End")
 	}
 

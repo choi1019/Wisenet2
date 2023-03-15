@@ -27,7 +27,7 @@ public:
         int result;
         char buf[MAXBUF];
         
-        while (this->GetEState() == IComponent::EState::eRunning) {
+        // while (this->GetEState() == IComponent::EState::eRunning) {
             LOG_NEWLINE("PSkeletonWorker::Run", this->GetObjectId());
             // read
             memset(buf, 0x00, MAXBUF);
@@ -40,7 +40,7 @@ public:
             if(result <= 0) {
                 throw Exception((int)(IPSkeleton::EException::eWrite), "eWrite", result);
             }
-        }
+        // }
         close(m_nSockfdClient);
     }
 };

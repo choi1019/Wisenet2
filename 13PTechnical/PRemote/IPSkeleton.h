@@ -2,7 +2,7 @@
 
 #include <13PTechnical/typedef.h>
 #define _PSkeleton_Id _GET_CLASS_UID(_ELayer_PTechnical::_ePSkeleton) 
-#define _PSkeleton_Name "Skeleton"
+#define _PSkeleton_Name "PSkeleton"
 
 class IPSkeleton {
 public:
@@ -20,6 +20,7 @@ enum class EException {
 	enum class EEventType {
 		eBegin = _PSkeleton_Id,
 		eInitialize,
+		eFinalize,
 		eStart,
 		eStop,
 		eEnd
