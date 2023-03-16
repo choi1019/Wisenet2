@@ -38,13 +38,11 @@ void PLifecycleManager::RegisterUserComponents() {
 	// this->RegisterAComponent((int)EComponents::eTimerRTC, new("PTimerRTC") PTimerRTC(2000));
 }
 void PLifecycleManager::AllocateUserComponents() {
-
-
-	this->AllocateAComponent((int)EComponents::eVideoManager, (int)EComponents::ePScheduler0);
-		this->AllocateAComponent((int)EComponents::ePSkeleton, (int)EComponents::ePScheduler0);
+	this->AllocateAComponent((int)EComponents::ePSkeleton, (int)ILifecycleManager::ECompponents::eMainScheduler);
+	this->AllocateAComponent((int)EComponents::eVideoManager, (int)ILifecycleManager::ECompponents::eMainScheduler);
 	this->AllocateAComponent((int)EComponents::eVideoProviderManager, (int)EComponents::ePScheduler0);
-	this->AllocateAComponent((int)EComponents::eVideoRequesterManager, (int)EComponents::ePScheduler0);
-	this->AllocateAComponent((int)EComponents::ePStub, (int)EComponents::ePScheduler0);
+	this->AllocateAComponent((int)EComponents::eVideoRequesterManager, (int)EComponents::ePScheduler1);
+	this->AllocateAComponent((int)EComponents::ePStub, (int)EComponents::ePScheduler2);
 	
 	// this->AllocateAComponent((int)EComponents::eTimerLinux, (int)EComponents::eScheduler2);
 	// this->AllocateAComponent((int)EComponents::eTimerLinux1, (int)EComponents::eScheduler1);

@@ -17,7 +17,7 @@
         "databaseFilename": "${default}",
         "path": [
           "${default}",
-          "/home/choisw/source/PlatformLinux"
+          "/home/choisw/source/Wisenet2"
         ]
       },
       "intelliSenseMode": "linux-gcc-x64",

@@ -24,6 +24,7 @@ enum class EException {
 
 	enum class EParts {
 		eBegin = _PStub_Id,
+		ePStubWorker,
 		eEnd
 	};
 	enum class EReceivers {

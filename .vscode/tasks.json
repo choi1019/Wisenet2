@@ -6,7 +6,7 @@
             "command": "/usr/bin/g++-11",
             "args": [
                 "-fdiagnostics-color=always",
-                "-I/home/choisw/source/PlatformLinux/",
+                "-I/home/choisw/source/Wisenet2/",
                 "-g",
                 "${workspaceFolder}/Main.cpp",
 

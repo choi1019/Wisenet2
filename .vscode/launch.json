@@ -7,8 +7,8 @@
       "args": [],
       "stopAtEntry": false,
       "externalConsole": false,
-      "cwd": "/home/choisw/source/PlatformLinux",
-      "program": "/home/choisw/source/PlatformLinux/bin/a.out",
+      "cwd": "/home/choisw/source/Wisenet2",
+      "program": "/home/choisw/source/Wisenet2/bin/a.out",
       "MIMode": "gdb",
       "miDebuggerPath": "gdb",
       "setupCommands": [
