@@ -13,8 +13,8 @@
                 // "${workspaceFolder}/92TestApplication/PTestMain/PTestMain.cpp",
                 // "${workspaceFolder}/92TestApplication/PTS2/*.cpp",
                 // "${workspaceFolder}/92TestApplication/PTS2/PTC21/*.cpp",
-                // "${workspaceFolder}/92TestApplication/PTS2/PTC22/*.cpp",
 
+                "${workspaceFolder}/92TestApplication/PTS2/PTC22/*.cpp",
                 "${workspaceFolder}/92TestApplication/PTS2/PTC21/*.cpp",
 
                 "${workspaceFolder}/92TestApplication/PTS1/PTC11/*.cpp",

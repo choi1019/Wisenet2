@@ -6,32 +6,20 @@
 #include <91TestPlatform/TestCase/TestSuite.h>
 
 #include <92TestApplication/PTS2/Config.h>
-//#include <13PTechnical/PMemoryManager/PMemoryManager.h>
-#include <19PApplication/PMain/PMain.h>
+#include <92TestApplication/PTS2/PTC21/PTC21.h>
+#include <92TestApplication/PTS2/PTC22/PTC22.h>
 
 class PTS2: public TestSuite {
 public:
 	PTS2(
 		unsigned classId = _PTS2_Id,
 		const char* pClassName = _PTS2_Name)
-		: TestSuite(classId, pClassName)
-	{
+		: TestSuite(classId, pClassName) {
+		this->Add(new("PTC21") PTC21());
+		this->Add(new("PTC22") PTC22());
 	}
+	
 	virtual ~PTS2() {
-	}
-
-	void Initialize() {
-		TestSuite::Initialize();
-		//PMemoryManager::Allocate(SIZE_MEMORY_SYSTEM, SIZE_MEMORY_APPLICATION, SIZE_PAGE, SIZE_SLOT_UNIT);
-	}
-
-	void Run() override {
-		PMain::main_ex();
-	}
-
-	void Finalize() {
-		TestSuite::Finalize();
-		//PMemoryManager::Delocate();
 	}
 };
 
