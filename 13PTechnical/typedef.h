@@ -19,6 +19,7 @@ enum class _ELayer_PTechnical {
 	_ePTimerLinux2,
 
 	_ePStub,
+	_ePStubWorker,
 	_ePSkeleton,
 	_ePSkeletonWorker,
 
