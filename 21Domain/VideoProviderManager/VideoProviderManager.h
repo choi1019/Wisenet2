@@ -29,12 +29,12 @@ protected:
 	// 	Component::Finalize();
 	// }
 
-	void Register(Event* pEvent) {
+	void Initialize(Event* pEvent) {
 		if (pEvent->IsReply()) {
-			if (pEvent->GetReplyType() == (int)IVideoRequesterManager::EEventType::eRegister) {
+			if (pEvent->GetReplyType() == (int)IVideoRequesterManager::EEventType::eInitialize) {
 				this->SendReplyEvent(
 					(int)IVideoProviderManager::EReceivers::ePStub, 
-					(int)IPStub::EEventType::eRegister);
+					(int)IPStub::EEventType::eInitialize);
 			} else {
 				LOG_FOOTER("VideoProviderManager::Register");
 			}
@@ -43,7 +43,7 @@ protected:
 			LOG_HEADER("VideoProviderManager::Register");
 			this->SendReplyEvent(
 				(int)IVideoProviderManager::EReceivers::eVideoRequesterManager,
-				(int)IVideoRequesterManager::EEventType::eRegister);
+				(int)IVideoRequesterManager::EEventType::eInitialize);
 		}
 	}
 
@@ -67,8 +67,8 @@ protected:
 
 	void ProcessAEvent(Event* pEvent) {
 		switch (pEvent->GetType()) {
-		case (unsigned)IVideoProviderManager::EEventType::eRegister:
-			this->Register(pEvent);
+		case (unsigned)IVideoProviderManager::EEventType::eInitialize:
+			this->Initialize(pEvent);
 			break;
 		case (unsigned)IVideoProviderManager::EEventType::eStart:
 			this->Start(pEvent);

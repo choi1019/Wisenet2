@@ -31,7 +31,7 @@ public:
 
     }
 
-    void Register(Event *pEvent) {
+    void Initialize(Event *pEvent) {
         PStubWorker *pPStubWorker = new("pPStubWorker") PStubWorker(m_nNumPort, m_inAddressIP);
         this->AddPart((int)IPStub::EParts::ePStubWorker, pPStubWorker);
     }
@@ -46,8 +46,8 @@ public:
 
     void ProcessAEvent(Event *pEvent) {
         switch(pEvent->GetType()) {
-            case (int)IPStub::EEventType::eRegister:
-                this->Register(pEvent);
+            case (int)IPStub::EEventType::eInitialize:
+                this->Initialize(pEvent);
                 break;
             case (int)IPStub::EEventType::eSend:
                 this->Send(pEvent);
