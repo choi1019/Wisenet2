@@ -63,7 +63,7 @@ public:
 		, m_pIterator(pIterator)
 
 		, m_bReply(false)
-		, m_nReplyType(UNDEFINED)
+		, m_nReplyType(undefined)
 
 		, m_bSynchronous(false)
 		, m_pParent(nullptr)

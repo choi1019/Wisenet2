@@ -166,7 +166,7 @@ void LifecycleManager::AllocateComponents(Event* pEvent) {
 			this->SendReplyEvent(
 				uIdTargetScheduler
 				, (int)IScheduler::EEventType::eAllocateAComponent
-				, UNDEFINED
+				, undefined
 				, pParamAllocateAComponent
 				, pIteratorMapAllocations
 			);
@@ -196,7 +196,7 @@ void LifecycleManager::AllocateComponents(Event* pEvent) {
 			this->SendReplyEvent(
 				uIdTargetScheduler
 				, (int)IScheduler::EEventType::eAllocateAComponent
-				, UNDEFINED
+				, undefined
 				, pParamAllocateAComponent
 				, pIteratorMapAllocations
 			);

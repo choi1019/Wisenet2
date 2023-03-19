@@ -1,6 +1,6 @@
 #pragma once
 
-#define UNDEFINED -1
+#define undefined -1
 
 #define _GET_LAYER_UID(ID) (unsigned)ID*100
 #define _GET_CLASS_UID(ID) (unsigned)ID*100

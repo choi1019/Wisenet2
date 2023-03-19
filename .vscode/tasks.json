@@ -5,58 +5,55 @@
             "label": "C/C++: g++ build active file",
             "command": "/usr/bin/g++-11",
             "args": [
+
                 "-fdiagnostics-color=always",
                 "-I/home/choisw/source/Wisenet2/",
+                "-I/home/linuxbrew/.linuxbrew/Cellar/opencv/4.7.0_2/include/opencv4/",
                 "-g",
                 "${workspaceFolder}/Main.cpp",
-
                 // "${workspaceFolder}/92TestApplication/PTestMain/PTestMain.cpp",
                 // "${workspaceFolder}/92TestApplication/PTS2/*.cpp",
                 // "${workspaceFolder}/92TestApplication/PTS2/PTC21/*.cpp",
-
                 "${workspaceFolder}/92TestApplication/PTS2/PTC22/*.cpp",
                 "${workspaceFolder}/92TestApplication/PTS2/PTC21/*.cpp",
-
                 "${workspaceFolder}/92TestApplication/PTS1/PTC11/*.cpp",
                 "${workspaceFolder}/92TestApplication/PTS1/PTC12/*.cpp",
                 "${workspaceFolder}/92TestApplication/PTS1/PTC13/*.cpp",
                 "${workspaceFolder}/92TestApplication/PTS1/PTC14/*.cpp",
-
                 // "${workspaceFolder}/91TestPlatform/TestCase/*.cpp",
                 // "${workspaceFolder}/91TestPlatform/TestAspect/*.cpp",
                 // "${workspaceFolder}/91TestPlatform/TestObject/*.cpp",
-
                 "${workspaceFolder}/19PApplication/PMain/*.cpp",
                 "${workspaceFolder}/19PApplication/PLifecycleManager/*.cpp",
-
                 "${workspaceFolder}/21Domain/VideoManager/*.cpp",
                 "${workspaceFolder}/21Domain/VideoProviderManager/*.cpp",
                 "${workspaceFolder}/21Domain/VideoRequesterManager/*.cpp",
-
                 "${workspaceFolder}/13PTechnical/PMemoryManager/*.cpp",
                 "${workspaceFolder}/13PTechnical/PTimer/*.cpp",
                 "${workspaceFolder}/13PTechnical/PThread/*.cpp",
  //               "${workspaceFolder}/13PTechnical/PRemote/*.cpp",
-
                 "${workspaceFolder}/12PPlatform/PEventQueue/*.cpp",
                 "${workspaceFolder}/12PPlatform/PScheduler/*.cpp",
                 "${workspaceFolder}/12PPlatform/PComponent/*.cpp",
-
                 "${workspaceFolder}/09Application/Main/*.cpp",
                 "${workspaceFolder}/09Application/LifecycleManager/*.cpp",
-
                 "${workspaceFolder}/03Technical/MemoryManager/*.cpp",
                 "${workspaceFolder}/03Technical/Timer/*.cpp",
-
                 "${workspaceFolder}/02Platform/EventQueue/*.cpp",
                 "${workspaceFolder}/02Platform/Scheduler/*.cpp",
                 "${workspaceFolder}/02Platform/Component/*.cpp",
-
                 "${workspaceFolder}/01Base/StdLib/*.cpp",
                 "${workspaceFolder}/01Base/Aspect/*.cpp",
                 "${workspaceFolder}/01Base/Object/*.cpp",
                 "-o",
-                "${workspaceFolder}/bin/a.out"
+                "${workspaceFolder}/bin/a.out",
+
+                "-std=c++11",
+                "'pkg-config",
+                "opencv4",
+                "--libs",
+                "--cflags",
+                "opencv4'",
             ],
             "options": {
                 "cwd": "/usr/bin"

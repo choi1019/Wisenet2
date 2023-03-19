@@ -55,7 +55,7 @@ void Main::InitializeAsAMain(Event* pEvent) {
 		this->SendReplyEvent(
 			this->m_pLifecycleManager->GetUId()
 			, (int)ILifecycleManager::EEventType::eInitializeAsALifecycleManager
-			, UNDEFINED
+			, undefined
 			, pParamParamInitializeAsALifecycleManager
 		);
 	}

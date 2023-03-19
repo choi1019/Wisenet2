@@ -13,7 +13,7 @@ private:
 	EventQueue* m_pEventQueue;
 
 public:
-	UId(int uComponentId = UNDEFINED, EventQueue* pEventQueue = nullptr)
+	UId(int uComponentId = undefined, EventQueue* pEventQueue = nullptr)
 		: ValueObject(UId_Id, UId_Nname)
 		, m_uComponentId(uComponentId)
 		, m_pEventQueue(pEventQueue)

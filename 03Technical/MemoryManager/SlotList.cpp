@@ -27,7 +27,7 @@ SlotList::SlotList(size_t szSlot, SlotList *pSlotListHead, int nClassId, const c
     , m_pSlotListHead(pSlotListHead)
 
     , m_pPageIndex(nullptr)
-    , m_idxPage(UNDEFINED)
+    , m_idxPage(undefined)
     , m_numPagesRequired(0)
 
     , m_numMaxSlots(0)

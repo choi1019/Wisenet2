@@ -47,10 +47,10 @@ protected:
 					(int)IVideoProviderManager::EReceivers::ePStub, 
 					(int)IPStub::EEventType::eSend);
 			} else {
-				// LOG_FOOTER("VideoProviderManager::Start");
-				this->SendReplyEvent(
-					(int)IVideoProviderManager::EReceivers::ePStub, 
-					(int)IPStub::EEventType::eSend);
+				LOG_FOOTER("VideoProviderManager::Start");
+				// this->SendReplyEvent(
+				// 	(int)IVideoProviderManager::EReceivers::ePStub, 
+				// 	(int)IPStub::EEventType::eSend);
 			}
 		}
 		else {

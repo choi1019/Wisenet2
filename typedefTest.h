@@ -1,6 +1,6 @@
 #pragma once
 
-#define UNDEFINED -1
+#define undefined -1
 
 #define _GET_TESTLAYER_UID(ID)	(unsigned)ID*10
 #define _GET_TESTCOMPONENT_UID(ID)	(unsigned)ID*100

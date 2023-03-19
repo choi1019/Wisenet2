@@ -12,8 +12,8 @@ public:
 		int m_nInterval;
 	public:
 		ParamStartTimer(int m_nDueTime, int nInterval)
-			: m_nDueTime(UNDEFINED)
-			, m_nInterval(UNDEFINED)
+			: m_nDueTime(undefined)
+			, m_nInterval(undefined)
 		{
 			this->m_nInterval = nInterval;
 		}

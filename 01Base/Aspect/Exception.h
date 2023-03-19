@@ -26,7 +26,7 @@ public:
 	String& GetMessage2() { return this->m_sMessage2; }
 public:
 	Exception(
-		int nType = UNDEFINED,
+		int nType = undefined,
 		String sName = "",
 		String sFunction = "",
 		String sLine = "",

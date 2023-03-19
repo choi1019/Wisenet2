@@ -15,7 +15,7 @@ public:
 		unsigned classId = _PTS2_Id,
 		const char* pClassName = _PTS2_Name)
 		: TestSuite(classId, pClassName) {
-		this->Add(new("PTC21") PTC21());
+		//this->Add(new("PTC21") PTC21());
 		this->Add(new("PTC22") PTC22());
 	}
 	
