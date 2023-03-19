@@ -32,18 +32,7 @@ public:
     , m_nNumPort(nNumPort)
     , m_inAddressIP(inAddressIP)
     , m_sockfdServer(UNDEFINED)
-    {}
-	~PStubWorker() override 
-    {}
-
-    void Start(Event *pEvent) {
-        PComponentPart::Fork();
-        PComponentPart::Join();
-    }
-    void Stop(Event *pEvent) {
-     }
-
-    void RunThread() override {
+    {
         // create a socket
         if((m_sockfdServer = socket(AF_INET, SOCK_STREAM, 0)) == -1){
             throw Exception((int)(IPStub::EException::eSocket));
@@ -58,6 +47,21 @@ public:
         if (result < 0){
             throw Exception((int)(IPStub::EException::eConnect), "eConnect", result);
         }
+    }
+	~PStubWorker() override 
+    {
+        close(m_sockfdServer); 
+    }
+
+    void Start(Event *pEvent) {
+        PComponentPart::Fork();
+        PComponentPart::Join();
+    }
+    void Stop(Event *pEvent) {
+     }
+
+    void RunThread() override {
+
         // write
         char acBuf[MAXLENGTH_BUF];
         memset(acBuf, 0x00, MAXLENGTH_BUF);
@@ -66,7 +70,7 @@ public:
         acBuf[2] = 's';
         acBuf[3] = 't';
         acBuf[4] = '\0';
-        result = write(m_sockfdServer, acBuf, MAXLENGTH_BUF);
+        int result = write(m_sockfdServer, acBuf, MAXLENGTH_BUF);
         if(result <= 0){
             throw Exception((int)(IPStub::EException::eWrite), "eWrite", result);
         }
@@ -79,6 +83,5 @@ public:
         }
         LOG_NEWLINE("PStub::Send and Reply - ", acBuf);
         fflush(stdout);
-        close(m_sockfdServer); 
     }
 };

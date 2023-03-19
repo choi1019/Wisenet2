@@ -27,20 +27,22 @@ public:
         int result;
         char buf[MAXBUF];
         
-        // while (this->GetEState() == IComponent::EState::eRunning) {
-            LOG_NEWLINE("PSkeletonWorker::Run", this->GetObjectId());
+        while (this->GetEState() == IComponent::EState::eRunning) {
             // read
             memset(buf, 0x00, MAXBUF);
             result = read(m_nSockfdClient, buf, MAXBUF);
+            LOG_NEWLINE("PSkeletonWorker::RunThread - Read", buf);
             if (result < 0) {
-                throw Exception((int)(IPSkeleton::EException::eRead), "eRead", result);
+                // throw Exception((int)(IPSkeleton::EException::eRead), "eRead", result);
+                this->SetEState(IComponent::EState::eStopped);
+                break;
             }
             // write
             result = write(m_nSockfdClient, buf, MAXBUF);
             if(result <= 0) {
                 throw Exception((int)(IPSkeleton::EException::eWrite), "eWrite", result);
             }
-        // }
+        }
         close(m_nSockfdClient);
     }
 };

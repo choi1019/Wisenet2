@@ -34,6 +34,9 @@ public:
 		eBegin = _VideoRequesterManager_Id,
 		eInitialize,
 		eStart,
+		eProcess,
+		eStop,
+		eFinalize,
 		eEnd
 	};
 

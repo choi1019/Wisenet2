@@ -7,8 +7,6 @@
 
 #include <13PTechnical/PRemote/PStubWorker.h>
 
-#define MAXLINE     1024
-
 class PStub : public Component, public IPStub
 {
 private:
@@ -28,7 +26,6 @@ public:
         }
     }
 	~PStub() override {
-
     }
 
     void Initialize(Event *pEvent) {

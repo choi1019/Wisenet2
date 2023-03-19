@@ -22,13 +22,6 @@ protected:
 	virtual void RegisterExceptions() {
 	}
 
-	// void Initialize() {
-	// 	Component::Initialize();
-	// }
-	// void Finalize() {
-	// 	Component::Finalize();
-	// }
-
 	void Initialize(Event* pEvent) {
 		if (pEvent->IsReply()) {
 			if (pEvent->GetReplyType() == (int)IVideoRequesterManager::EEventType::eInitialize) {
@@ -54,7 +47,10 @@ protected:
 					(int)IVideoProviderManager::EReceivers::ePStub, 
 					(int)IPStub::EEventType::eSend);
 			} else {
-				LOG_FOOTER("VideoProviderManager::Start");
+				// LOG_FOOTER("VideoProviderManager::Start");
+				this->SendReplyEvent(
+					(int)IVideoProviderManager::EReceivers::ePStub, 
+					(int)IPStub::EEventType::eSend);
 			}
 		}
 		else {

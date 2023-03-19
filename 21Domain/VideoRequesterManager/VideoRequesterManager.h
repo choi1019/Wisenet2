@@ -27,7 +27,14 @@ protected:
 		LOG_HEADER("VideoRequesterManage::Start");
 		LOG_FOOTER("VideoRequesterManage::Start");
 	}
-
+	void Process(Event* pEvent) {
+		LOG_HEADER("VideoRequesterManage::Process");
+		LOG_FOOTER("VideoRequesterManage::Process");
+	}
+	void Stop(Event* pEvent) {
+		LOG_HEADER("VideoRequesterManage::Stop");
+		LOG_FOOTER("VideoRequesterManage::Stop");
+	}
 
 	void ProcessAEvent(Event* pEvent) {
 		switch (pEvent->GetType()) {
@@ -37,6 +44,12 @@ protected:
 		case (unsigned)IVideoRequesterManager::EEventType::eStart:
 			this->Start(pEvent);
 			break;
+		case (unsigned)IVideoRequesterManager::EEventType::eProcess:
+			this->Process(pEvent);
+			break;
+		case (unsigned)IVideoRequesterManager::EEventType::eStop:
+			this->Stop(pEvent);
+			break;	
 		default:
 			Component::ProcessAEvent(pEvent);
 			break;
