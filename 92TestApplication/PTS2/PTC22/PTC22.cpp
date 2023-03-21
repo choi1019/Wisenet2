@@ -4,13 +4,14 @@
 
 #include <19PApplication/PMain/PMain.h>
 
-// #include <opencv2/imgcodecs.hpp>
-// #include <opencv2/imgproc.hpp>
-// #include <opencv2/highgui.hpp>
+#include <opencv2/core/mat.hpp>
+#include <opencv2/imgcodecs.hpp>
+#include <opencv2/imgproc.hpp>
+#include <opencv2/highgui.hpp>
 
-// using namespace cv;
+using namespace cv;
 
-// Mat src, dst, src_gray;
+Mat src, dst, src_gray;
 
 PTC22::PTC22(unsigned nClassId, const char* pcClassName)
     : TestCase(nClassId, pcClassName)
@@ -25,9 +26,9 @@ void PTC22::Finalize() {
 }
 void PTC22::Run() {
 
-    // int rtn = 0;
-    // src = imread("data/test.jpg");
-    // cvtColor(src, src_gray, COLOR_RGB2GRAY);
+    int rtn = 0;
+    src = imread("data/test.jpg");
+    cvtColor(src, src_gray, COLOR_RGB2GRAY);
     // imshow("imgGray", src_gray);
 
     // rtn = waitKey(0);
