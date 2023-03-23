@@ -27,13 +27,13 @@ void PTC22::Finalize() {
 void PTC22::Run() {
 
     int rtn = 0;
-    src = imread("data/test.jpg");
+    src = imread("92TestApplication/PTS2/PTC22/data/test.jpg");
     cvtColor(src, src_gray, COLOR_RGB2GRAY);
-    // imshow("imgGray", src_gray);
+    imshow("imgGray", src_gray);
 
-    // rtn = waitKey(0);
-    // if (rtn = 27) {
-    //     return;
-    // }
-    // return;
+    rtn = waitKey(0);
+    if (rtn = 27) {
+        return;
+    }
+    return;
 }
