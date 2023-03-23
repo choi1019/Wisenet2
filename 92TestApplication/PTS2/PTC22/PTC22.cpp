@@ -4,10 +4,7 @@
 
 #include <19PApplication/PMain/PMain.h>
 
-#include <opencv2/core/mat.hpp>
-#include <opencv2/imgcodecs.hpp>
-#include <opencv2/imgproc.hpp>
-#include <opencv2/highgui.hpp>
+#include <opencv2/opencv.hpp>
 
 using namespace cv;
 
@@ -26,14 +23,27 @@ void PTC22::Finalize() {
 }
 void PTC22::Run() {
 
-    int rtn = 0;
-    src = imread("92TestApplication/PTS2/PTC22/data/test.jpg");
-    cvtColor(src, src_gray, COLOR_RGB2GRAY);
-    imshow("imgGray", src_gray);
+	VideoCapture cap(0);
+	
+	if (!cap.isOpened())
+	{
+		printf("Can't open the camera");
+		return;
+	}
 
-    rtn = waitKey(0);
-    if (rtn = 27) {
-        return;
-    }
-    return;
+	Mat img;
+
+	while (1)
+	{
+		cap >> img;
+
+		imshow("camera img", img);
+
+		if (waitKey(1) == 27)
+			break;
+	}
+
+
+
+	return;
 }
