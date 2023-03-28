@@ -18,7 +18,7 @@ public:
 	}
 	void Initialize() override {
 		TestMain::Initialize();
-		// this->Add(new("PTS1") PTS1());
+		this->Add(new("PTS1") PTS1());
 		this->Add(new("PTS2") PTS2());
 	}
 
